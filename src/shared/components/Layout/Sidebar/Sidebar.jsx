@@ -16,8 +16,8 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
-import { SidebarHeader } from './SidebarHeader'
-import { SidebarFooter } from './SidebarFooter'
+import { SidebarHeader } from './SidebarHeader/index.js'
+import { SidebarFooter } from './SidebarFooter/index.js'
 
 const menuItems = [
   {
