@@ -1,0 +1,2 @@
+export { SidebarConfiguracion } from './SidebarConfiguracion'
+
