@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { Sidebar } from '@shared/components/Layout/Sidebar'
+import { Header } from '@shared/components/Layout/Header'
 
 export function MainLayout() {
   const location = useLocation()
@@ -14,7 +15,8 @@ export function MainLayout() {
      location.pathname.startsWith('/agente-integrador') ||
      location.pathname.startsWith('/convenios-constancias'))
 
-  // Si es una ruta de módulo, no mostrar el sidebar principal
+  // En módulos: el Layout del módulo incluye Header + Sidebar
+  // En dashboard/configuración: Header + Sidebar principal aquí
   if (isModuleRoute) {
     return (
       <div className="h-screen bg-gray-50">
@@ -23,13 +25,16 @@ export function MainLayout() {
     )
   }
 
-  // Para dashboard y configuración, mostrar el sidebar principal
+  // Dashboard y configuración: Header + Sidebar principal
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50 flex">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        <Outlet />
-      </main>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }

@@ -2,14 +2,11 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
-  Users,
-  Mic,
-  ClipboardList,
-  ClockCheck,
-  Target,
-  Database,
-  Bot,
-  FileCheck,
+  Calendar,
+  FolderOpen,
+  FileText,
+  CheckCircle,
+  Clock,
   Settings,
   ChevronDown,
   ChevronRight,
@@ -17,6 +14,7 @@ import {
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
 import { SidebarHeader } from './SidebarHeader'
+import { SidebarBackButton } from './SidebarBackButton'
 import { SidebarFooter } from './SidebarFooter'
 
 const menuItems = [
@@ -26,52 +24,47 @@ const menuItems = [
       {
         icon: LayoutDashboard,
         label: 'Dashboard',
-        path: '/',
+        path: '/seleccion-practicantes',
       },
     ],
   },
   {
-    title: 'GESTIÓN DE MODULOS',
+    title: 'RECLUTAMIENTO',
     items: [
       {
-        icon: Users,
-        label: 'Selección Practicantes',
-        path: '/seleccion-practicantes',
+        icon: Calendar,
+        label: 'Convocatorias',
+        path: '/seleccion-practicantes/convocatorias',
       },
       {
-        icon: Mic,
-        label: 'Transcripción Reuniones',
-        path: '/transcripcion-reuniones',
+        icon: FolderOpen,
+        label: 'Postulantes',
+        path: '/seleccion-practicantes/postulantes',
       },
       {
-        icon: ClipboardList,
-        label: 'Gestión Tareas',
-        path: '/gestion-tareas',
+        icon: FileText,
+        label: 'Ver CV/s',
+        path: '/seleccion-practicantes/cvs',
+      },
+    ],
+  },
+  {
+    title: 'GESTIÓN',
+    items: [
+      {
+        icon: CheckCircle,
+        label: 'Evaluaciones',
+        path: '/seleccion-practicantes/evaluaciones',
       },
       {
-        icon: ClockCheck,
-        label: 'Asistencia & Horario',
-        path: '/asistencia-horario',
+        icon: Calendar,
+        label: 'Calendario',
+        path: '/seleccion-practicantes/calendario',
       },
       {
-        icon: Target,
-        label: 'Evaluación 360',
-        path: '/evaluacion-360',
-      },
-      {
-        icon: Database,
-        label: 'Dataset Transcripción',
-        path: '/dataset-transcripcion',
-      },
-      {
-        icon: Bot,
-        label: 'Agente Integrador',
-        path: '/agente-integrador',
-      },
-      {
-        icon: FileCheck,
-        label: 'Convenios Constancias',
-        path: '/convenios-constancias',
+        icon: Clock,
+        label: 'Historial',
+        path: '/seleccion-practicantes/historial',
       },
     ],
   },
@@ -81,7 +74,7 @@ const menuItems = [
       {
         icon: Settings,
         label: 'Configuración',
-        path: '/configuracion',
+        path: '/seleccion-practicantes/configuracion',
       },
     ],
   },
@@ -92,7 +85,8 @@ export function Sidebar() {
   const navigate = useNavigate()
   const [expandedSections, setExpandedSections] = useState({
     PRINCIPAL: true,
-    'GESTIÓN DE MODULOS': true,
+    RECLUTAMIENTO: true,
+    GESTIÓN: true,
     CUENTA: true,
   })
 
@@ -104,15 +98,18 @@ export function Sidebar() {
   }
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname === ''
+    // Para dashboard: debe ser exactamente la ruta
+    if (path === '/seleccion-practicantes') {
+      return location.pathname === '/seleccion-practicantes' || location.pathname === '/seleccion-practicantes/'
     }
-    return location.pathname.startsWith(path) && location.pathname !== '/'
+    // Para otras rutas: debe empezar con la ruta y tener algo más o ser exactamente igual
+    return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
   return (
     <div className={styles.sidebar}>
       <SidebarHeader />
+      <SidebarBackButton />
 
       <nav className={styles.nav}>
         {menuItems.map((section) => (

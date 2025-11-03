@@ -1,0 +1,78 @@
+.header {
+  width: 100%;
+  height: auto;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.content {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+  border-radius: 0.375rem;
+}
+
+.iconButton:hover {
+  opacity: 0.7;
+  background-color: #f3f4f6;
+}
+
+.icon {
+  color: black;
+}
+
+.avatarButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.avatarButton:hover {
+  opacity: 0.8;
+}
+
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  background-color: black;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarText {
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
