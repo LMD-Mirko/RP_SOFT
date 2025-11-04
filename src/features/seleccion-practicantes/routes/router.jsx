@@ -12,6 +12,7 @@ import { CVsPage } from '../modules/cv/pages'
 import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
 import { HistorialPage } from '../modules/historial/pages'
+import { PostulacionPage } from '../pages/PostulacionPage'
 
 /**
  * Router del Módulo
@@ -21,6 +22,10 @@ import { HistorialPage } from '../modules/historial/pages'
 export function ModuleRouter() {
   return (
     <Routes>
+      {/* Ruta pública de postulación (sin Layout) */}
+      <Route path="postulacion" element={<PostulacionPage />} />
+      
+      {/* Rutas con Layout (requieren autenticación) */}
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
         
