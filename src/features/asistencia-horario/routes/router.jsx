@@ -51,6 +51,20 @@ export function ModuleRouter() {
           path="historial-practicantes"
           element={<div><h2>Historial de Practicantes</h2></div>}
         />
+        
+        {/* Rutas de Practicante */}
+        <Route
+          path="practicante/inicio"
+          element={<div><h2>Inicio - Practicante</h2></div>}
+        />
+        <Route
+          path="practicante/mi-asistencia"
+          element={<div><h2>Mi Asistencia</h2></div>}
+        />
+        <Route
+          path="practicante/mi-horario"
+          element={<div><h2>Mi Horario</h2></div>}
+        />
       </Route>
     </Routes>
   )

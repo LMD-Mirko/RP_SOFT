@@ -8,6 +8,8 @@ import {
   BarChart2,
   AlertCircle,
   ClipboardList,
+  UserCheck,
+  CalendarDays,
   ChevronDown,
   ChevronRight,
 } from 'lucide-react'
@@ -69,6 +71,26 @@ const menuItems = [
       },
     ],
   },
+  {
+    title: 'PRACTICANTE',
+    items: [
+      {
+        icon: Clock,
+        label: 'Inicio',
+        path: '/asistencia-horario/practicante/inicio',
+      },
+      {
+        icon: UserCheck,
+        label: 'Mi Asistencia',
+        path: '/asistencia-horario/practicante/mi-asistencia',
+      },
+      {
+        icon: CalendarDays,
+        label: 'Mi Horario',
+        path: '/asistencia-horario/practicante/mi-horario',
+      },
+    ],
+  },
 ]
 
 export function Sidebar() {
@@ -78,6 +100,7 @@ export function Sidebar() {
     MONITOREO: true,
     ASISTENCIA: true,
     MÓDULOS: true,
+    PRACTICANTE: true,
   })
 
   const toggleSection = (title) => {
