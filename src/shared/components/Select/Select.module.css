@@ -1,5 +1,6 @@
 .container {
   font-family: 'Be Vietnam Pro', sans-serif;
+  width: 100%;
 }
 
 .fullWidth {
@@ -24,6 +25,7 @@
   position: relative;
   z-index: 1;
   isolation: isolate;
+  width: 100%;
 }
 
 .select {
