@@ -13,6 +13,7 @@ import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
 import { HistorialPage } from '../modules/historial/pages'
 
+
 /**
  * Router del Módulo
  * Layout envuelve todas las rutas para mantener el sidebar visible.
@@ -57,7 +58,14 @@ export function ModuleRouter() {
           path="configuracion"
           element={<div><h2>Configuración</h2></div>}
         />
+        
+        {/* Rutas de Practicante-Form (sin sidebar) */}
+        <Route
+          path="practicante-form"
+          element={<div><h2>Practicante Formumario</h2></div>}
+        />
       </Route>
+      
     </Routes>
   )
 }
