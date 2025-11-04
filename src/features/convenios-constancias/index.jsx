@@ -1,14 +1,6 @@
-import { Routes, Route } from 'react-router-dom'
-
-function DashboardConveniosConstancias() {
-  return <div className="text-lg font-semibold">Dashboard Convenios Constancias</div>
-}
+import { ModuleRouter } from './routes'
 
 export function ConveniosConstanciasIndex() {
-  return (
-    <Routes>
-      <Route index element={<DashboardConveniosConstancias />} />
-    </Routes>
-  )
+  return <ModuleRouter />
 }
 
