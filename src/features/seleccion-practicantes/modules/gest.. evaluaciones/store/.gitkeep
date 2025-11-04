@@ -1,0 +1,3 @@
+# Store para el módulo de gestión de evaluaciones
+# El estado global del módulo se gestionará aquí (Redux, Zustand, etc.)
+

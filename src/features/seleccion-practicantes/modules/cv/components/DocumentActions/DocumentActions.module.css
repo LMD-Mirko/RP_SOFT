@@ -1,0 +1,112 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.downloadButton,
+.viewButton,
+.printButton {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.625rem !important;
+  padding: 1rem 1.5rem !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  border-radius: 0.75rem !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+  min-height: 48px !important;
+}
+
+.downloadButton:hover:not(:disabled),
+.viewButton:hover:not(:disabled),
+.printButton:hover:not(:disabled) {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.downloadButton:disabled,
+.viewButton:disabled,
+.printButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.downloadButton {
+  background: #374151 !important;
+  color: white !important;
+  border: none !important;
+  opacity: 1 !important;
+}
+
+.downloadButton:hover:not(:disabled) {
+  background: #1f2937 !important;
+  box-shadow: 0 6px 16px rgba(31, 41, 55, 0.4) !important;
+}
+
+.viewButton {
+  background: #3b82f6 !important;
+  color: white !important;
+  border: none !important;
+  opacity: 1 !important;
+}
+
+.viewButton:hover:not(:disabled) {
+  background: #2563eb !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4) !important;
+}
+
+.printButton {
+  background: #ffffff !important;
+  color: #374151 !important;
+  border: 1px solid #e5e7eb !important;
+  opacity: 1 !important;
+}
+
+.printButton:hover:not(:disabled) {
+  background: #f9fafb !important;
+  border-color: #d1d5db !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+  color: #1f2937 !important;
+}
+
+
+@media (max-width: 768px) {
+  .container {
+    gap: 1.25rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .actions {
+    gap: 0.75rem;
+  }
+
+  .downloadButton,
+  .viewButton,
+  .printButton {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+}
+

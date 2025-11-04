@@ -1,0 +1,2 @@
+export { ConvocatoriaCard } from './ConvocatoriaCard'
+

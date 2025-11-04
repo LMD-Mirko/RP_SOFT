@@ -1,5 +1,10 @@
 import { ModuleRouter } from './routes'
+import { ToastProvider } from '@shared/components/Toast'
 
 export function SeleccionPracticantesIndex() {
-  return <ModuleRouter />
+  return (
+    <ToastProvider>
+      <ModuleRouter />
+    </ToastProvider>
+  )
 }

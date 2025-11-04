@@ -1,0 +1,175 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.searchContainer {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.listContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+.documentItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.documentItem:hover {
+  background-color: #f9fafb;
+}
+
+.documentItem.selected {
+  background-color: #e0f2fe;
+  border-left: 3px solid #7dd3fc;
+}
+
+.documentIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.documentItem:hover .documentIcon {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.documentItem.selected .documentIcon {
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  color: white;
+}
+
+.documentInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.documentTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.25rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.postulanteName {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 0.25rem;
+  font-weight: 400;
+}
+
+.documentDate {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  margin: 0;
+  font-weight: 400;
+}
+
+.documentDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.fileSize {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.fileType {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 500;
+  padding: 0.125rem 0.5rem;
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  color: #d1d5db;
+  margin-bottom: 1rem;
+}
+
+.emptyText {
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Scrollbar styling */
+.listContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.listContainer::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+.listContainer::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.listContainer::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .searchContainer {
+    padding: 1rem;
+  }
+
+  .documentItem {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .documentIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .documentTitle {
+    font-size: 0.875rem;
+  }
+
+  .postulanteName,
+  .documentDate {
+    font-size: 0.75rem;
+  }
+}
+

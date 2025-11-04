@@ -1,0 +1,167 @@
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+/* Header Styles */
+.header {
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.headerCell {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Body Styles */
+.body {
+  background-color: white;
+}
+
+.row {
+  border-bottom: 1px solid #f3f4f6;
+  transition: all 0.2s ease;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowHover:hover {
+  background-color: #f9fafb;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background-color: #eff6ff !important;
+}
+
+.cell {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  color: #111827;
+  vertical-align: middle;
+}
+
+/* Alignment */
+.align_left {
+  text-align: left;
+}
+
+.align_center {
+  text-align: center;
+}
+
+.align_right {
+  text-align: right;
+}
+
+/* Striped variant */
+.striped .row:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+/* Hover variant */
+.hover .row:hover {
+  background-color: #f3f4f6;
+}
+
+/* Bordered variant */
+.bordered .row {
+  border: 1px solid #e5e7eb;
+}
+
+.bordered .cell,
+.bordered .headerCell {
+  border-right: 1px solid #f3f4f6;
+}
+
+.bordered .cell:last-child,
+.bordered .headerCell:last-child {
+  border-right: none;
+}
+
+/* Empty state */
+.empty {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.emptyIcon {
+  color: #d1d5db;
+  margin-bottom: 1rem;
+}
+
+.emptyText {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tableWrapper {
+    border-radius: 0.5rem;
+  }
+
+  .headerCell,
+  .cell {
+    padding: 0.875rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .headerCell {
+    font-size: 0.75rem;
+  }
+}
+
+/* Scrollbar personalizado */
+.tableWrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 0 0 0.75rem 0.75rem;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+

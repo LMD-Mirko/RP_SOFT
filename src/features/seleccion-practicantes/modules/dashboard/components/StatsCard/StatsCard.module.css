@@ -1,0 +1,145 @@
+.card {
+  background-color: white;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  min-height: 120px;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  line-height: 1.4;
+}
+
+.detail {
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  line-height: 1.4;
+}
+
+.detail_default {
+  color: #6b7280;
+}
+
+.detail_success {
+  color: #10b981;
+}
+
+.detail_danger {
+  color: #ef4444;
+}
+
+.detail_warning {
+  color: #6b7280;
+}
+
+.detail_info {
+  color: #6b7280;
+}
+
+.iconContainer {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .iconContainer {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.iconContainer_blue {
+  background-color: #dbeafe;
+}
+
+.iconContainer_blue .icon {
+  color: #3b82f6;
+}
+
+.iconContainer_green {
+  background-color: #d1fae5;
+}
+
+.iconContainer_green .icon {
+  color: #10b981;
+}
+
+.iconContainer_red {
+  background-color: #fee2e2;
+}
+
+.iconContainer_red .icon {
+  color: #ef4444;
+}
+
+.iconContainer_orange {
+  background-color: #fed7aa;
+}
+
+.iconContainer_orange .icon {
+  color: #f97316;
+}
+
+.iconContainer_gray {
+  background-color: #fef3c7;
+}
+
+.iconContainer_gray .icon {
+  color: #f59e0b;
+}

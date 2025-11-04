@@ -1,0 +1,3 @@
+export { PostulanteModal } from './PostulanteModal'
+
+

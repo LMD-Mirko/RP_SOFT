@@ -1,0 +1,2 @@
+export { ConvocatoriaModal } from './ConvocatoriaModal'
+

@@ -1,0 +1,2 @@
+export { ParticipantsModal } from './ParticipantsModal'
+

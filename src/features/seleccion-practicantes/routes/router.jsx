@@ -6,6 +6,12 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
+import { ConvocatoriasPage } from '../modules/convocatorias/pages'
+import { PostulantesPage } from '../modules/postulantes/pages'
+import { CVsPage } from '../modules/cv/pages'
+import { CalendarioPage } from '../modules/Calendario/pages'
+import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
+import { HistorialPage } from '../modules/historial/pages'
 
 /**
  * Router del Módulo
@@ -21,29 +27,29 @@ export function ModuleRouter() {
         {/* Rutas de Reclutamiento */}
         <Route
           path="convocatorias"
-          element={<div><h2>Convocatorias</h2></div>}
+          element={<ConvocatoriasPage />}
         />
         <Route
           path="postulantes"
-          element={<div><h2>Postulantes</h2></div>}
+          element={<PostulantesPage />}
         />
         <Route
           path="cvs"
-          element={<div><h2>Ver CV/s</h2></div>}
+          element={<CVsPage />}
         />
         
         {/* Rutas de Gestión */}
         <Route
           path="evaluaciones"
-          element={<div><h2>Evaluaciones</h2></div>}
+          element={<EvaluacionesPage />}
         />
         <Route
           path="calendario"
-          element={<div><h2>Calendario</h2></div>}
+          element={<CalendarioPage />}
         />
         <Route
           path="historial"
-          element={<div><h2>Historial</h2></div>}
+          element={<HistorialPage />}
         />
         
         {/* Rutas de Cuenta */}

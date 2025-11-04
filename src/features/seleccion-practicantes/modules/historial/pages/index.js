@@ -1,0 +1,3 @@
+export { HistorialPage } from './HistorialPage'
+
+

@@ -1,0 +1,3 @@
+export { PostulantesPage } from './PostulantesPage'
+
+
