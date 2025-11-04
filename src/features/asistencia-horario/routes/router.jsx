@@ -1,0 +1,72 @@
+/**
+ * Router del Módulo Asistencia & Horario
+ * Define todas las rutas internas del módulo.
+ */
+
+import { Routes, Route } from 'react-router-dom'
+import { Layout } from '../components/Layout'
+import { Dashboard } from '../pages/Dashboard'
+
+/**
+ * Router del Módulo
+ * Layout envuelve todas las rutas para mantener el sidebar visible.
+ * Las rutas se implementarán gradualmente según se desarrollen las vistas.
+ */
+export function ModuleRouter() {
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route index element={<Dashboard />} />
+        
+        {/* Rutas de Monitoreo */}
+        <Route
+          path="bot-integracion"
+          element={<div><h2>Bot & Integración</h2></div>}
+        />
+        
+        {/* Rutas de Asistencia */}
+        <Route
+          path="puntualidad"
+          element={<div><h2>Puntualidad</h2></div>}
+        />
+        <Route
+          path="practicantes"
+          element={<div><h2>Practicantes</h2></div>}
+        />
+        <Route
+          path="gestion-horarios"
+          element={<div><h2>Gestión de Horarios</h2></div>}
+        />
+        
+        {/* Rutas de Módulos */}
+        <Route
+          path="reportes"
+          element={<div><h2>Reportes</h2></div>}
+        />
+        <Route
+          path="reforzamiento"
+          element={<div><h2>Reforzamiento</h2></div>}
+        />
+        <Route
+          path="historial-practicantes"
+          element={<div><h2>Historial de Practicantes</h2></div>}
+        />
+        
+        {/* Rutas de Practicante */}
+        <Route
+          path="practicante/inicio"
+          element={<div><h2>Inicio - Practicante</h2></div>}
+        />
+        <Route
+          path="practicante/mi-asistencia"
+          element={<div><h2>Mi Asistencia</h2></div>}
+        />
+        <Route
+          path="practicante/mi-horario"
+          element={<div><h2>Mi Horario</h2></div>}
+        />
+      </Route>
+    </Routes>
+  )
+}
+
