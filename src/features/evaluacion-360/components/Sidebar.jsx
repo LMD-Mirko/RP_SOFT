@@ -50,15 +50,29 @@ export function Sidebar() {
             >
               Eventos de Evaluación
             </button>
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
             <button 
               className={isActive('/evaluacion-360/evaluacion-360') ? styles.activeMenuItem : styles.menuItem}
               onClick={() => handleNavigation('/evaluacion-360/evaluacion-360')}
             >
               Evaluación 360°
             </button>
+<<<<<<< HEAD
             <button className={styles.menuItem}>
               Evaluación Individual
             </button>
+=======
+
+            <button
+  className={isActive('/evaluacion-360/evaluacion-tecnica') ? styles.activeMenuItem : styles.menuItem}
+  onClick={() => handleNavigation('/evaluacion-360/evaluacion-tecnica')}
+>
+  Evaluación Técnica
+</button>
+>>>>>>> main
           </div>
         </div>
       </div>
@@ -82,4 +96,8 @@ export function Sidebar() {
       </div>
     </div>
   )
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> main

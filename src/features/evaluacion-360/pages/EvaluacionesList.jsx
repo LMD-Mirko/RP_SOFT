@@ -1,9 +1,22 @@
 import { useState } from 'react'
+<<<<<<< HEAD
+=======
+import { useNavigate } from 'react-router-dom'
+>>>>>>> main
 import { Eye, Edit, Trash2 } from 'lucide-react'
 import styles from './EvaluacionesList.module.css'
 
 export function EvaluacionesList() {
   const [activeTab, setActiveTab] = useState('todos')
+<<<<<<< HEAD
+=======
+  const navigate = useNavigate()
+
+  // Función para ir a la vista de Evaluación Técnica
+  const irAEvaluacionTecnica = () => {
+    navigate('/evaluacion-360/evaluacion-tecnica')
+  }
+>>>>>>> main
 
   const evaluaciones = [
     {
@@ -91,6 +104,10 @@ export function EvaluacionesList() {
                 </div>
               </div>
 
+<<<<<<< HEAD
+=======
+              {/* Botones de acciones */}
+>>>>>>> main
               <div className={styles.cardActions}>
                 {evaluacion.estado === 'Cerrado' && (
                   <button className={styles.actionButton}>
@@ -102,6 +119,20 @@ export function EvaluacionesList() {
                     Cerrar
                   </button>
                 )}
+<<<<<<< HEAD
+=======
+
+                {/* Nuevo botón para ir a la vista de Evaluación Técnica */}
+                {evaluacion.estado === 'Activo' && (
+                  <button 
+                    className={styles.actionButton}
+                    onClick={irAEvaluacionTecnica}
+                  >
+                    Evaluar Técnica
+                  </button>
+                )}
+
+>>>>>>> main
                 <button className={styles.iconButton}>
                   <Eye className="w-4 h-4" />
                 </button>
@@ -124,4 +155,8 @@ export function EvaluacionesList() {
       )}
     </div>
   )
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> main
