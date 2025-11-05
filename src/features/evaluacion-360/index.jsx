@@ -1,14 +1,17 @@
 import { Routes, Route } from 'react-router-dom'
-
-function DashboardEvaluacion360() {
-  return <div className="text-lg font-semibold">Dashboard Evaluación 360</div>
-}
+import { Layout } from './components/Layout'
+import { EvaluacionesList } from './pages/EvaluacionesList'
+import { Evaluacion360 } from './pages/Evaluacion360'
+import { EvaluacionTecnica } from './pages/EvaluacionTecnica'
 
 export function Evaluacion360Index() {
   return (
-    <Routes>
-      <Route index element={<DashboardEvaluacion360 />} />
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route index element={<EvaluacionesList />} />
+        <Route path="evaluacion-360" element={<Evaluacion360 />} />
+        <Route path="evaluacion-tecnica" element={<EvaluacionTecnica />} /> 
+      </Routes>
+    </Layout>
   )
 }
-
