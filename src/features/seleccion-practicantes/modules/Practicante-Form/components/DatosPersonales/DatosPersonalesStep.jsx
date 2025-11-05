@@ -4,6 +4,13 @@ import { Button } from '@shared/components/Button'
 import { User, Mail, Phone, CreditCard, Calendar, MapPin, Home } from 'lucide-react'
 import styles from './DatosPersonalesStep.module.css'
 
+// Estilos inline para quitar flechas de inputs numéricos
+const numericInputStyle = {
+  MozAppearance: 'textfield',
+  WebkitAppearance: 'none',
+  appearance: 'none'
+}
+
 export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
   const [formData, setFormData] = useState({
     nombres: data.nombres || '',
@@ -19,11 +26,20 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target
+    
+    // Limitar longitud de teléfono y DNI
+    if (name === 'telefono' && value.length > 9) return
+    if (name === 'dni' && value.length > 8) return
+    
+    // No permitir números en nombres y apellidos
+    if ((name === 'nombres' || name === 'apellidos') && /\d/.test(value)) return
+    
     setFormData(prev => ({ ...prev, [name]: value }))
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }))
     }
   }
+
 
   const validate = () => {
     const newErrors = {}
@@ -31,6 +47,7 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
     if (!formData.nombres.trim()) newErrors.nombres = 'Requerido'
     if (!formData.apellidos.trim()) newErrors.apellidos = 'Requerido'
     if (!formData.telefono.trim()) newErrors.telefono = 'Requerido'
+    else if (formData.telefono.length !== 9) newErrors.telefono = 'Teléfono debe tener 9 dígitos'
     if (!formData.dni.trim()) newErrors.dni = 'Requerido'
     else if (formData.dni.length !== 8) newErrors.dni = 'DNI debe tener 8 dígitos'
     if (!formData.fechaNacimiento) newErrors.fechaNacimiento = 'Requerido'
@@ -75,6 +92,7 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
               label="Apellidos"
               id="apellidos"
               name="apellidos"
+              type="text"
               value={formData.apellidos}
               onChange={handleChange}
               placeholder="Ingrese sus apellidos"
@@ -90,12 +108,14 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
               label="Teléfono"
               id="telefono"
               name="telefono"
+              type="number"
               value={formData.telefono}
               onChange={handleChange}
-              placeholder="+51 999 999 999"
+              placeholder="999 999 999"
               icon={Phone}
               iconPosition="left"
               error={errors.telefono}
+              style={numericInputStyle}
               required
             />
 
@@ -111,6 +131,7 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
               iconPosition="left"
               maxLength={8}
               error={errors.dni}
+              style={numericInputStyle}
               required
             />
           </div>

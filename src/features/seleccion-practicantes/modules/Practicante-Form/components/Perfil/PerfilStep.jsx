@@ -4,20 +4,21 @@ import { Briefcase, BookOpen, Clock } from 'lucide-react'
 import styles from './PerfilStep.module.css'
 
 const OPCIONES_AREA = [
-  { value: 'frontend', label: 'Desarrollo Frontend (HTML, CSS, JavaScript, React)', icon: '💻' },
-  { value: 'backend', label: 'Desarrollo Backend(Python, Django, Bases de datos)', icon: '⚙️' },
-  { value: 'ux', label: 'Diseño UX/UI (Figma, Wireframes, Experiencia de Usuario)', icon: '🎨' },
+  { value: 'frontend', label: 'Desarrollo Frontend (HTML, CSS, JavaScript, React)' },
+  { value: 'backend', label: 'Desarrollo Backend (Python, Django, Bases de datos)' },
+  { value: 'ux', label: 'Diseño UX/UI (Figma, Wireframes, Experiencia de Usuario)' },
 ]
 
 const OPCIONES_EXPERIENCIA = [
-  { value: 'si', label: 'Sí, tengo experiencia', icon: '✓' },
-  { value: 'basico', label: 'Tengo conocimientos básicos', icon: '📚' },
-  { value: 'no', label: 'No, es mi primer acercamiento', icon: '🌱' },
+  { value: 'si', label: 'Sí, tengo experiencia' },
+  { value: 'basico', label: 'Tengo conocimientos básicos' },
+  { value: 'no', label: 'No, es mi primer acercamiento' },
 ]
 
 const OPCIONES_COMPROMISO = [
-  { value: 'alto', label: 'Muy comprometido, puedo dedicar muchas horas', icon: '🔥' },
-  { value: 'moderado', label: 'Moderadamente comprometido', icon: '⚖️' },
+  { value: 'alto', label: 'Muy comprometido, puedo dedicar muchas horas' },
+  { value: 'moderado', label: 'Moderadamente comprometido' },
+  { value: 'bajo', label: 'Disponibilidad limitada' },
 ]
 
 export function PerfilStep({ data, onNext, onBack }) {
@@ -69,19 +70,23 @@ export function PerfilStep({ data, onNext, onBack }) {
               <Briefcase size={20} />
               ¿Cuál es tu área de mayor interés?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {OPCIONES_AREA.map((opcion) => (
-                <button
+                <div
                   key={opcion.value}
-                  type="button"
-                  onClick={() => handleSelect('areaInteres', opcion.value)}
-                  className={`${styles.optionCard} ${
-                    formData.areaInteres === opcion.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.areaInteres === opcion.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('areaInteres', opcion.value)}
                 >
-                  <span className={styles.optionIcon}>{opcion.icon}</span>
-                  <span className={styles.optionLabel}>{opcion.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.areaInteres === opcion.value}
+                    onChange={() => handleSelect('areaInteres', opcion.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{opcion.label}</label>
+                </div>
               ))}
             </div>
             {errors.areaInteres && (
@@ -95,19 +100,23 @@ export function PerfilStep({ data, onNext, onBack }) {
               <BookOpen size={20} />
               ¿Tienes experiencia previa en tu área de interés?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {OPCIONES_EXPERIENCIA.map((opcion) => (
-                <button
+                <div
                   key={opcion.value}
-                  type="button"
-                  onClick={() => handleSelect('experienciaPrevia', opcion.value)}
-                  className={`${styles.optionCard} ${
-                    formData.experienciaPrevia === opcion.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.experienciaPrevia === opcion.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('experienciaPrevia', opcion.value)}
                 >
-                  <span className={styles.optionIcon}>{opcion.icon}</span>
-                  <span className={styles.optionLabel}>{opcion.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.experienciaPrevia === opcion.value}
+                    onChange={() => handleSelect('experienciaPrevia', opcion.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{opcion.label}</label>
+                </div>
               ))}
             </div>
             {errors.experienciaPrevia && (
@@ -121,19 +130,23 @@ export function PerfilStep({ data, onNext, onBack }) {
               <Clock size={20} />
               ¿Cuál es tu nivel de compromiso?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {OPCIONES_COMPROMISO.map((opcion) => (
-                <button
+                <div
                   key={opcion.value}
-                  type="button"
-                  onClick={() => handleSelect('nivelCompromiso', opcion.value)}
-                  className={`${styles.optionCard} ${
-                    formData.nivelCompromiso === opcion.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.nivelCompromiso === opcion.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('nivelCompromiso', opcion.value)}
                 >
-                  <span className={styles.optionIcon}>{opcion.icon}</span>
-                  <span className={styles.optionLabel}>{opcion.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.nivelCompromiso === opcion.value}
+                    onChange={() => handleSelect('nivelCompromiso', opcion.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{opcion.label}</label>
+                </div>
               ))}
             </div>
             {errors.nivelCompromiso && (

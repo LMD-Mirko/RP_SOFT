@@ -81,60 +81,58 @@
     flex-shrink: 0;
 }
 
-/* Options Grid */
-.optionsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.optionCard {
+/* Options List */
+.optionsList {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     gap: 0.75rem;
-    padding: 1.5rem 1rem;
+}
+
+/* Checkbox Option */
+.checkboxOption {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
     background: white;
     border: 2px solid #e5e7eb;
     border-radius: 0.75rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: 'Be Vietnam Pro', sans-serif;
-    min-height: 100px;
 }
 
-.optionCard:hover {
+.checkboxOption:hover {
     border-color: #3b82f6;
     background: #eff6ff;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
-.optionCardSelected {
+.checkboxOptionSelected {
     border-color: #3b82f6;
     background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.optionIcon {
-    font-size: 2rem;
-    transition: transform 0.2s ease;
+.checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #3b82f6;
+    flex-shrink: 0;
 }
 
-.optionCard:hover .optionIcon {
-    transform: scale(1.15);
-}
-
-.optionLabel {
-    font-size: 0.875rem;
+.checkboxLabel {
+    flex: 1;
+    font-size: 0.9375rem;
     font-weight: 500;
     color: #374151;
-    text-align: center;
+    cursor: pointer;
     line-height: 1.4;
+    font-family: 'Be Vietnam Pro', sans-serif;
 }
 
-.optionCardSelected .optionLabel {
+.checkboxOptionSelected .checkboxLabel {
     color: #1e40af;
     font-weight: 600;
 }
@@ -238,10 +236,6 @@
 
     .stepTitle {
         font-size: 1.5rem;
-    }
-
-    .optionsGrid {
-        grid-template-columns: 1fr;
     }
 
     .actions {

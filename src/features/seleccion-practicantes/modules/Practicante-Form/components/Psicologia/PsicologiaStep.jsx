@@ -17,6 +17,8 @@ const OPCIONES_MANEJO_CONFLICTOS = [
 
 const OPCIONES_ACTITUD_DESAFIOS = [
   { value: 'Los veo como oportunidades', label: 'Los veo como oportunidades' },
+  { value: 'Me Motivan', label: 'Me Motivan' },
+  { value: 'Me Generan estrés', label: 'Me Generan estrés' },
 ]
 
 export function PsicologiaStep({ data, onNext, onBack }) {
@@ -66,20 +68,25 @@ export function PsicologiaStep({ data, onNext, onBack }) {
           <div className={styles.questionGroup}>
             <label className={styles.questionLabel}>
               <Users size={20} />
-              ¿Cómo describes tu capacidad para trabajar em equipo?
+              ¿Cómo describes tu capacidad para trabajar en equipo?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {OPCIONES_TRABAJO_EQUIPO.map((opcion) => (
-                <button
+                <div
                   key={opcion.value}
-                  type="button"
-                  onClick={() => handleSelect('trabajoEquipo', opcion.value)}
-                  className={`${styles.optionCard} ${
-                    formData.trabajoEquipo === opcion.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.trabajoEquipo === opcion.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('trabajoEquipo', opcion.value)}
                 >
-                  <span className={styles.optionLabel}>{opcion.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.trabajoEquipo === opcion.value}
+                    onChange={() => handleSelect('trabajoEquipo', opcion.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{opcion.label}</label>
+                </div>
               ))}
             </div>
             {errors.trabajoEquipo && (
@@ -93,18 +100,23 @@ export function PsicologiaStep({ data, onNext, onBack }) {
               <AlertCircle size={20} />
               ¿Cómo manejas conflictos en el trabajo?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {OPCIONES_MANEJO_CONFLICTOS.map((opcion) => (
-                <button
+                <div
                   key={opcion.value}
-                  type="button"
-                  onClick={() => handleSelect('manejoConflictos', opcion.value)}
-                  className={`${styles.optionCard} ${
-                    formData.manejoConflictos === opcion.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.manejoConflictos === opcion.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('manejoConflictos', opcion.value)}
                 >
-                  <span className={styles.optionLabel}>{opcion.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.manejoConflictos === opcion.value}
+                    onChange={() => handleSelect('manejoConflictos', opcion.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{opcion.label}</label>
+                </div>
               ))}
             </div>
             {errors.manejoConflictos && (
@@ -118,18 +130,23 @@ export function PsicologiaStep({ data, onNext, onBack }) {
               <Target size={20} />
               ¿Cuál es tu actitud ante los desafíos?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {OPCIONES_ACTITUD_DESAFIOS.map((opcion) => (
-                <button
+                <div
                   key={opcion.value}
-                  type="button"
-                  onClick={() => handleSelect('actitudDesafios', opcion.value)}
-                  className={`${styles.optionCard} ${
-                    formData.actitudDesafios === opcion.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.actitudDesafios === opcion.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('actitudDesafios', opcion.value)}
                 >
-                  <span className={styles.optionLabel}>{opcion.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.actitudDesafios === opcion.value}
+                    onChange={() => handleSelect('actitudDesafios', opcion.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{opcion.label}</label>
+                </div>
               ))}
             </div>
             {errors.actitudDesafios && (

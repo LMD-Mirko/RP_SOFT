@@ -58,18 +58,23 @@ export function TecnicaStep({ data, onNext, onBack }) {
               <Code size={20} />
               ¿Cuál es tu nivel en HTML?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {NIVELES.map((nivel) => (
-                <button
+                <div
                   key={nivel.value}
-                  type="button"
-                  onClick={() => handleSelect('nivelHTML', nivel.value)}
-                  className={`${styles.optionCard} ${
-                    formData.nivelHTML === nivel.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.nivelHTML === nivel.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('nivelHTML', nivel.value)}
                 >
-                  <span className={styles.optionLabel}>{nivel.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.nivelHTML === nivel.value}
+                    onChange={() => handleSelect('nivelHTML', nivel.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{nivel.label}</label>
+                </div>
               ))}
             </div>
             {errors.nivelHTML && (
@@ -81,20 +86,25 @@ export function TecnicaStep({ data, onNext, onBack }) {
           <div className={styles.questionGroup}>
             <label className={styles.questionLabel}>
               <Code size={20} />
-              ¿Cual es tu nivel en CSS?
+              ¿Cuál es tu nivel en CSS?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {NIVELES.map((nivel) => (
-                <button
+                <div
                   key={nivel.value}
-                  type="button"
-                  onClick={() => handleSelect('nivelCSS', nivel.value)}
-                  className={`${styles.optionCard} ${
-                    formData.nivelCSS === nivel.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.nivelCSS === nivel.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('nivelCSS', nivel.value)}
                 >
-                  <span className={styles.optionLabel}>{nivel.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.nivelCSS === nivel.value}
+                    onChange={() => handleSelect('nivelCSS', nivel.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{nivel.label}</label>
+                </div>
               ))}
             </div>
             {errors.nivelCSS && (
@@ -108,18 +118,23 @@ export function TecnicaStep({ data, onNext, onBack }) {
               <Code size={20} />
               ¿Cuál es tu nivel en JavaScript?
             </label>
-            <div className={styles.optionsGrid}>
+            <div className={styles.optionsList}>
               {NIVELES.map((nivel) => (
-                <button
+                <div
                   key={nivel.value}
-                  type="button"
-                  onClick={() => handleSelect('nivelJavaScript', nivel.value)}
-                  className={`${styles.optionCard} ${
-                    formData.nivelJavaScript === nivel.value ? styles.optionCardSelected : ''
+                  className={`${styles.checkboxOption} ${
+                    formData.nivelJavaScript === nivel.value ? styles.checkboxOptionSelected : ''
                   }`}
+                  onClick={() => handleSelect('nivelJavaScript', nivel.value)}
                 >
-                  <span className={styles.optionLabel}>{nivel.label}</span>
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={formData.nivelJavaScript === nivel.value}
+                    onChange={() => handleSelect('nivelJavaScript', nivel.value)}
+                    className={styles.checkbox}
+                  />
+                  <label className={styles.checkboxLabel}>{nivel.label}</label>
+                </div>
               ))}
             </div>
             {errors.nivelJavaScript && (

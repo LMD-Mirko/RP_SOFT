@@ -168,6 +168,15 @@
     box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+
 /* Responsive */
 @media (max-width: 768px) {
     .stepCard {
