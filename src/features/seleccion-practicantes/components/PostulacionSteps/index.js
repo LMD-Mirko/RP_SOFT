@@ -1,7 +1,0 @@
-export { DatosPersonalesStep } from './DatosPersonalesStep'
-export { PerfilStep } from './PerfilStep'
-export { TecnicaStep } from './TecnicaStep'
-export { PsicologiaStep } from './PsicologiaStep'
-export { MotivacionStep } from './MotivacionStep'
-export { CVStep } from './CVStep'
-export { ConfirmacionStep } from './ConfirmacionStep'

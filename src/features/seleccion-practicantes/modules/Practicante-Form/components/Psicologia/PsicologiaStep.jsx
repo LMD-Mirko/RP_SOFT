@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@shared/components/Button'
 import { Users, AlertCircle, Target } from 'lucide-react'
-import styles from './StepForm.module.css'
+import styles from './PsicologiaStep.module.css'
 
 const OPCIONES_TRABAJO_EQUIPO = [
   { value: 'Excelente', label: 'Excelente' },

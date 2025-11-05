@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { CheckCircle } from 'lucide-react'
-import styles from './StepForm.module.css'
+import styles from './ConfirmacionStep.module.css'
+
 
 export function ConfirmacionStep({ data }) {
   useEffect(() => {

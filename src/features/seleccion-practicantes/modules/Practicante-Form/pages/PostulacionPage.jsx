@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DatosPersonalesStep } from '../components/PostulacionSteps/DatosPersonalesStep'
-import { PerfilStep } from '../components/PostulacionSteps/PerfilStep'
-import { TecnicaStep } from '../components/PostulacionSteps/TecnicaStep'
-import { PsicologiaStep } from '../components/PostulacionSteps/PsicologiaStep'
-import { MotivacionStep } from '../components/PostulacionSteps/MotivacionStep'
-import { CVStep } from '../components/PostulacionSteps/CVStep'
-import { ConfirmacionStep } from '../components/PostulacionSteps/ConfirmacionStep'
+import { DatosPersonalesStep } from '../components/DatosPersonales'
+import { PerfilStep } from '../components/Perfil'
+import { TecnicaStep } from '../components/Tecnica'
+import { PsicologiaStep } from '../components/Psicologia'
+import { MotivacionStep } from '../components/Motivacion'
+import { CVStep } from '../components/CV'
+import { ConfirmacionStep } from '../components/Confirmacion'
 import styles from './PostulacionPage.module.css'
 
 const STEPS = [
@@ -31,27 +31,27 @@ export function PostulacionPage() {
     fechaNacimiento: '',
     distrito: '',
     direccion: '',
-    
+
     // Perfil
     areaInteres: '',
     experienciaPrevia: '',
     nivelCompromiso: '',
-    
+
     // Técnica
     nivelHTML: '',
     nivelCSS: '',
     nivelJavaScript: '',
-    
+
     // Psicología
     trabajoEquipo: '',
     manejoConflictos: '',
     actitudDesafios: '',
-    
+
     // Motivación
     motivacion: '',
     expectativas: '',
     participacionProyectos: '',
-    
+
     // CV
     cvFile: null,
   })
@@ -75,10 +75,10 @@ export function PostulacionPage() {
 
   const handleSubmit = async (stepData) => {
     updateFormData(stepData)
-    
+
     // Aquí iría la lógica para enviar los datos al backend
     console.log('Datos finales:', { ...formData, ...stepData })
-    
+
     // Avanzar al paso de confirmación
     setCurrentStep(STEPS.length)
   }
@@ -93,10 +93,9 @@ export function PostulacionPage() {
           {STEPS.map((step) => (
             <div
               key={step.id}
-              className={`${styles.step} ${
-                currentStep === step.id ? styles.stepActive :
-                currentStep > step.id ? styles.stepCompleted : ''
-              }`}
+              className={`${styles.step} ${currentStep === step.id ? styles.stepActive :
+                  currentStep > step.id ? styles.stepCompleted : ''
+                }`}
             >
               <div className={styles.stepNumber}>{step.id}</div>
               <span className={styles.stepLabel}>{step.label}</span>

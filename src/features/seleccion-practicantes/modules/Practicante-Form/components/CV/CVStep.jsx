@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Button } from '@shared/components/Button'
 import { Upload, FileText, X } from 'lucide-react'
-import styles from './StepForm.module.css'
+import styles from './CVStep.module.css'
 
 export function CVStep({ data, onNext, onBack }) {
   const [cvFile, setCvFile] = useState(data.cvFile || null)

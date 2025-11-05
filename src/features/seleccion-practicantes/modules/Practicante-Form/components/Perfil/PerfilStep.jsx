@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@shared/components/Button'
 import { Briefcase, BookOpen, Clock } from 'lucide-react'
-import styles from './StepForm.module.css'
+import styles from './PerfilStep.module.css'
 
 const OPCIONES_AREA = [
   { value: 'frontend', label: 'Desarrollo Frontend (HTML, CSS, JavaScript, React)', icon: '💻' },

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@shared/components/Button'
 import { MessageSquare, Target, CheckCircle } from 'lucide-react'
-import styles from './StepForm.module.css'
+import styles from './MotivacionStep.module.css'
 
 export function MotivacionStep({ data, onNext, onBack }) {
   const [formData, setFormData] = useState({

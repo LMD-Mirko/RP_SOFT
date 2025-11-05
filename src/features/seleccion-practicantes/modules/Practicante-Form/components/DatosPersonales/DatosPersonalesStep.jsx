@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Input } from '@shared/components/Input'
 import { Button } from '@shared/components/Button'
 import { User, Mail, Phone, CreditCard, Calendar, MapPin, Home } from 'lucide-react'
-import styles from './StepForm.module.css'
+import styles from './DatosPersonalesStep.module.css'
 
 export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
   const [formData, setFormData] = useState({

@@ -1,3 +1,5 @@
+// src/features/seleccion-practicantes/routes/router.jsx
+
 /**
  * Router del Módulo Selección Practicantes
  * Define todas las rutas internas del módulo.
@@ -12,7 +14,7 @@ import { CVsPage } from '../modules/cv/pages'
 import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
 import { HistorialPage } from '../modules/historial/pages'
-import { PostulacionPage } from '../pages/PostulacionPage'
+import { PostulacionPage } from '../modules/Practicante-Form/pages'
 
 
 /**

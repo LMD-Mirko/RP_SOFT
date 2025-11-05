@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@shared/components/Button'
 import { Code } from 'lucide-react'
-import styles from './StepForm.module.css'
+import styles from './TecnicaStep.module.css'
 
 const NIVELES = [
   { value: 'Basico', label: 'Básico' },
