@@ -1,7 +1,9 @@
 import { LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import styles from './SidebarFooter.module.css'
 
 export function SidebarFooter() {
+  const navigate = useNavigate()
   const handleLogout = () => {
     // TODO: Implementar lógica de logout
     console.log('Cerrar sesión')
@@ -9,7 +11,7 @@ export function SidebarFooter() {
 
   return (
     <div className={styles.footer}>
-      <div className={styles.userInfo}>
+      <div className={styles.userInfo} onClick={() => navigate('/gestion-tareas/usuario')} role="button" tabIndex={0}>
         <div className={styles.userAvatar}>
           <span className={styles.userAvatarText}>A</span>
         </div>

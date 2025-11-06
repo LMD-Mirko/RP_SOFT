@@ -6,6 +6,17 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
+import { Backlog } from '../pages/Backlog'
+import { SprintBoard } from '../pages/SprintBoard'
+import { HistoryRepo } from '../pages/HistoryRepo'
+import { Metrics } from '../pages/Metrics'
+import { User } from '../pages/User'
+import { UserHome } from '../components/user/UserHome'
+import { UserTasks } from '../components/user/UserTasks'
+import { UserFeedback } from '../components/user/UserFeedback'
+import { UserTeams } from '../components/user/UserTeams'
+import { UserProfile } from '../components/user/UserProfile'
+import { Navigate } from 'react-router-dom'
 
 /**
  * Router del Módulo
@@ -19,22 +30,18 @@ export function ModuleRouter() {
         <Route index element={<Dashboard />} />
         
         {/* Rutas de Gestión de Tareas */}
-        <Route
-          path="backlog"
-          element={<div><h2>Backlog del Producto</h2></div>}
-        />
-        <Route
-          path="sprint-board"
-          element={<div><h2>Sprint Board</h2></div>}
-        />
-        <Route
-          path="historias"
-          element={<div><h2>Repo. de Historias</h2></div>}
-        />
-        <Route
-          path="metricas"
-          element={<div><h2>Métricas</h2></div>}
-        />
+        <Route path="backlog" element={<Backlog />} />
+        <Route path="sprint-board" element={<SprintBoard />} />
+        <Route path="historias" element={<HistoryRepo />} />
+        <Route path="metricas" element={<Metrics />} />
+        <Route path="usuario" element={<User />}> 
+          <Route index element={<Navigate to="inicio" replace />} />
+          <Route path="inicio" element={<UserHome />} />
+          <Route path="mis-tareas" element={<UserTasks />} />
+          <Route path="equipo" element={<UserTeams />} />
+          <Route path="feedback" element={<UserFeedback />} />
+          <Route path="perfil" element={<UserProfile />} />
+        </Route>
       </Route>
     </Routes>
   )
