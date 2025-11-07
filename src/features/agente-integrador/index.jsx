@@ -1,14 +1,19 @@
-import { Routes, Route } from 'react-router-dom'
-
-function DashboardAgenteIntegrador() {
-  return <div className="text-lg font-semibold">Dashboard Agente Integrador</div>
-}
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import RoleGate from "./pages/RoleGate";
+import UserPanel from "./pages/UserPanel";
+import ConfigPanel from "./pages/ConfigPanel";
+import SystemPanel from "./pages/SystemPanel";
+import ModuleLoader from "./pages/ModuleLoader";
 
 export function AgenteIntegradorIndex() {
   return (
     <Routes>
-      <Route index element={<DashboardAgenteIntegrador />} />
+      <Route path="/" element={<RoleGate />} />
+      <Route path="/user" element={<UserPanel />} />
+      <Route path="/admin" element={<ConfigPanel />} />
+      <Route path="/sistema" element={<SystemPanel />} />
+      <Route path="/modulo" element={<ModuleLoader />} />
     </Routes>
-  )
+  );
 }
-

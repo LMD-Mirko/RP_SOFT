@@ -1,0 +1,74 @@
+.history {
+  background: var(--card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.history li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.history li strong {
+  display: block;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.history button {
+  margin-top: 12px;
+  width: 100%;
+}
+.history-panel {
+  background: var(--card);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border-radius: 12px;
+  height: 560px;
+  overflow-y: auto;
+}
+
+.history-panel h3 {
+  margin-top: 0;
+  color: var(--text);
+}
+
+.history-panel ul {
+  list-style: none;
+  padding: 0;
+}
+
+.history-panel li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.history-panel li strong {
+  display: block;
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.history-panel li span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.history-panel li p {
+  font-size: 13px;
+  margin: 4px 0;
+  color: var(--text);
+}
