@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Search, ChevronDown } from 'lucide-react'
-import { EvaluacionModal } from '../components/EvaluacionModal'
-import styles from './Evaluacion360.module.css'
+import { EvaluacionModal } from '../../../components/EvaluacionModal'
+import styles from './Evaluacion360Page.module.css'
 
-export function Evaluacion360() {
+export function Evaluacion360Page() {
   const [showModal, setShowModal] = useState(false)
   const [selectedPracticante, setSelectedPracticante] = useState(null)
 
@@ -184,3 +184,4 @@ export function Evaluacion360() {
     </div>
   )
 }
+

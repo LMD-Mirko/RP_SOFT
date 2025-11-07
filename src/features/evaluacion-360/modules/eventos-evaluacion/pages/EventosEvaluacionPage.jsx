@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Eye, Edit, Trash2 } from 'lucide-react'
-import styles from './EvaluacionesList.module.css'
+import styles from './EventosEvaluacionPage.module.css'
 
-export function EvaluacionesList() {
+export function EventosEvaluacionPage() {
   const [activeTab, setActiveTab] = useState('todos')
 
   const evaluaciones = [
@@ -125,3 +125,4 @@ export function EvaluacionesList() {
     </div>
   )
 }
+

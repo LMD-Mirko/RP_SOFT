@@ -1,15 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
-import { Layout } from './components/Layout'
-import { EvaluacionesList } from './pages/EvaluacionesList'
-import { Evaluacion360 } from './pages/Evaluacion360'
+import { ModuleRouter } from './routes'
+import { ToastProvider } from '@shared/components/Toast'
 
 export function Evaluacion360Index() {
   return (
-    <Layout>
-      <Routes>
-        <Route index element={<EvaluacionesList />} />
-        <Route path="evaluacion-360" element={<Evaluacion360 />} />
-      </Routes>
-    </Layout>
+    <ToastProvider>
+      <ModuleRouter />
+    </ToastProvider>
   )
 }
