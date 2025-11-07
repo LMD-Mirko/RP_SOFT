@@ -6,6 +6,9 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
+import Auditoria from '../pages/Auditoria'
+import Configuracion from '../pages/Configuracion'
+import RevisionDocumentos from '../pages/RevisionDocumentos'
 
 /**
  * Router del Módulo
@@ -21,15 +24,15 @@ export function ModuleRouter() {
         {/* Rutas de Convenios y Constancias */}
         <Route
           path="revision-documentos"
-          element={<div><h2>Revisión de Documentos</h2></div>}
+          element={<RevisionDocumentos />}
         />
         <Route
           path="auditoria"
-          element={<div><h2>Auditoría</h2></div>}
+          element={<Auditoria />}
         />
         <Route
           path="configuracion"
-          element={<div><h2>Configuración</h2></div>}
+          element={<Configuracion />}
         />
       </Route>
     </Routes>
