@@ -1,4 +1,4 @@
-import { SelectionPanel } from '../components/selection/SelectionPanel';
+import { SelectionPanel } from '../components/SelectionPanel'
 
 export function Dashboard() {
   return (
@@ -7,4 +7,3 @@ export function Dashboard() {
     </div>
   )
 }
-

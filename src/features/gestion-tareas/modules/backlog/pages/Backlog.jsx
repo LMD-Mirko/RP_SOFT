@@ -1,4 +1,4 @@
-import { BacklogPanel } from '../components/backlog/BacklogPanel'
+import { BacklogPanel } from '../components/BacklogPanel'
 
 export function Backlog() {
   return (

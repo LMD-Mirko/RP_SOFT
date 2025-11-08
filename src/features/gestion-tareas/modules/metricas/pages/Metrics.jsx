@@ -1,4 +1,4 @@
-import { MetricsView } from '../components/metrics/MetricsView'
+import { MetricsView } from '../components/MetricsView'
 
 export function Metrics() {
   return (

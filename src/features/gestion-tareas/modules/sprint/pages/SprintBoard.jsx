@@ -1,4 +1,4 @@
-import { SprintBoard as SprintBoardView } from '../components/sprint/SprintBoard'
+import { SprintBoard as SprintBoardView } from '../components/SprintBoard'
 
 export function SprintBoard() {
   return (

@@ -98,7 +98,7 @@ export function Sidebar() {
             </button>
 
             {expandedSections[section.title] && (
-              <div className={styles.sectionItems}>
+              <div className={clsx(styles.sectionItems, 'space-y-2')}> 
                 {section.items.map((item) => {
                   const Icon = item.icon
                   const active = isActive(item.path)
@@ -107,7 +107,11 @@ export function Sidebar() {
                     <button
                       key={item.path}
                       onClick={() => navigate(item.path)}
-                      className={clsx(styles.menuItem, active && styles.active)}
+                      className={clsx(
+                        styles.menuItem,
+                        active && styles.active,
+                        'rounded-xl hover:bg-gray-100 transition-all duration-150'
+                      )}
                     >
                       <Icon size={20} className={styles.menuIcon} />
                       <span className={styles.menuLabel}>{item.label}</span>

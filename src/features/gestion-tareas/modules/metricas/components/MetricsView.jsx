@@ -1,10 +1,10 @@
 import { Share2, CheckCircle2, Gauge, Timer, Target, TrendingUp } from 'lucide-react'
-import { Button } from '../ui/Button'
-import { Card } from '../ui/Card'
-import { Badge } from '../ui/Badge'
-import { Avatar } from '../ui/Avatar'
-import { Progress } from '../ui/Progress'
-import { useMetrics } from '../../hooks/useMetrics'
+import { Button } from '../../../components/ui/Button'
+import { Card } from '../../../components/ui/Card'
+import { Badge } from '../../../components/ui/Badge'
+import { Avatar } from '../../../components/ui/Avatar'
+import { Progress } from '../../../components/ui/Progress'
+import { useMetrics } from '../../../hooks/useMetrics'
 
 function TinyBarChart({ labels = [], values = [] }) {
   const max = Math.max(1, ...values)

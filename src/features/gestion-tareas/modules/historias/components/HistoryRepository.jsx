@@ -1,10 +1,10 @@
 import { Upload, Plus, Star, FolderOpen, TrendingUp, Tags, Search, ChevronDown, Copy } from 'lucide-react'
-import { Card } from '../ui/Card'
-import { Button } from '../ui/Button'
-import { Input } from '../ui/Input'
-import { Select } from '../ui/Select'
-import { Badge } from '../ui/Badge'
-import { useHistoryRepo } from '../../hooks/useHistoryRepo'
+import { Card } from '../../../components/ui/Card'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
+import { Select } from '../../../components/ui/Select'
+import { Badge } from '../../../components/ui/Badge'
+import { useHistoryRepo } from '../../../hooks/useHistoryRepo'
 
 function TemplateCard({ tpl }) {
   return (

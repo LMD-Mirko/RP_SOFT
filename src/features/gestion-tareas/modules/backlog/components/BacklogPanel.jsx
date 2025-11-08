@@ -1,10 +1,10 @@
 import { Search, Upload, Download, Plus, CheckCircle2, BadgeInfo, Timer, Hash, User as UserIcon, ChevronDown } from 'lucide-react'
-import { Card } from '../ui/Card'
-import { Button } from '../ui/Button'
-import { Input } from '../ui/Input'
-import { Select } from '../ui/Select'
-import { Badge } from '../ui/Badge'
-import { useBacklogPanel } from '../../hooks/useBacklogPanel'
+import { Card } from '../../../components/ui/Card'
+import { Button } from '../../../components/ui/Button'
+import { Input } from '../../../components/ui/Input'
+import { Select } from '../../../components/ui/Select'
+import { Badge } from '../../../components/ui/Badge'
+import { useBacklogPanel } from '../../../hooks/useBacklogPanel'
 
 export function BacklogPanel() {
   const {

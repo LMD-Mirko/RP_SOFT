@@ -1,4 +1,4 @@
-import { HistoryRepository } from '../components/repo/HistoryRepository'
+import { HistoryRepository } from '../components/HistoryRepository'
 
 export function HistoryRepo() {
   return (

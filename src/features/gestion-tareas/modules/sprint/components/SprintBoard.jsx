@@ -1,10 +1,10 @@
 import { Plus, Share2, Ellipsis, Timer, Gauge, Users as UsersIcon, CheckCircle2 } from 'lucide-react'
-import { Badge } from '../ui/Badge'
-import { Button } from '../ui/Button'
-import { Card } from '../ui/Card'
-import { Avatar } from '../ui/Avatar'
-import { Progress } from '../ui/Progress'
-import { useSprintBoard } from '../../hooks/useSprintBoard'
+import { Badge } from '../../../components/ui/Badge'
+import { Button } from '../../../components/ui/Button'
+import { Card } from '../../../components/ui/Card'
+import { Avatar } from '../../../components/ui/Avatar'
+import { Progress } from '../../../components/ui/Progress'
+import { useSprintBoard } from '../../../hooks/useSprintBoard'
 
 function ColumnCard({ card }) {
   return (
