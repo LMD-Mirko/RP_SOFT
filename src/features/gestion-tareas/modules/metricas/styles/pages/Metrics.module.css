@@ -1,0 +1,184 @@
+/*
+  Metrics Page Styles (layout > typography > colors > spacing > others)
+  - Page layout, headers, grids, panels, list and item styles
+  - Mirrors Tailwind classes used in Metrics.jsx while keeping structure and responsiveness
+*/
+
+:root {
+  /* colors */
+  --metrics-white: #ffffff;
+  --metrics-gray-50: #f9fafb;
+  --metrics-gray-100: #f3f4f6;
+  --metrics-gray-200: #e5e7eb;
+  --metrics-gray-400: #9ca3af;
+  --metrics-gray-500: #6b7280;
+  --metrics-gray-600: #4b5563;
+  --metrics-gray-900: #111827;
+  --metrics-rose-600: #e11d48;
+  --metrics-emerald-600: #059669;
+
+  /* sizes */
+  --metrics-radius-xl: 0.75rem; /* rounded-xl */
+  --metrics-radius-2xl: 1rem; /* rounded-2xl */
+  --metrics-shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --metrics-shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+}
+
+/* layout */
+.container {
+  min-height: 100%;
+  background-color: var(--metrics-gray-50);
+  padding-top: 2rem; /* py-8 */
+  padding-bottom: 2rem;
+  padding-left: 1rem; /* px-4 */
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) { /* sm */
+  .container { padding-left: 1.5rem; padding-right: 1.5rem; }
+}
+@media (min-width: 1024px) { /* lg */
+  .container { padding-left: 2rem; padding-right: 2rem; }
+}
+
+.content {
+  max-width: auto;
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* gap-3 */
+  margin-bottom: 2rem; /* mb-8 */
+}
+
+@media (min-width: 768px) { /* md */
+  .header { flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 1rem; /* md:gap-4 */ }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* gap-2 */
+}
+
+.gridStats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem; /* gap-6 */
+  margin-bottom: 2rem; /* mb-8 */
+}
+
+@media (min-width: 640px) { /* sm */
+  .gridStats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) { /* lg */
+  .gridStats { grid-template-columns: repeat(4, 1fr); }
+}
+
+.gridCharts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem; /* gap-6 */
+  margin-bottom: 2rem; /* mb-8 */
+}
+
+@media (min-width: 1024px) { /* lg */
+  .gridCharts { grid-template-columns: repeat(2, 1fr); }
+}
+
+.panel {
+  border-radius: var(--metrics-radius-2xl);
+  border: 1px solid var(--metrics-gray-200);
+  background-color: var(--metrics-white);
+  padding: 1.5rem; /* p-6 */
+  box-shadow: var(--metrics-shadow-sm);
+  transition: transform 300ms ease-in-out, box-shadow 300ms ease-in-out; /* 300ms duration */
+  will-change: transform, box-shadow;
+}
+
+.panel:hover {
+  box-shadow: var(--metrics-shadow-xl); /* hover:shadow-xl */
+  transform: scale(1.03);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+.panelHeaderIcon {
+  transition: transform 300ms ease-in-out, color 300ms ease-in-out;
+}
+
+.panel:hover .panelHeaderIcon,
+.panel:focus-visible .panelHeaderIcon {
+  transform: rotate(10deg);
+  color: var(--metrics-gray-600);
+}
+
+.list {
+  /* space-y-4 equivalent */
+}
+
+.list > * + * { margin-top: 1rem; }
+
+.memberRow {
+  padding: 0.75rem; /* p-3 */
+  border-radius: var(--metrics-radius-xl);
+  transition: background-color 150ms ease-in-out;
+}
+
+.memberRow:hover { background-color: var(--metrics-gray-50); }
+
+.memberHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* gap-3 */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.memberBody {
+  flex: 1 1 0%;
+  min-width: 0; /* min-w-0 */
+}
+
+.memberHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* gap-3 */
+  flex-wrap: wrap;
+}
+
+.iconMuted { color: var(--metrics-gray-400); }
+
+.iconLeft { margin-right: 0.5rem; /* mr-2 */ }
+
+/* typography */
+.title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 800; /* font-extrabold */
+  letter-spacing: -0.025em; /* tracking-tight */
+}
+
+.subtitle { color: var(--metrics-gray-600); }
+
+.labelSmMuted { font-size: 0.875rem; color: var(--metrics-gray-500); }
+.labelXsMuted { font-size: 0.75rem; color: var(--metrics-gray-400); }
+.memberName { font-weight: 600; color: var(--metrics-gray-900); }
+.memberMeta { font-size: 0.75rem; color: var(--metrics-gray-500); }
+.tendencyNegative { color: var(--metrics-rose-600); }
+.tendencyPositive { color: var(--metrics-emerald-600); }
+
+/* colors */
+/* handled above via variables and color classes */
+
+/* spacing */
+.mb4 { margin-bottom: 1rem; }
+
+/* others */
+/* none */
