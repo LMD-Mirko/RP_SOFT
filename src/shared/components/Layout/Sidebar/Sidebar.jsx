@@ -7,7 +7,6 @@ import {
   ClipboardList,
   ClockCheck,
   Target,
-  Database,
   Bot,
   FileCheck,
   Settings,
@@ -18,6 +17,7 @@ import clsx from 'clsx'
 import styles from './Sidebar.module.css'
 import { SidebarHeader } from './SidebarHeader/index.js'
 import { SidebarFooter } from './SidebarFooter/index.js'
+import { useChatPanel } from '@shared/context/ChatPanelContext'
 
 const menuItems = [
   {
@@ -59,11 +59,6 @@ const menuItems = [
         path: '/evaluacion-360',
       },
       {
-        icon: Database,
-        label: 'Dataset Transcripción',
-        path: '/dataset-transcripcion',
-      },
-      {
         icon: Bot,
         label: 'Agente Integrador',
         path: '/agente-integrador',
@@ -90,6 +85,7 @@ const menuItems = [
 export function Sidebar() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { toggleChat, isOpen: isChatOpen } = useChatPanel()
   const [expandedSections, setExpandedSections] = useState({
     PRINCIPAL: true,
     'GESTIÓN DE MODULOS': true,
@@ -104,9 +100,19 @@ export function Sidebar() {
   }
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname === ''
+    // Si el chat está abierto, solo Agente Integrador debe estar activo
+    if (isChatOpen) {
+      return path === '/agente-integrador'
     }
+    
+    if (path === '/agente-integrador') {
+      return false
+    }
+    
+    if (path === '/') {
+      return (location.pathname === '/' || location.pathname === '') && !isChatOpen
+    }
+    
     return location.pathname.startsWith(path) && location.pathname !== '/'
   }
 
@@ -134,11 +140,18 @@ export function Sidebar() {
                 {section.items.map((item) => {
                   const Icon = item.icon
                   const active = isActive(item.path)
+                  const isAgenteIntegrador = item.path === '/agente-integrador'
 
                   return (
                     <button
                       key={item.path}
-                      onClick={() => navigate(item.path)}
+                      onClick={() => {
+                        if (isAgenteIntegrador) {
+                          toggleChat()
+                        } else {
+                          navigate(item.path)
+                        }
+                      }}
                       className={clsx(styles.menuItem, active && styles.active)}
                     >
                       <Icon size={20} className={styles.menuIcon} />

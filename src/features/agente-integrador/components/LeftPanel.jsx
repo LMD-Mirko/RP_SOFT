@@ -8,16 +8,27 @@ import {
   FaChartLine,
   FaQuestionCircle,
 } from "react-icons/fa";
+import { useGemini } from "../hooks/useGemini";
 
 export default function LeftPanel() {
   const [activeButton, setActiveButton] = useState("Asistencia");
+  const { setShowAgentIntegrator } = useGemini();
+
+  const handleButtonClick = (text) => {
+    setActiveButton(text);
+    if (text === 'agente-integrador') {
+      setShowAgentIntegrator(true);
+    } else {
+      setShowAgentIntegrator(false);
+    }
+  };
 
   const buttons = [
     { icon: <FaUserCheck />, text: "Asistencia" },
     { icon: <FaTasks />, text: "Gestión de tareas" },
     { icon: <FaUserGraduate />, text: "Selección de practicantes" },
     { icon: <FaClipboardList />, text: "Transcripción de sesiones" },
-    { icon: <FaComments />, text: "Conversación y asistencias" },
+    { icon: <FaComments />, text: "agente-integrador" },
     { icon: <FaChartLine />, text: "Sistema de evaluación" },
   ];
 
@@ -75,7 +86,7 @@ export default function LeftPanel() {
             icon={btn.icon}
             text={btn.text}
             active={activeButton === btn.text}
-            onClick={() => setActiveButton(btn.text)}
+            onClick={() => handleButtonClick(btn.text)}
           />
         ))}
       </div>

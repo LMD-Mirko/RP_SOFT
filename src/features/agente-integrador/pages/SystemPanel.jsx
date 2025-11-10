@@ -52,7 +52,7 @@ export default function SystemPanel() {
       </div>
 
 
-      <button className="return-btn" onClick={() => navigate("/")}>
+      <button className="return-btn" onClick={() => window.location.href = "/"}>
         🔙 REGRESAR
       </button>
     </div>
