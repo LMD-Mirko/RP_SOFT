@@ -72,27 +72,7 @@ const menuItems = [
     ],
   },
 
-  // 🔹 NUEVA SECCIÓN: TRANSCRIPCIÓN
-  {
-    title: 'TRANSCRIPCIÓN',
-    items: [
-      {
-        icon: MessageSquare,
-        label: 'Daily Scrum',
-        path: '/seleccion-practicantes/daily-scrum',
-      },
-      {
-        icon: Users,
-        label: 'Scrum de Scrum',
-        path: '/seleccion-practicantes/scrum-scrum',
-      },
-      {
-        icon: Download,
-        label: 'Transcripciones',
-        path: '/seleccion-practicantes/transcripciones',
-      },
-    ],
-  },
+  // Se elimina la sección de Transcripción aquí; vive en su propio módulo
 
   {
     title: 'CUENTA',
