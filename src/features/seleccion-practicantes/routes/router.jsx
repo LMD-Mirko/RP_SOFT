@@ -12,6 +12,7 @@ import { CVsPage } from '../modules/cv/pages'
 import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
 import { HistorialPage } from '../modules/historial/pages'
+import { TranscripcionesPage } from '@features/transcripcion-reuniones'
 
 /**
  * Router del Módulo
@@ -50,6 +51,11 @@ export function ModuleRouter() {
         <Route
           path="historial"
           element={<HistorialPage />}
+        />
+        {/* Transcripción: enlaza a la vista del módulo transcripcion-reuniones */}
+        <Route
+          path="transcripciones"
+          element={<TranscripcionesPage />}
         />
         
         {/* Rutas de Cuenta */}

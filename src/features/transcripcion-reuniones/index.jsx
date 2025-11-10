@@ -1,13 +1,11 @@
 import { Routes, Route } from 'react-router-dom'
-
-function DashboardTranscripcionReuniones() {
-  return <div className="text-lg font-semibold">Dashboard Transcripción Reuniones</div>
-}
+import { TranscripcionesPage } from './pages/TranscripcionesPage.jsx'
+export { TranscripcionesPage } from './pages/TranscripcionesPage.jsx'
 
 export function TranscripcionReunionesIndex() {
   return (
     <Routes>
-      <Route index element={<DashboardTranscripcionReuniones />} />
+      <Route index element={<TranscripcionesPage />} />
     </Routes>
   )
 }
