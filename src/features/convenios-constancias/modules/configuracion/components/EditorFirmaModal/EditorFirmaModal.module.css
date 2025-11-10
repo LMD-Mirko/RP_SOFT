@@ -1,0 +1,440 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 90vh;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.controlLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.controlLabel:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileName {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.firmaLoaded {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #d1fae5;
+  border: 1px solid #10b981;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #065f46;
+}
+
+.removeFirmaButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.removeFirmaButton:hover {
+  background-color: #dc2626;
+}
+
+.documentoInfo {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zoomControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+}
+
+.zoomButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: none;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.zoomButton:hover:not(:disabled) {
+  background-color: #f3f4f6;
+}
+
+.zoomButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.zoomValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  min-width: 3rem;
+  text-align: center;
+}
+
+.sizeControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+}
+
+.sizeLabel {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.sizeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: none;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.sizeButton:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.sizeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sizeValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  min-width: 5rem;
+  text-align: center;
+}
+
+.editorArea {
+  flex: 1;
+  overflow: auto;
+  background-color: #e5e7eb;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.documentContainer {
+  position: relative;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  width: fit-content;
+  height: fit-content;
+  margin: 0 auto;
+  overflow: visible;
+  display: inline-block;
+}
+
+.pdfViewer {
+  width: 800px;
+  height: 1000px;
+  border: none;
+  display: block;
+  background-color: white;
+}
+
+.pdfDocument {
+  width: 800px;
+  height: 1000px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.pdfContent {
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.pdfHeader {
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.pdfHeader h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.pdfHeader p {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.pdfBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pdfBody p {
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.pdfLines {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pdfLine {
+  height: 1px;
+  background-color: #e5e7eb;
+  width: 100%;
+}
+
+.pdfLine:nth-child(odd) {
+  width: 95%;
+}
+
+.pdfLine:nth-child(even) {
+  width: 100%;
+}
+
+.pdfSignatureArea {
+  margin-top: 3rem;
+  padding: 2rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+  text-align: center;
+}
+
+.signatureLabel {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.pdfFooter {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.pdfFooter p {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.documentImage {
+  max-width: 800px;
+  max-height: 1000px;
+  display: block;
+  width: auto;
+  height: auto;
+}
+
+.firmaOverlay {
+  position: absolute;
+  cursor: move;
+  z-index: 100;
+  border: 2px dashed #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  transition: border-color 0.2s, background-color 0.2s;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.firmaOverlay:hover {
+  border-color: #2563eb;
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+.firmaOverlay.dragging {
+  border-color: #1d4ed8;
+  background-color: rgba(59, 130, 246, 0.3);
+  cursor: grabbing;
+}
+
+.firmaImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  object-fit: contain;
+}
+
+.firmaHandle {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: move;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.emptyText {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.emptySubtext {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.positionInfo {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.positionItem {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.positionLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.positionValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  font-family: monospace;
+  background-color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #e5e7eb;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.footerRight {
+  display: flex;
+  gap: 1rem;
+}
+

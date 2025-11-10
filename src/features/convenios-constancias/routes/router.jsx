@@ -5,10 +5,10 @@
 
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { Dashboard } from '../pages/Dashboard'
-import Auditoria from '../pages/Auditoria'
-import Configuracion from '../pages/Configuracion'
-import RevisionDocumentos from '../pages/RevisionDocumentos'
+import { Dashboard } from '../modules/dashboard/pages'
+import { AuditoriaPage } from '../modules/auditoria/pages'
+import { ConfiguracionPage } from '../modules/configuracion/pages'
+import { RevisionDocumentosPage } from '../modules/revisiondocumentos/pages'
 
 /**
  * Router del Módulo
@@ -24,15 +24,15 @@ export function ModuleRouter() {
         {/* Rutas de Convenios y Constancias */}
         <Route
           path="revision-documentos"
-          element={<RevisionDocumentos />}
+          element={<RevisionDocumentosPage />}
         />
         <Route
           path="auditoria"
-          element={<Auditoria />}
+          element={<AuditoriaPage />}
         />
         <Route
           path="configuracion"
-          element={<Configuracion />}
+          element={<ConfiguracionPage />}
         />
       </Route>
     </Routes>

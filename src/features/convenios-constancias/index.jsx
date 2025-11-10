@@ -1,6 +1,11 @@
 import { ModuleRouter } from './routes'
+import { ToastProvider } from '@shared/components/Toast'
 
 export function ConveniosConstanciasIndex() {
-  return <ModuleRouter />
+  return (
+    <ToastProvider>
+      <ModuleRouter />
+    </ToastProvider>
+  )
 }
 
