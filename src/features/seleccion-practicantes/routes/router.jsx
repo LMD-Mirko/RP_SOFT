@@ -15,7 +15,7 @@ import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
 import { HistorialPage } from '../modules/historial/pages'
 import { PostulacionPage } from '../modules/Practicante-Form/pages'
-import { LoginPage, RegisterPage } from '../modules/auth/pages'
+import { LoginPage, RegisterPage, OAuthCallbackPage } from '../modules/auth/pages'
 
 
 /**
@@ -29,6 +29,7 @@ export function ModuleRouter() {
       {/* Rutas públicas de autenticación (sin Layout) */}
       <Route path="auth/login" element={<LoginPage />} />
       <Route path="auth/register" element={<RegisterPage />} />
+      <Route path="auth/callback" element={<OAuthCallbackPage />} />
       <Route path="postulacion" element={<PostulacionPage />} />
       
       {/* Rutas con Layout (requieren autenticación) */}

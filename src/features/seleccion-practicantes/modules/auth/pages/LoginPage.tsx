@@ -1,41 +1,48 @@
-import type React from "react"
-import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
-import styles from "./LoginPage.module.css"
+import type React from 'react'
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import styles from './LoginPage.module.css'
+import { useMicrosoftOAuth } from '../hooks/useMicrosoftOAuth'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const {
+    handleMicrosoftAuth,
+    isLoading: isOAuthLoading,
+    error: oauthError,
+  } = useMicrosoftOAuth()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
+    setError('')
     setIsLoading(true)
 
     if (!email || !password) {
-      setError("Por favor completa todos los campos")
+      setError('Por favor completa todos los campos')
       setIsLoading(false)
       return
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setError("Por favor ingresa un email válido")
+      setError('Por favor ingresa un email válido')
       setIsLoading(false)
       return
     }
 
-    let role = "practicante"
-    if (email.toLowerCase() === "admin@rpsoft.com") {
-      role = "admin"
+    let role = 'practicante'
+    if (email.toLowerCase() === 'admin@rpsoft.com') {
+      role = 'admin'
     }
 
     setTimeout(() => {
       localStorage.setItem(
-        "rpsoft_user",
+        'rpsoft_user',
         JSON.stringify({
           email,
           role,
@@ -43,13 +50,13 @@ export default function LoginPage() {
         }),
       )
 
-      localStorage.removeItem("rpsoft_selection_data")
-      localStorage.removeItem("rpsoft_current_step")
+      localStorage.removeItem('rpsoft_selection_data')
+      localStorage.removeItem('rpsoft_current_step')
 
-      if (role === "admin") {
-        navigate("/admin/dashboard")
+      if (role === 'admin') {
+        navigate('/admin/dashboard')
       } else {
-        navigate("/seleccion-practicantes")
+        navigate('/seleccion-practicantes')
       }
       setIsLoading(false)
     }, 500)
@@ -73,11 +80,39 @@ export default function LoginPage() {
             <p className={styles.subtitle}>Sistema de Selección de Practicantes</p>
           </div>
 
-          {error && (
+          {(error || oauthError) && (
             <div className={styles.errorAlert}>
-              <p className={styles.errorText}>{error}</p>
+              <p className={styles.errorText}>{error || oauthError}</p>
             </div>
           )}
+
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await handleMicrosoftAuth()
+              } catch (err) {
+                setError(err instanceof Error ? err.message : 'Error al autenticar con Microsoft')
+              }
+            }}
+            disabled={isOAuthLoading || isLoading}
+            className={styles.microsoftButton}
+          >
+            <svg className={styles.microsoftIcon} viewBox="0 0 23 23" fill="none">
+              <path d="M0 0h11v11H0V0z" fill="#F25022" />
+              <path d="M12 0h11v11H12V0z" fill="#7FBA00" />
+              <path d="M0 12h11v11H0V12z" fill="#00A4EF" />
+              <path d="M12 12h11v11H12V12z" fill="#FFB900" />
+            </svg>
+            {isOAuthLoading ? 'Conectando con Microsoft...' : 'Iniciar sesión con Microsoft'}
+          </button>
+
+          <div className={styles.divider}>
+            <div className={styles.dividerLine}></div>
+            <div className={styles.dividerText}>
+              <span>O continúa con email</span>
+            </div>
+          </div>
 
           <form onSubmit={handleLogin} className={styles.form}>
             <div className={styles.field}>
@@ -102,27 +137,21 @@ export default function LoginPage() {
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={styles.submitButton}
-            >
-              {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+            <button type="submit" disabled={isLoading} className={styles.submitButton}>
+              {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
           </form>
 
           <div className={styles.footer}>
             <p className={styles.footerText}>
-              ¿No tienes cuenta?{" "}
+              ¿No tienes cuenta?{' '}
               <Link to="/seleccion-practicantes/auth/register" className={styles.link}>
                 Crear cuenta
               </Link>
             </p>
           </div>
 
-          <p className={styles.disclaimer}>
-            Plataforma segura de selección de practicantes SENATI
-          </p>
+          <p className={styles.disclaimer}>Plataforma segura de selección de practicantes SENATI</p>
         </div>
       </div>
     </div>
