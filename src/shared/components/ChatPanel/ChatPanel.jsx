@@ -15,8 +15,10 @@ export function ChatPanel() {
   const [menuPosition, setMenuPosition] = useState('top')
   const [showQRModal, setShowQRModal] = useState(false)
   const [placeholderIndex, setPlaceholderIndex] = useState(0)
+  const [isRecording, setIsRecording] = useState(false)
 
   const messagesEndRef = useRef(null)
+  const recognitionRef = useRef(null)
   const inputRef = useRef(null)
   const txtInputRef = useRef(null)
   const xlsxInputRef = useRef(null)
@@ -165,7 +167,56 @@ export function ChatPanel() {
   }
 
   const handleMicClick = () => {
-    alert('Funcionalidad de micrófono próximamente')
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Tu navegador no soporta reconocimiento de voz. Prueba con Chrome o Edge.')
+      return
+    }
+
+    if (isRecording) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop()
+      }
+      setIsRecording(false)
+      return
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    const recognition = new SpeechRecognition()
+    
+    recognition.lang = 'es-ES'
+    recognition.continuous = false
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+
+    recognition.onstart = () => {
+      setIsRecording(true)
+    }
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript
+      setInput(prev => prev + (prev ? ' ' : '') + transcript)
+      setIsRecording(false)
+    }
+
+    recognition.onerror = (event) => {
+      console.error('Error de reconocimiento de voz:', event.error)
+      setIsRecording(false)
+      
+      if (event.error === 'not-allowed') {
+        alert('Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.')
+      } else if (event.error === 'no-speech') {
+        alert('No se detectó ningún audio. Intenta hablar más cerca del micrófono.')
+      } else {
+        alert(`Error: ${event.error}`)
+      }
+    }
+
+    recognition.onend = () => {
+      setIsRecording(false)
+      recognitionRef.current = null
+    }
+
+    recognitionRef.current = recognition
+    recognition.start()
   }
 
   const toggleSidebar = () => {
@@ -282,8 +333,8 @@ export function ChatPanel() {
           )}
         </div>
         <button
-          className={styles.micButton}
-          aria-label="Micrófono"
+          className={clsx(styles.micButton, isRecording && styles.micButtonRecording)}
+          aria-label={isRecording ? 'Detener grabación' : 'Micrófono'}
           onClick={handleMicClick}
         >
           <Mic size={20} />
