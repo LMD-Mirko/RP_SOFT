@@ -460,6 +460,21 @@ body {
   padding: 5px;
 }
 
+.typing-cursor::after {
+  content: "|";
+  animation: blink 1s infinite;
+  color: #000;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
 
 @media (max-width: 1024px) {
   .main-grid {

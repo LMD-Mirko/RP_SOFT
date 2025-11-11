@@ -2,6 +2,65 @@ import React, { useState, useEffect, useRef } from "react";
 import ExcelJS from "exceljs";
 import { useGemini } from "../context/GeminiContext";
 import { SYSTEM_PROMPT } from "../config/prompt";
+import { createContext, useContext, useState } from "react";
+import { streamGeminiResponse } from "../services/geminiService";
+import "./chat.css";
+
+
+appendMessage("...", "bot");
+
+await streamGeminiResponse(
+  userMsg,
+  (partial) => {
+    setMessages((prev) => {
+      const updated = [...prev];
+      const last = updated[updated.length - 1];
+      if (last && last.who === "bot") {
+        last.text += partial;
+      } else {
+        updated.push({ text: partial, who: "bot" });
+      }
+      localStorage.setItem("last_chat", JSON.stringify(updated));
+      return updated;
+    });
+  },
+  () => {
+    saveToHistory("Conversación con IA");
+    setIsLoading(false);
+  }
+);
+const GeminiContext = createContext();
+
+export const GeminiProvider = ({ children }) => {
+  const [apiKey, setApiKey] = useState(
+    import.meta.env.VITE_GEMINI_API_KEY || ""
+  );
+  const [model, setModel] = useState("gemini-1.5-flash");
+  const [temperature, setTemperature] = useState(0.7);
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem("chat_history");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  return (
+    <GeminiContext.Provider
+      value={{
+        apiKey,
+        setApiKey,
+        model,
+        setModel,
+        temperature,
+        setTemperature,
+        history,
+        setHistory,
+      }}
+    >
+      {children}
+    </GeminiContext.Provider>
+  );
+};
+
+export const useGemini = () => useContext(GeminiContext);
 
 export default function Chat() {
   const { apiKey, model, temperature, history, setHistory } = useGemini();
@@ -21,7 +80,10 @@ export default function Chat() {
 
   useEffect(() => {
     if (messages.length === 0) {
-      appendMessage("¡Hola! Soy tu agente IA 🤖. ¿En qué puedo ayudarte hoy?", "bot");
+      appendMessage(
+        "¡Hola! Soy tu agente IA 🤖. ¿En qué puedo ayudarte hoy?",
+        "bot"
+      );
     }
   }, []);
 
@@ -94,14 +156,19 @@ export default function Chat() {
 
       if (!response.ok) {
         if (response.status === 404)
-          throw new Error("❌ Modelo no encontrado (404). Verifica el nombre del modelo.");
+          throw new Error(
+            "❌ Modelo no encontrado (404). Verifica el nombre del modelo."
+          );
         if (response.status === 403)
           throw new Error("❌ API Key inválida o sin permisos (403).");
         throw new Error(`⚠️ Error HTTP: ${response.status}`);
       }
 
       const data = await response.json();
-      return data?.candidates?.[0]?.content?.parts?.[0]?.text || "⚠️ Sin respuesta de la IA.";
+      return (
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "⚠️ Sin respuesta de la IA."
+      );
     } catch (error) {
       throw new Error("🚫 Error al conectar con la API: " + error.message);
     }
@@ -132,46 +199,46 @@ export default function Chat() {
   };
 
   const handleFileUpload = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+    const file = event.target.files[0];
+    if (!file) return;
 
-  appendMessage(`📎 Has subido el archivo: ${file.name}`, "user");
-  const ext = file.name.split(".").pop().toLowerCase();
-  let content = "";
+    appendMessage(`📎 Has subido el archivo: ${file.name}`, "user");
+    const ext = file.name.split(".").pop().toLowerCase();
+    let content = "";
 
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      if (["txt", "csv", "json"].includes(ext)) {
-        content = e.target.result;
-      } else if (["xlsx", "xls"].includes(ext)) {
-        const buffer = e.target.result;
-        const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.load(buffer);
-        const sheet = workbook.worksheets[0];
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        if (["txt", "csv", "json"].includes(ext)) {
+          content = e.target.result;
+        } else if (["xlsx", "xls"].includes(ext)) {
+          const buffer = e.target.result;
+          const workbook = new ExcelJS.Workbook();
+          await workbook.xlsx.load(buffer);
+          const sheet = workbook.worksheets[0];
 
-        const rows = [];
-        sheet.eachRow({ includeEmpty: true }, (row) => {
-          const cells = row.values.slice(1).map((v) => (v == null ? "" : String(v)));
-          rows.push(cells);
-        });
-        content = rows.map((r) => r.join(" | ")).join("\n");
-      } else {
-        appendMessage("⚠️ Tipo de archivo no compatible.", "bot");
-        return;
+          const rows = [];
+          sheet.eachRow({ includeEmpty: true }, (row) => {
+            const cells = row.values
+              .slice(1)
+              .map((v) => (v == null ? "" : String(v)));
+            rows.push(cells);
+          });
+          content = rows.map((r) => r.join(" | ")).join("\n");
+        } else {
+          appendMessage("⚠️ Tipo de archivo no compatible.", "bot");
+          return;
+        }
+
+        await analyzeFile(file.name, content);
+      } catch (error) {
+        appendMessage("❌ Error al leer el archivo: " + error.message, "bot");
       }
+    };
 
-      await analyzeFile(file.name, content);
-    } catch (error) {
-      appendMessage("❌ Error al leer el archivo: " + error.message, "bot");
-    }
+    if (["xlsx", "xls"].includes(ext)) reader.readAsArrayBuffer(file);
+    else reader.readAsText(file);
   };
-
-  if (["xlsx", "xls"].includes(ext)) reader.readAsArrayBuffer(file);
-  else reader.readAsText(file);
-};
-
-      
 
   return (
     <div
@@ -196,49 +263,41 @@ export default function Chat() {
           gap: "16px",
         }}
       >
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              justifyContent: msg.who === "user" ? "flex-end" : "flex-start",
-              marginBottom: "8px",
-            }}
-          >
+        {messages.map((msg, i) => {
+          const isLastBotMessage =
+            msg.who === "bot" && i === messages.length - 1 && isLoading;
+
+          return (
             <div
+              key={i}
               style={{
-                maxWidth: "80%",
-                padding: "12px 16px",
-                borderRadius:
-                  msg.who === "user"
-                    ? "18px 18px 0 18px"
-                    : "18px 18px 18px 0",
-                backgroundColor: msg.who === "user" ? "#000000ff" : "#f0f0f0",
-                color: msg.who === "user" ? "white" : "#333",
-                fontSize: "14px",
-                lineHeight: "1.5",
-                boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                display: "flex",
+                justifyContent: msg.who === "user" ? "flex-end" : "flex-start",
+                marginBottom: "8px",
               }}
             >
-              {msg.text}
+              <div
+                className={isLastBotMessage ? "typing-cursor" : ""}
+                style={{
+                  maxWidth: "80%",
+                  padding: "12px 16px",
+                  borderRadius:
+                    msg.who === "user"
+                      ? "18px 18px 0 18px"
+                      : "18px 18px 18px 0",
+                  backgroundColor: msg.who === "user" ? "#000000ff" : "#f0f0f0",
+                  color: msg.who === "user" ? "white" : "#333",
+                  fontSize: "14px",
+                  lineHeight: "1.5",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                }}
+              >
+                {msg.text}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
-        {isLoading && (
-          <div
-            style={{
-              alignSelf: "flex-start",
-              padding: "12px 16px",
-              borderRadius: "18px 18px 18px 0",
-              backgroundColor: "#f0f0f0",
-              color: "#333",
-              fontSize: "14px",
-            }}
-          >
-            🤔 Procesando...
-          </div>
-        )}
         <div ref={messagesEndRef} />
       </div>
 
@@ -259,7 +318,10 @@ export default function Chat() {
           style={{ display: "none" }}
           onChange={handleFileUpload}
         />
-        <label htmlFor="file-upload" style={{ cursor: "pointer", fontSize: "20px" }}>
+        <label
+          htmlFor="file-upload"
+          style={{ cursor: "pointer", fontSize: "20px" }}
+        >
           📎
         </label>
 
