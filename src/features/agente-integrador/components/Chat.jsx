@@ -260,36 +260,39 @@ export default function Chat() {
           padding: "16px",
           display: "flex",
           flexDirection: "column",
-          gap: "16px",
         }}
       >
         {messages.map((msg, i) => {
           const isLastBotMessage =
             msg.who === "bot" && i === messages.length - 1 && isLoading;
 
+          const isUser = msg.who === "user";
+
           return (
             <div
               key={i}
               style={{
+                width: "100%",
+                marginBottom: "12px",
                 display: "flex",
-                justifyContent: msg.who === "user" ? "flex-end" : "flex-start",
-                marginBottom: "8px",
+                justifyContent: isUser ? "flex-end" : "center",
+                alignItems: "flex-start",
               }}
             >
               <div
                 className={isLastBotMessage ? "typing-cursor" : ""}
                 style={{
                   maxWidth: "80%",
+                  minWidth: "120px",
                   padding: "12px 16px",
-                  borderRadius:
-                    msg.who === "user"
-                      ? "18px 18px 0 18px"
-                      : "18px 18px 18px 0",
-                  backgroundColor: msg.who === "user" ? "#000000ff" : "#f0f0f0",
-                  color: msg.who === "user" ? "white" : "#333",
+                  borderRadius: isUser ? "18px 18px 0 18px" : "18px",
+                  backgroundColor: isUser ? "#000000ff" : "#f0f0f0",
+                  color: isUser ? "white" : "#333",
                   fontSize: "14px",
                   lineHeight: "1.5",
                   boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
                 }}
               >
                 {msg.text}
