@@ -1,15 +1,20 @@
-import type React from 'react'
+import React from 'react'
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useToast } from '@shared/components/Toast'
 import styles from './LoginPage.module.css'
 import { useMicrosoftOAuth } from '../hooks/useMicrosoftOAuth'
+import { useAuth } from '../hooks/authHook'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const { login: loginUser, error: authError, isLoading: authLoading } = useAuth()
 
   const {
     handleMicrosoftAuth,
@@ -23,43 +28,51 @@ export default function LoginPage() {
     setIsLoading(true)
 
     if (!email || !password) {
-      setError('Por favor completa todos los campos')
+      const errorMsg = 'Por favor completa todos los campos'
+      setError(errorMsg)
+      toast.error(errorMsg, 3000, 'Error de validación')
       setIsLoading(false)
       return
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setError('Por favor ingresa un email válido')
+      const errorMsg = 'Por favor ingresa un email válido'
+      setError(errorMsg)
+      toast.error(errorMsg, 3000, 'Email inválido')
       setIsLoading(false)
       return
     }
 
-    let role = 'practicante'
-    if (email.toLowerCase() === 'admin@rpsoft.com') {
-      role = 'admin'
-    }
+    try {
+      const credentials = {
+        email,
+        password,
+      }
 
-    setTimeout(() => {
-      localStorage.setItem(
-        'rpsoft_user',
-        JSON.stringify({
-          email,
-          role,
-          loginTime: new Date().toISOString(),
-        }),
-      )
+      const response = await loginUser(credentials)
+      
+      // Determinar el rol del usuario (puede venir en la respuesta o usar lógica por defecto)
+      let role = response.user?.role || 'practicante'
+      if (email.toLowerCase() === 'admin@rpsoft.com' || response.user?.is_admin) {
+        role = 'admin'
+      }
 
-      localStorage.removeItem('rpsoft_selection_data')
-      localStorage.removeItem('rpsoft_current_step')
+      const userName = response.user?.username || response.user?.email || email
+      toast.success(`¡Bienvenido, ${userName}!`, 3000, 'Sesión iniciada')
 
       if (role === 'admin') {
         navigate('/admin/dashboard')
       } else {
         navigate('/seleccion-practicantes')
       }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Error al iniciar sesión'
+      setError(errorMsg)
+      toast.error(errorMsg, 4000, 'Error al iniciar sesión')
+    } finally {
       setIsLoading(false)
-    }, 500)
+    }
   }
 
   return (
@@ -80,9 +93,9 @@ export default function LoginPage() {
             <p className={styles.subtitle}>Sistema de Selección de Practicantes</p>
           </div>
 
-          {(error || oauthError) && (
+          {(error || oauthError || authError) && (
             <div className={styles.errorAlert}>
-              <p className={styles.errorText}>{error || oauthError}</p>
+              <p className={styles.errorText}>{error || oauthError || authError}</p>
             </div>
           )}
 
@@ -90,9 +103,12 @@ export default function LoginPage() {
             type="button"
             onClick={async () => {
               try {
+                toast.info('Conectando con Microsoft...', 2000, 'Autenticación')
                 await handleMicrosoftAuth()
               } catch (err) {
-                setError(err instanceof Error ? err.message : 'Error al autenticar con Microsoft')
+                const errorMsg = err instanceof Error ? err.message : 'Error al autenticar con Microsoft'
+                setError(errorMsg)
+                toast.error(errorMsg, 4000, 'Error de autenticación')
               }
             }}
             disabled={isOAuthLoading || isLoading}
@@ -137,15 +153,20 @@ export default function LoginPage() {
               />
             </div>
 
-            <button type="submit" disabled={isLoading} className={styles.submitButton}>
-              {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            <button type="submit" disabled={isLoading || authLoading} className={styles.submitButton}>
+              {isLoading || authLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
           </form>
 
           <div className={styles.footer}>
             <p className={styles.footerText}>
+              <Link to="/forgot-password" className={styles.link}>
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </p>
+            <p className={styles.footerText} style={{ marginTop: '0.5rem' }}>
               ¿No tienes cuenta?{' '}
-              <Link to="/seleccion-practicantes/auth/register" className={styles.link}>
+              <Link to="/register" className={styles.link}>
                 Crear cuenta
               </Link>
             </p>

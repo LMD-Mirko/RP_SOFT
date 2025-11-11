@@ -7,6 +7,23 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { MainLayout } from '@shared/components/Layout/MainLayout'
 
+// Lazy loading de páginas de autenticación
+const LoginPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.LoginPage }))
+)
+const RegisterPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.RegisterPage }))
+)
+const OAuthCallbackPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.OAuthCallbackPage }))
+)
+const ForgotPasswordPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.ForgotPasswordPage }))
+)
+const ResetPasswordPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.ResetPasswordPage }))
+)
+
 // Lazy loading de módulos - se cargan bajo demanda
 const SeleccionPracticantesIndex = lazy(() =>
   import('@features/seleccion-practicantes').then((m) => ({ default: m.SeleccionPracticantesIndex }))
@@ -53,8 +70,51 @@ export function Router() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Rutas públicas de autenticación (sin Layout) */}
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={null}>
+              <LoginPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <Suspense fallback={null}>
+              <RegisterPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/auth/callback"
+          element={
+            <Suspense fallback={null}>
+              <OAuthCallbackPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <Suspense fallback={null}>
+              <ForgotPasswordPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <Suspense fallback={null}>
+              <ResetPasswordPage />
+            </Suspense>
+          }
+        />
+
+        {/* Rutas con Layout (requieren autenticación) */}
         <Route element={<MainLayout />}>
-          <Route index element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
           <Route
             path="/seleccion-practicantes/*"

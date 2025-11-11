@@ -1,16 +1,24 @@
-import type React from 'react'
-import { useState } from 'react'
+import React from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useToast } from '@shared/components/Toast'
 import styles from './RegisterPage.module.css'
 import { useMicrosoftOAuth } from '../hooks/useMicrosoftOAuth'
+import { useAuth } from '../hooks/authHook'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [fullName, setFullName] = useState('')
+  const [nameParts, setNameParts] = useState({ firstName: '', lastName: '' })
+  const [username, setUsername] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const { register: registerUser, error: authError, isLoading: authLoading } = useAuth()
 
   const {
     handleMicrosoftAuth,
@@ -18,58 +26,122 @@ export default function RegisterPage() {
     error: oauthError,
   } = useMicrosoftOAuth()
 
+  // Parsear el campo de apellidos y nombres para obtener first_name y last_name
+  useEffect(() => {
+    const normalized = fullName.trim().replace(/\s+/g, ' ')
+
+    if (!normalized) {
+      setNameParts({ firstName: '', lastName: '' })
+      setUsername('')
+      return
+    }
+
+    let parsedFirstName = ''
+    let parsedLastName = ''
+
+    if (normalized.includes(',')) {
+      const [lastSegment, firstSegment] = normalized.split(',').map((segment) => segment.trim())
+      parsedLastName = lastSegment || ''
+      parsedFirstName = firstSegment || ''
+    } else {
+      const parts = normalized.split(' ')
+
+      if (parts.length === 1) {
+        parsedFirstName = parts[0]
+      } else {
+        // Considerar que los apellidos van primero: "Apellidos Nombres"
+        parsedLastName = parts.slice(0, parts.length - 1).join(' ')
+        parsedFirstName = parts.slice(-1).join(' ')
+      }
+    }
+
+    setNameParts({ firstName: parsedFirstName, lastName: parsedLastName })
+
+    const generatedUsername = `${parsedFirstName}${parsedLastName}`.replace(/\s+/g, '')
+    setUsername(generatedUsername)
+  }, [fullName])
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
 
-    if (!email || !password || !confirmPassword) {
-      setError('Por favor completa todos los campos')
+    if (!email || !password || !confirmPassword || !fullName.trim()) {
+      const errorMsg = 'Por favor completa todos los campos'
+      setError(errorMsg)
+      toast.error(errorMsg, 3000, 'Error de validación')
+      setIsLoading(false)
+      return
+    }
+
+    if (!nameParts.firstName || !nameParts.lastName) {
+      const errorMsg = 'Ingresa apellidos y nombres (por ejemplo: "Miranda Miranda Adrian")'
+      setError(errorMsg)
+      toast.error(errorMsg, 4000, 'Formato incorrecto')
       setIsLoading(false)
       return
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setError('Por favor ingresa un email válido')
+      const errorMsg = 'Por favor ingresa un email válido'
+      setError(errorMsg)
+      toast.error(errorMsg, 3000, 'Email inválido')
       setIsLoading(false)
       return
     }
 
     if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres')
+      const errorMsg = 'La contraseña debe tener al menos 6 caracteres'
+      setError(errorMsg)
+      toast.error(errorMsg, 3000, 'Contraseña débil')
       setIsLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden')
+      const errorMsg = 'Las contraseñas no coinciden'
+      setError(errorMsg)
+      toast.error(errorMsg, 3000, 'Error de validación')
       setIsLoading(false)
       return
     }
 
-    setTimeout(() => {
-      localStorage.setItem(
-        'rpsoft_user',
-        JSON.stringify({
-          email,
-          loginTime: new Date().toISOString(),
-        }),
-      )
+    try {
+      const userData = {
+        email,
+        username: username || `${nameParts.firstName}${nameParts.lastName}`.replace(/\s+/g, ''),
+        password,
+        first_name: nameParts.firstName,
+        last_name: nameParts.lastName,
+      }
 
-      localStorage.removeItem('rpsoft_selection_data')
-      localStorage.removeItem('rpsoft_current_step')
-
-      navigate('/seleccion-practicantes')
+      toast.info('Creando tu cuenta...', 2000, 'Registro')
+      const response = await registerUser(userData)
+      
+      const userName = response.user?.username || `${nameParts.firstName} ${nameParts.lastName}`.trim()
+      toast.success(`¡Cuenta creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
+      
+      setTimeout(() => {
+        navigate('/seleccion-practicantes')
+      }, 500)
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Error al registrar usuario'
+      setError(errorMsg)
+      toast.error(errorMsg, 4000, 'Error al registrar')
+    } finally {
       setIsLoading(false)
-    }, 500)
+    }
   }
 
   const handleMicrosoftRegister = async () => {
     try {
+      toast.info('Conectando con Microsoft...', 2000, 'Registro')
       await handleMicrosoftAuth()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al autenticar con Microsoft')
+      const errorMsg = err instanceof Error ? err.message : 'Error al autenticar con Microsoft'
+      setError(errorMsg)
+      toast.error(errorMsg, 4000, 'Error de autenticación')
     }
   }
 
@@ -91,9 +163,9 @@ export default function RegisterPage() {
             <p className={styles.subtitle}>Únete a RPsoft</p>
           </div>
 
-          {(error || oauthError) && (
+          {(error || oauthError || authError) && (
             <div className={styles.errorAlert}>
-              <p className={styles.errorText}>{error || oauthError}</p>
+              <p className={styles.errorText}>{error || oauthError || authError}</p>
             </div>
           )}
 
@@ -132,6 +204,17 @@ export default function RegisterPage() {
             </div>
 
             <div className={styles.field}>
+              <label className={styles.label}>Apellidos y nombres</label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Apellidos y nombres"
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.field}>
               <label className={styles.label}>Contraseña</label>
               <input
                 type="password"
@@ -153,15 +236,15 @@ export default function RegisterPage() {
               />
             </div>
 
-            <button type="submit" disabled={isLoading} className={styles.submitButton}>
-              {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+            <button type="submit" disabled={isLoading || authLoading} className={styles.submitButton}>
+              {isLoading || authLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
             </button>
           </form>
 
           <div className={styles.footer}>
             <p className={styles.footerText}>
               ¿Ya tienes cuenta?{' '}
-              <Link to="/seleccion-practicantes/auth/login" className={styles.link}>
+              <Link to="/" className={styles.link}>
                 Iniciar sesión
               </Link>
             </p>

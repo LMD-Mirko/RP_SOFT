@@ -79,8 +79,13 @@
   box-sizing: border-box;
 }
 
-.logoutButton:hover {
+.logoutButton:hover:not(:disabled) {
   background-color: #e5e7eb;
+}
+
+.logoutButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .logoutText {

@@ -1,21 +1,26 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useToast } from '@shared/components/Toast'
 import styles from './LoginPage.module.css'
 import { handleMicrosoftRedirect } from '../utils/microsoftOAuth'
 import { oauthLogin } from '../services/auth.service'
+import { setAuthTokens } from '../../../shared/utils/cookieHelper'
 
 export default function OAuthCallbackPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const processCallback = async () => {
       try {
+        toast.info('Procesando autenticación con Microsoft...', 2000, 'Autenticación')
         const microsoftData = await handleMicrosoftRedirect()
 
         if (!microsoftData) {
-          navigate('/seleccion-practicantes/auth/login')
+          toast.warning('No se pudo obtener la información de Microsoft', 3000, 'Autenticación cancelada')
+          navigate('/')
           return
         }
 
@@ -26,8 +31,16 @@ export default function OAuthCallbackPage() {
           username: microsoftData.username,
         })
 
-        if (response.token) {
-          localStorage.setItem('authToken', response.token)
+        // Guardar tokens en cookies
+        if (response.tokens) {
+          const accessToken = response.tokens.access
+          const refreshToken = response.tokens.refresh
+          if (accessToken) {
+            setAuthTokens(accessToken, refreshToken)
+          }
+        } else if (response.token) {
+          // Compatibilidad con formato anterior
+          setAuthTokens(response.token, '')
         }
 
         if (response.user) {
@@ -47,6 +60,8 @@ export default function OAuthCallbackPage() {
         localStorage.removeItem('rpsoft_current_step')
 
         setStatus('success')
+        const userName = response.user?.username || microsoftData.username || microsoftData.email
+        toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
 
         const userData = response.user || JSON.parse(localStorage.getItem('rpsoft_user') || '{}')
         setTimeout(() => {
@@ -61,9 +76,10 @@ export default function OAuthCallbackPage() {
           err instanceof Error ? err.message : 'Error al procesar la autenticación con Microsoft'
         setError(message)
         setStatus('error')
+        toast.error(message, 4000, 'Error de autenticación')
 
         setTimeout(() => {
-          navigate('/seleccion-practicantes/auth/login')
+          navigate('/')
         }, 3000)
       }
     }

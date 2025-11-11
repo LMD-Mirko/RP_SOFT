@@ -7,6 +7,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginWithMicrosoftPopup } from '../utils/microsoftOAuth';
 import { oauthLogin } from '../services/auth.service';
+import { setAuthTokens } from '../../../shared/utils/cookieHelper';
 
 /**
  * Hook para manejar OAuth con Microsoft
@@ -37,9 +38,16 @@ export const useMicrosoftOAuth = () => {
         username: microsoftData.username,
       });
 
-      // 3. Guardar token y datos del usuario
-      if (response.token) {
-        localStorage.setItem('authToken', response.token);
+      // 3. Guardar tokens en cookies
+      if (response.tokens) {
+        const accessToken = response.tokens.access;
+        const refreshToken = response.tokens.refresh;
+        if (accessToken) {
+          setAuthTokens(accessToken, refreshToken);
+        }
+      } else if (response.token) {
+        // Compatibilidad con formato anterior
+        setAuthTokens(response.token, null);
       }
 
       if (response.user) {
