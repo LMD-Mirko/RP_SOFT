@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf node_modules/.vite",
+    "fresh": "rm -rf node_modules/.vite && npm run dev"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
