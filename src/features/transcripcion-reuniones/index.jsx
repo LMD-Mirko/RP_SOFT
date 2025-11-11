@@ -1,5 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { TranscripcionesPage } from './pages/TranscripcionesPage.jsx'
+import { ScrumScrumPage } from './pages/ScrumScrumPage.jsx'
+import { DailyScrumPage } from './pages/DailyScrumPage.jsx'
 import { Layout } from './components/Layout.jsx'
 export { TranscripcionesPage } from './pages/TranscripcionesPage.jsx'
 
@@ -12,8 +14,8 @@ export function TranscripcionReunionesIndex() {
     <Routes>
       <Route element={<Layout />}> 
         <Route index element={<TranscripcionesPage />} />
-        <Route path="daily-scrum" element={<Placeholder title="Daily Scrum" />} />
-        <Route path="scrum-scrum" element={<Placeholder title="Scrum de Scrum" />} />
+        <Route path="daily-scrum" element={<DailyScrumPage />} />
+        <Route path="scrum-scrum" element={<ScrumScrumPage />} />
         <Route path="panel-central" element={<Placeholder title="Panel Central" />} />
         <Route path="transcripciones" element={<TranscripcionesPage />} />
       </Route>
