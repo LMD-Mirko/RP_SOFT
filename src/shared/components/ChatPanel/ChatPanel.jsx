@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
-import { Plus, Mic, Send } from 'lucide-react'
+import { Plus, Mic, Send, FileText, FileSpreadsheet, QrCode } from 'lucide-react'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
 import { ChatSidebar } from './ChatSidebar'
 import styles from './ChatPanel.module.css'
@@ -11,6 +11,7 @@ export function ChatPanel() {
   const [input, setInput] = useState('')
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
+  const [menuPosition, setMenuPosition] = useState('top')
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
@@ -19,6 +20,7 @@ export function ChatPanel() {
   const qrInputRef = useRef(null)
   const menuRef = useRef(null)
   const buttonRef = useRef(null)
+  const inputContainerRef = useRef(null)
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -51,12 +53,32 @@ export function ChatPanel() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  useEffect(() => {
+    if (messages.length > 0) {
+      setShowMenu(false)
+    }
+  }, [messages.length])
+
+  useEffect(() => {
+    if (showMenu && inputContainerRef.current) {
+      const rect = inputContainerRef.current.getBoundingClientRect()
+      const spaceBelow = window.innerHeight - rect.bottom
+
+      if (spaceBelow < 150) {
+        setMenuPosition('top')
+      } else {
+        setMenuPosition('bottom')
+      }
+    }
+  }, [showMenu])
+
   const handleSend = () => {
     const trimmed = input.trim()
     if (!trimmed) return
 
     setMessages(prev => [...prev, { text: trimmed, who: 'user' }])
     setInput('')
+    setShowMenu(false)
     inputRef.current?.focus()
 
     window.setTimeout(() => {
@@ -84,7 +106,7 @@ export function ChatPanel() {
 
       setMessages(prev => [
         ...prev,
-        { text: `📄 Archivo TXT: ${file.name}\n${target.result}`, who: 'user' },
+        { text: `Archivo TXT: ${file.name}\n${target.result}`, who: 'user' },
       ])
     }
     reader.readAsText(file)
@@ -101,7 +123,7 @@ export function ChatPanel() {
 
     setMessages(prev => [
       ...prev,
-      { text: `📊 Archivo Excel: ${file.name} (procesando...)`, who: 'user' },
+      { text: `Archivo Excel: ${file.name} (procesando...)`, who: 'user' },
     ])
 
     if (xlsxInputRef.current) {
@@ -118,7 +140,7 @@ export function ChatPanel() {
     reader.onload = ({ target }) => {
       setMessages(prev => [
         ...prev,
-        { text: `📷 Código QR: ${file.name} (procesando...)`, who: 'user' },
+        { text: `Código QR: ${file.name} (procesando...)`, who: 'user' },
       ])
     }
     reader.readAsDataURL(file)
@@ -139,8 +161,7 @@ export function ChatPanel() {
 
   const renderInputBar = () => (
     <div className={styles.chatInput}>
-      <div className={styles.inputContainer}>
-        {/* Inputs ocultos para cada tipo de archivo */}
+      <div ref={inputContainerRef} className={styles.inputContainer}>
         <input
           ref={txtInputRef}
           type="file"
@@ -178,12 +199,18 @@ export function ChatPanel() {
         </button>
 
         {showMenu && (
-          <div ref={menuRef} className={styles.fileMenu}>
+          <div 
+            ref={menuRef} 
+            className={clsx(
+              styles.fileMenu,
+              menuPosition === 'bottom' && styles.fileMenuBottom
+            )}
+          >
             <div
               onClick={() => txtInputRef.current?.click()}
               className={styles.menuOption}
             >
-              <span className={styles.menuIcon}></span>
+              <FileText size={20} className={styles.menuIcon} />
               <span>Subir archivo TXT</span>
             </div>
 
@@ -191,15 +218,15 @@ export function ChatPanel() {
               onClick={() => xlsxInputRef.current?.click()}
               className={styles.menuOption}
             >
-              <span className={styles.menuIcon}></span>
-              <span>Subir archivo Excel</span>
+              <FileSpreadsheet size={20} className={styles.menuIcon} />
+              <span>Subir archivo XLSX</span>
             </div>
 
             <div
               onClick={() => qrInputRef.current?.click()}
               className={styles.menuOption}
             >
-              <span className={styles.menuIcon}></span>
+              <QrCode size={20} className={styles.menuIcon} />
               <span>Subir código QR</span>
             </div>
           </div>
