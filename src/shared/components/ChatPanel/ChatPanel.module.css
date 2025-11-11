@@ -233,11 +233,12 @@
   position: absolute;
   bottom: calc(100% + 8px);
   left: 0;
-  background-color: #2c2c2e;
+  background-color: #f1f3f4;
+  border: 1px solid #e0e0e0;
   border-radius: 16px;
   padding: 8px;
   min-width: 280px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
 }
 
@@ -252,14 +253,14 @@
   gap: 12px;
   padding: 12px 16px;
   cursor: pointer;
-  color: white;
+  color: #202124;
   font-size: 15px;
   border-radius: 8px;
   transition: background-color 0.2s;
 }
 
 .menuOption:hover {
-  background-color: #3a3a3c;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .menuIcon {

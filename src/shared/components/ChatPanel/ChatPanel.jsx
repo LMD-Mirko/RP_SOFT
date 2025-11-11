@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { Plus, Mic, Send, FileText, FileSpreadsheet, QrCode } from 'lucide-react'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
 import { ChatSidebar } from './ChatSidebar'
+import { QRGeneratorModal } from './QRGeneratorModal'
 import styles from './ChatPanel.module.css'
 
 export function ChatPanel() {
@@ -12,12 +13,12 @@ export function ChatPanel() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
   const [menuPosition, setMenuPosition] = useState('top')
+  const [showQRModal, setShowQRModal] = useState(false)
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   const txtInputRef = useRef(null)
   const xlsxInputRef = useRef(null)
-  const qrInputRef = useRef(null)
   const menuRef = useRef(null)
   const buttonRef = useRef(null)
   const inputContainerRef = useRef(null)
@@ -132,22 +133,8 @@ export function ChatPanel() {
     setShowMenu(false)
   }
 
-  const handleQrUpload = (event) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = ({ target }) => {
-      setMessages(prev => [
-        ...prev,
-        { text: `Código QR: ${file.name} (procesando...)`, who: 'user' },
-      ])
-    }
-    reader.readAsDataURL(file)
-
-    if (qrInputRef.current) {
-      qrInputRef.current.value = ''
-    }
+  const handleOpenQRGenerator = () => {
+    setShowQRModal(true)
     setShowMenu(false)
   }
 
@@ -176,13 +163,7 @@ export function ChatPanel() {
           style={{ display: 'none' }}
           onChange={handleXlsxUpload}
         />
-        <input
-          ref={qrInputRef}
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-          onChange={handleQrUpload}
-        />
+
 
         <button
           ref={buttonRef}
@@ -223,11 +204,11 @@ export function ChatPanel() {
             </div>
 
             <div
-              onClick={() => qrInputRef.current?.click()}
+              onClick={handleOpenQRGenerator}
               className={styles.menuOption}
             >
               <QrCode size={20} className={styles.menuIcon} />
-              <span>Subir código QR</span>
+              <span>Generar QR</span>
             </div>
           </div>
         )}
@@ -309,6 +290,10 @@ export function ChatPanel() {
       <ChatSidebar
         isCollapsed={isSidebarCollapsed}
         onToggle={toggleSidebar}
+      />
+      <QRGeneratorModal 
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
       />
     </div>
   )
