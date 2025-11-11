@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { Menu, Search } from 'lucide-react'
 import styles from './ChatSidebar.module.css'
 
-export function ChatSidebar({ isCollapsed, onToggle }) {
+export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
   const recentItems = [
     'Busqueda de un seleccionado...',
     'Busqueda de una reunion...',
@@ -93,7 +93,11 @@ export function ChatSidebar({ isCollapsed, onToggle }) {
             <div className={styles.recentList}>
               {filteredItems.length > 0 ? (
                 filteredItems.map((item, i) => (
-                  <div key={i} className={styles.recentItem}>
+                  <div 
+                    key={i} 
+                    className={styles.recentItem}
+                    onClick={() => onSelectChat?.(item)}
+                  >
                     {item}
                   </div>
                 ))

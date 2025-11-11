@@ -14,6 +14,7 @@ export function ChatPanel() {
   const [showMenu, setShowMenu] = useState(false)
   const [menuPosition, setMenuPosition] = useState('top')
   const [showQRModal, setShowQRModal] = useState(false)
+  const [placeholderIndex, setPlaceholderIndex] = useState(0)
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
@@ -22,6 +23,21 @@ export function ChatPanel() {
   const menuRef = useRef(null)
   const buttonRef = useRef(null)
   const inputContainerRef = useRef(null)
+
+  const placeholders = [
+    'Cuantos practicantes han sido seleccionados hoy',
+    'Cual fue el tema principal de la reunión de hoy',
+    'Que tareas se han terminado ayer en el proyecto AV1',
+    'Quienes han faltado hoy',
+    'Quien tiene mas nota en el mes de diciembre',
+    'A quien debo de firmar su convenio',
+    'Cuantos practicantes son en total',
+    'Cual fue el tema principal en el daily de hoy',
+    'Que tareas se han retrasado o están con tardanza',
+    'De Luis cual es su horario semanal',
+    'Quien tiene la menor nota de febrero',
+    'Que convenios terminan en diciembre'
+  ]
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -72,6 +88,16 @@ export function ChatPanel() {
       }
     }
   }, [showMenu])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % 12)
+    }, 5000)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [])
 
   const handleSend = () => {
     const trimmed = input.trim()
@@ -146,6 +172,30 @@ export function ChatPanel() {
     setIsSidebarCollapsed(prev => !prev)
   }
 
+  const handleSelectChat = (chatTitle) => {
+    const simulatedResponses = {
+      'Busqueda de un seleccionado...': 'Aquí están los seleccionados que encontré en el sistema.',
+      'Busqueda de una reunion...': 'Encontré 3 reuniones programadas para esta semana.',
+      'Registro de una tarea...': 'La tarea ha sido registrada exitosamente.',
+      'Quien ingreso tarde hoy...': 'Hoy ingresaron tarde: Juan Pérez (9:15 AM) y María García (9:30 AM).',
+      'Dime quien tiene una nota mayor a 18..': 'Los estudiantes con nota mayor a 18 son: Carlos López (18.5), Ana Torres (19.0).',
+      'Que convenio debo de firmar hoy...': 'Tienes pendiente firmar el convenio con la empresa TechCorp.',
+      'Que practicante tiene una nota no aprobo este mes...': 'El practicante Luis Rodríguez no aprobó este mes con nota 10.5.',
+      'Registra a este nuevo postulante...': 'El postulante ha sido registrado correctamente en el sistema.',
+      'Dime de que trato la reunion de las 9:00..': 'La reunión de las 9:00 trató sobre la planificación del proyecto Q4.',
+      'Pon en tardanza a este practicante...': 'Se ha registrado la tardanza del practicante.',
+      'Dime que constancia debo de firmar hoy...': 'Debes firmar 2 constancias: Constancia de trabajo y Constancia de estudios.',
+      'Cuando falta Luiz Fernandez...': 'Luiz Fernández faltó los días 5, 12 y 18 de este mes.'
+    }
+
+    const response = simulatedResponses[chatTitle] || 'Esta es una conversación previa.'
+
+    setMessages([
+      { text: chatTitle.replace('...', ''), who: 'user' },
+      { text: response, who: 'bot' }
+    ])
+  }
+
   const renderInputBar = () => (
     <div className={styles.chatInput}>
       <div ref={inputContainerRef} className={styles.inputContainer}>
@@ -213,16 +263,24 @@ export function ChatPanel() {
           </div>
         )}
 
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="Pregunta lo que quieras"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          onKeyDown={handleKeyDown}
-          className={styles.input}
-          autoFocus
-        />
+        <div className={styles.inputWrapper}>
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            onKeyDown={handleKeyDown}
+            className={styles.input}
+            autoFocus
+          />
+          {!input && (
+            <div className={styles.placeholderContainer}>
+              <span key={placeholderIndex} className={styles.animatedPlaceholder}>
+                {placeholders[placeholderIndex]}
+              </span>
+            </div>
+          )}
+        </div>
         <button
           className={styles.micButton}
           aria-label="Micrófono"
@@ -290,6 +348,7 @@ export function ChatPanel() {
       <ChatSidebar
         isCollapsed={isSidebarCollapsed}
         onToggle={toggleSidebar}
+        onSelectChat={handleSelectChat}
       />
       <QRGeneratorModal 
         isOpen={showQRModal}

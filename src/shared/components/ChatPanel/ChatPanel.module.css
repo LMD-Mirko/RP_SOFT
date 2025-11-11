@@ -20,8 +20,8 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  margin-right: 280px;
   transition: margin 0.3s ease;
+  position: relative;
 }
 
 .chatMainContentCollapsed {
@@ -76,7 +76,7 @@
   min-height: 0;
   max-width: 800px;
   margin: 0 auto;
-  width: 100%;
+  width: calc(100% - 280px);
   box-sizing: border-box;
   justify-content: flex-start;
   padding-bottom: 1rem;
@@ -120,7 +120,7 @@
 
 
 .chatInput {
-  width: 100%;
+  width: calc(100% - 280px);
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem 1.5rem 1.5rem;
@@ -169,6 +169,13 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+.inputWrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .input {
   flex: 1;
   padding: 0.5rem 0.75rem;
@@ -179,10 +186,39 @@
   background: transparent;
   color: #202124;
   font-family: inherit;
+  position: relative;
+  z-index: 2;
 }
 
-.input::placeholder {
+.placeholderContainer {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  overflow: hidden;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+.animatedPlaceholder {
   color: #9aa0a6;
+  font-size: 1rem;
+  white-space: nowrap;
+  animation: slideUpFade 1s ease-in-out forwards;
+}
+
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .micButton {
@@ -282,6 +318,14 @@
 
 .chatMessages::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
+}
+
+.chatPanelCollapsed .chatMessages {
+  width: 100%;
+}
+
+.chatPanelCollapsed .chatInput {
+  width: 100%;
 }
 
 

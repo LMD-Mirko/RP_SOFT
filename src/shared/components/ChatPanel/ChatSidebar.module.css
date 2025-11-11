@@ -129,15 +129,23 @@
   font-size: 0.875rem;
   cursor: pointer;
   border-radius: 0.75rem;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+  user-select: none;
 }
 
 .recentItem:hover {
   background-color: #e2e8f0;
+  color: #0f172a;
+  transform: translateX(2px);
+}
+
+.recentItem:active {
+  background-color: #cbd5e1;
+  transform: translateX(0);
 }
 
 .emptyState {
