@@ -26,7 +26,7 @@ const menuItems = [
       {
         icon: LayoutDashboard,
         label: 'Dashboard',
-        path: '/',
+        path: '/dashboard',
       },
     ],
   },
@@ -104,8 +104,8 @@ export function Sidebar() {
   }
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname === ''
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard'
     }
     return location.pathname.startsWith(path) && location.pathname !== '/'
   }

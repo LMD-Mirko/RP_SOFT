@@ -76,7 +76,7 @@ export const useMicrosoftOAuth = () => {
         if (userData?.role === 'admin') {
           navigate('/admin/dashboard');
         } else {
-          navigate('/seleccion-practicantes');
+          navigate('/dashboard');
         }
       }
 

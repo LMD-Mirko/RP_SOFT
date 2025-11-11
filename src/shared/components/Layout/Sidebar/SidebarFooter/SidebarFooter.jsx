@@ -4,15 +4,18 @@ import { LogOut } from 'lucide-react'
 import { useToast } from '@shared/components/Toast'
 import { logout as logoutService } from '@features/seleccion-practicantes/modules/auth/services/authService'
 import { getRefreshToken, clearAuthTokens } from '@features/seleccion-practicantes/shared/utils/cookieHelper'
+import { LogoutAnimation } from './LogoutAnimation'
 import styles from './SidebarFooter.module.css'
 
 export function SidebarFooter() {
   const navigate = useNavigate()
   const toast = useToast()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [showAnimation, setShowAnimation] = useState(false)
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
+    setShowAnimation(true)
     
     try {
       const refreshToken = getRefreshToken()
@@ -39,40 +42,48 @@ export function SidebarFooter() {
       localStorage.removeItem('rpsoft_selection_data')
       localStorage.removeItem('rpsoft_current_step')
 
-      // Redirigir al login después de un breve delay para que se vea el toast
-      setTimeout(() => {
-        navigate('/')
-      }, 500)
+      // La animación manejará la navegación cuando termine
     } catch (error) {
       console.error('Error al cerrar sesión:', error)
       toast.error('Error al cerrar sesión. Por favor, intenta nuevamente.', 4000, 'Error')
       setIsLoggingOut(false)
+      setShowAnimation(false)
     }
   }
 
+  const handleAnimationComplete = () => {
+    // Redirigir al login después de que la animación termine
+    navigate('/')
+  }
+
   return (
-    <div className={styles.footer}>
-      <div className={styles.userInfo}>
-        <div className={styles.userAvatar}>
-          <span className={styles.userAvatarText}>A</span>
+    <>
+      {showAnimation && (
+        <LogoutAnimation onComplete={handleAnimationComplete} />
+      )}
+      <div className={styles.footer}>
+        <div className={styles.userInfo}>
+          <div className={styles.userAvatar}>
+            <span className={styles.userAvatarText}>A</span>
+          </div>
+          <div className={styles.userDetails}>
+            <p className={styles.userName}>Carlos Mendoza</p>
+            <p className={styles.userEmail}>admin@rpsoft.com</p>
+            <p className={styles.userRole}>Admin</p>
+          </div>
         </div>
-        <div className={styles.userDetails}>
-          <p className={styles.userName}>Carlos Mendoza</p>
-          <p className={styles.userEmail}>admin@rpsoft.com</p>
-          <p className={styles.userRole}>Admin</p>
-        </div>
+        <button 
+          onClick={handleLogout} 
+          className={styles.logoutButton}
+          disabled={isLoggingOut}
+        >
+          <LogOut size={16} />
+          <span className={styles.logoutText}>
+            {isLoggingOut ? 'Cerrando sesión...' : 'Cerrar Sesión'}
+          </span>
+        </button>
       </div>
-      <button 
-        onClick={handleLogout} 
-        className={styles.logoutButton}
-        disabled={isLoggingOut}
-      >
-        <LogOut size={16} />
-        <span className={styles.logoutText}>
-          {isLoggingOut ? 'Cerrando sesión...' : 'Cerrar Sesión'}
-        </span>
-      </button>
-    </div>
+    </>
   )
 }
 

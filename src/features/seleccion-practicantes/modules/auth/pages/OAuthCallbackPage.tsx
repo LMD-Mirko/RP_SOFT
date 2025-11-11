@@ -68,7 +68,7 @@ export default function OAuthCallbackPage() {
           if (userData?.role === 'admin') {
             navigate('/admin/dashboard')
           } else {
-            navigate('/seleccion-practicantes')
+            navigate('/dashboard')
           }
         }, 1000)
       } catch (err) {

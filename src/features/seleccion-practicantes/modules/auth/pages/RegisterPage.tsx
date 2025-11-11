@@ -123,7 +123,7 @@ export default function RegisterPage() {
       toast.success(`¡Cuenta creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
       
       setTimeout(() => {
-        navigate('/seleccion-practicantes')
+        navigate('/dashboard')
       }, 500)
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Error al registrar usuario'

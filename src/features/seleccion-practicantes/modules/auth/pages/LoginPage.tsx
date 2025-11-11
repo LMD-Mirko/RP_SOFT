@@ -64,7 +64,7 @@ export default function LoginPage() {
       if (role === 'admin') {
         navigate('/admin/dashboard')
       } else {
-        navigate('/seleccion-practicantes')
+        navigate('/dashboard')
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Error al iniciar sesión'

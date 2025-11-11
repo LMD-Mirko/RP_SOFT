@@ -57,8 +57,12 @@ const ConveniosConstanciasIndex = lazy(() =>
   import('@features/convenios-constancias').then((m) => ({ default: m.ConveniosConstanciasIndex }))
 )
 
+// Lazy loading del Dashboard
+const DashboardPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/dashboard/pages').then((m) => ({ default: m.DashboardPage }))
+)
+
 // Placeholders
-const Dashboard = () => null
 const Configuracion = () => null
 
 /**
@@ -114,7 +118,14 @@ export function Router() {
 
         {/* Rutas con Layout (requieren autenticación) */}
         <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Suspense fallback={null}>
+                <DashboardPage />
+              </Suspense>
+            }
+          />
 
           <Route
             path="/seleccion-practicantes/*"
