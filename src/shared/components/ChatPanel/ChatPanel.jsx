@@ -10,10 +10,15 @@ export function ChatPanel() {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
-  const fileInputRef = useRef(null)
+  const txtInputRef = useRef(null)
+  const xlsxInputRef = useRef(null)
+  const qrInputRef = useRef(null)
+  const menuRef = useRef(null)
+  const buttonRef = useRef(null)
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -30,6 +35,21 @@ export function ChatPanel() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setShowMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleSend = () => {
     const trimmed = input.trim()
@@ -54,14 +74,9 @@ export function ChatPanel() {
     }
   }
 
-  const handleFileSelect = (event) => {
+  const handleTxtUpload = (event) => {
     const file = event.target.files?.[0]
     if (!file) return
-
-    if (!file.name.toLowerCase().endsWith('.txt')) {
-      alert('Por favor, selecciona un archivo .txt')
-      return
-    }
 
     const reader = new FileReader()
     reader.onload = ({ target }) => {
@@ -69,14 +84,49 @@ export function ChatPanel() {
 
       setMessages(prev => [
         ...prev,
-        { text: `📎 Archivo: ${file.name}\n${target.result}`, who: 'user' },
+        { text: `📄 Archivo TXT: ${file.name}\n${target.result}`, who: 'user' },
       ])
     }
     reader.readAsText(file)
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+    if (txtInputRef.current) {
+      txtInputRef.current.value = ''
     }
+    setShowMenu(false)
+  }
+
+  const handleXlsxUpload = async (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setMessages(prev => [
+      ...prev,
+      { text: `📊 Archivo Excel: ${file.name} (procesando...)`, who: 'user' },
+    ])
+
+    if (xlsxInputRef.current) {
+      xlsxInputRef.current.value = ''
+    }
+    setShowMenu(false)
+  }
+
+  const handleQrUpload = (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = ({ target }) => {
+      setMessages(prev => [
+        ...prev,
+        { text: `📷 Código QR: ${file.name} (procesando...)`, who: 'user' },
+      ])
+    }
+    reader.readAsDataURL(file)
+
+    if (qrInputRef.current) {
+      qrInputRef.current.value = ''
+    }
+    setShowMenu(false)
   }
 
   const handleMicClick = () => {
@@ -90,20 +140,71 @@ export function ChatPanel() {
   const renderInputBar = () => (
     <div className={styles.chatInput}>
       <div className={styles.inputContainer}>
+        {/* Inputs ocultos para cada tipo de archivo */}
         <input
-          ref={fileInputRef}
+          ref={txtInputRef}
           type="file"
           accept=".txt"
-          className={styles.fileInput}
-          onChange={handleFileSelect}
+          style={{ display: 'none' }}
+          onChange={handleTxtUpload}
         />
+        <input
+          ref={xlsxInputRef}
+          type="file"
+          accept=".xlsx,.xls"
+          style={{ display: 'none' }}
+          onChange={handleXlsxUpload}
+        />
+        <input
+          ref={qrInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleQrUpload}
+        />
+
         <button
+          ref={buttonRef}
           className={styles.fileButton}
-          aria-label="Adjuntar archivo txt"
-          onClick={() => fileInputRef.current?.click()}
+          aria-label="Opciones de archivo"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setShowMenu(prev => !prev)
+          }}
+          type="button"
         >
           <Plus size={20} />
         </button>
+
+        {showMenu && (
+          <div ref={menuRef} className={styles.fileMenu}>
+            <div
+              onClick={() => txtInputRef.current?.click()}
+              className={styles.menuOption}
+            >
+              <span className={styles.menuIcon}></span>
+              <span>Subir archivo TXT</span>
+            </div>
+
+            <div
+              onClick={() => xlsxInputRef.current?.click()}
+              className={styles.menuOption}
+            >
+              <span className={styles.menuIcon}></span>
+              <span>Subir archivo Excel</span>
+            </div>
+
+            <div
+              onClick={() => qrInputRef.current?.click()}
+              className={styles.menuOption}
+            >
+              <span className={styles.menuIcon}></span>
+              <span>Subir código QR</span>
+            </div>
+          </div>
+        )}
+
         <input
           ref={inputRef}
           type="text"
@@ -185,4 +286,5 @@ export function ChatPanel() {
     </div>
   )
 }
+
 
