@@ -5,10 +5,10 @@
 
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { Dashboard } from '../pages/Dashboard'
+import { Dashboard } from '../modules/Dashboard'
 import Auditoria from '../pages/Auditoria'
 import Configuracion from '../pages/Configuracion'
-import RevisionDocumentos from '../pages/RevisionDocumentos'
+import { RevisionDocumentos } from '../modules/RevisionDocumentos'
 
 /**
  * Router del Módulo

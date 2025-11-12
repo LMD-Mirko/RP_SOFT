@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Clock, Info, Search, AlertCircle, RefreshCw, User, Eye, FileText } from 'lucide-react'
-import styles from './RevisionDocumentos.module.css'
+import styles from '../styles/RevisionDocumentos.module.css'
 
 export default function RevisionDocumentos() {
   const [revisionAutomatica, setRevisionAutomatica] = useState(true)
