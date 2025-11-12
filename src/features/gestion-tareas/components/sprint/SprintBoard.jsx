@@ -1,12 +1,12 @@
+import { CheckCircle2, Ellipsis, Gauge, Pencil, Plus, Share2, Timer, Trash2, Users as UsersIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Plus, Share2, Ellipsis, Timer, Gauge, Users as UsersIcon, CheckCircle2, Pencil, Trash2, X } from 'lucide-react'
+import { useSprintBoard } from '../../hooks/useSprintBoard'
+import { Avatar } from '../ui/Avatar'
 import { Badge } from '../ui/Badge'
 import { Button } from '../ui/Button'
-import { Card } from '../ui/Card'
-import { Avatar } from '../ui/Avatar'
-import { Progress } from '../ui/Progress'
 import { Modal } from '../ui/Modal'
-import { useSprintBoard } from '../../hooks/useSprintBoard'
+import { Progress } from '../ui/Progress'
+import { useToast } from '../ui/ToastProvider'
 import styles from './SprintBoard.module.css'
 
 function ColumnCard({ card, columnId, onEdit, onDelete, onMoveWithin, onHoverWithin, onHoverLeave, dense }) {
@@ -79,8 +79,17 @@ function ColumnCard({ card, columnId, onEdit, onDelete, onMoveWithin, onHoverWit
         </span>
       </div>
       <div className={`${dense ? '' : ''}`}>
-        <Progress value={card.progreso?.done || 0} max={card.progreso?.total || 1} color="violet" className={dense ? styles.progressDense : styles.progress} />
-        <div className={styles.progressInfo}>{card.progreso?.done ?? 0}/{card.progreso?.total ?? 0}</div>
+        {(() => {
+          const hasChecklist = Array.isArray(card.checklist)
+          const done = hasChecklist ? card.checklist.filter(i => i.done).length : (card.progreso?.done || 0)
+          const total = hasChecklist ? card.checklist.length : (card.progreso?.total || 1)
+          return (
+            <>
+              <Progress value={done} max={total || 1} color="violet" className={dense ? styles.progressDense : styles.progress} />
+              <div className={styles.progressInfo}>{done}/{hasChecklist ? total : (card.progreso?.total ?? total)}</div>
+            </>
+          )
+        })()}
       </div>
       {card.fecha || (card.checklist && card.checklist.length > 0) ? (
         <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
@@ -104,6 +113,7 @@ function Column({ column, members, onAdd, onMove, onEdit, onDelete, forceOpen = 
   const [owner, setOwner] = useState('')
   const [isOver, setIsOver] = useState(false)
   const [hoverTargetId, setHoverTargetId] = useState(null)
+  const toast = useToast()
   const [quickTitle, setQuickTitle] = useState('')
 
   useEffect(() => {
@@ -128,6 +138,7 @@ function Column({ column, members, onAdd, onMove, onEdit, onDelete, forceOpen = 
       owner: owner || members?.[0]?.iniciales || 'NA',
     }
     onAdd?.(column.id, payload)
+    toast.success('Se creó la tarjeta', `${id} — "${payload.titulo}" en ${column.titulo}`)
     setTitulo('')
     setPuntos('')
     setTags('')
@@ -218,8 +229,10 @@ function Column({ column, members, onAdd, onMove, onEdit, onDelete, forceOpen = 
           onChange={(e) => setQuickTitle(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && quickTitle.trim()) {
-              onAdd?.(column.id, { id: `HU${Date.now().toString().slice(-4)}`, titulo: quickTitle.trim(), puntos: 0, tags: [], progreso: { done: 0, total: 17 } })
+              const newId = `HU${Date.now().toString().slice(-4)}`
+              onAdd?.(column.id, { id: newId, titulo: quickTitle.trim(), puntos: 0, tags: [], progreso: { done: 0, total: 17 } })
               setQuickTitle('')
+              toast.success('Se creó la tarjeta', `${newId} — "${quickTitle.trim()}" en ${column.titulo}`)
             }
           }}
           placeholder="Añadir tarjeta rápida y presiona Enter"
@@ -316,6 +329,7 @@ export function SprintBoard() {
   const scrollerRef = useRef(null)
   const [canLeft, setCanLeft] = useState(false)
   const [canRight, setCanRight] = useState(false)
+  const toast = useToast()
 
   const presetLabels = ['Prioridad Alta', 'Back-End', 'Front-End', 'Seguridad', 'Base de Datos', 'Diseño']
   const [q, setQ] = useState('')
@@ -362,6 +376,14 @@ export function SprintBoard() {
     el.scrollBy({ left: delta, behavior: 'smooth' })
   }
 
+  function moveCardBetweenWithToast(fromColumnId, toColumnId, cardId) {
+    if (!fromColumnId || !toColumnId || fromColumnId === toColumnId) return
+    const from = (columns.find(c => c.id === fromColumnId)?.titulo) || fromColumnId
+    const to = (columns.find(c => c.id === toColumnId)?.titulo) || toColumnId
+    moveCard(fromColumnId, toColumnId, cardId)
+    toast.notice('Tarjeta movida', `${cardId} — ${from} → ${to}`)
+  }
+
   function handleDragOverScroll(e) {
     const el = scrollerRef.current
     if (!el) return
@@ -371,6 +393,26 @@ export function SprintBoard() {
       el.scrollLeft -= 20
     } else if (rect.right - e.clientX < threshold) {
       el.scrollLeft += 20
+    }
+  }
+
+  async function handleShare() {
+    try {
+      const url = window.location?.href || ''
+      const text = `Mira el Sprint Board${stats?.nombre ? `: ${stats.nombre}` : ''}`
+      if (navigator.share) {
+        await navigator.share({ title: 'Sprint Board', text, url })
+        toast.info('Compartir', 'Abriendo diálogo nativo de compartir')
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url)
+        toast.info('Compartir', 'Enlace copiado al portapapeles')
+      } else {
+        window.prompt('Copia el enlace del Sprint Board:', url)
+        toast.info('Compartir', 'Copia el enlace mostrado')
+      }
+    } catch (e) {
+      console.error('Error al compartir:', e)
+      toast.warning('No se pudo compartir', 'Intenta copiar el enlace manualmente')
     }
   }
 
@@ -402,7 +444,7 @@ export function SprintBoard() {
                 <Button variant="light" className={`${styles.actionBtn} ${styles.addButton}`} aria-label="Añadir miembro">+</Button>
               </div>
               <div className={styles.headerButtons}>
-                <Button variant="light" className={`${styles.actionBtn} ${styles.shareButton}`}>
+                <Button variant="light" className={`${styles.actionBtn} ${styles.shareButton}`} onClick={handleShare}>
                   <Share2 size={18} className={styles.shareIcon} /> Compartir
                 </Button>
                 <Button
@@ -412,7 +454,13 @@ export function SprintBoard() {
                 >
                   <Plus size={18} className={styles.addColumnIcon} /> Agregar Tarea
                 </Button>
-                <Button variant="secondary" onClick={() => addColumn('Nueva columna')} className={`${styles.actionBtn} ${styles.addColButton}`}>+ Columna</Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => { addColumn('Nueva columna'); toast.success('Columna creada', '"Nueva columna"') }}
+                  className={`${styles.actionBtn} ${styles.addColButton}`}
+                >
+                  + Columna
+                </Button>
               </div>
             </div>
           </div>
@@ -500,21 +548,30 @@ export function SprintBoard() {
                     column={col}
                     members={members}
                     onAdd={addCard}
-                    onMove={{ between: moveCard, within: (colId, draggedId, targetId) => moveCardWithin(colId, draggedId, targetId) }}
-                    onEdit={(columnId, card) => setEditing({ columnId, card })}
+                    onMove={{ between: moveCardBetweenWithToast, within: (colId, draggedId, targetId) => moveCardWithin(colId, draggedId, targetId) }}
+                    onEdit={(columnId, card) => {
+                      if (columnId === 'column') {
+                        if (card?.id && typeof card?.titulo === 'string') {
+                          renameColumn(card.id, card.titulo)
+                          toast.info('Columna renombrada', `"${card.titulo}"`)
+                        }
+                        return
+                      }
+                      setEditing({ columnId, card })
+                    }}
                     onDelete={(columnId, card) => {
                       if (columnId === 'column') {
                         setConfirmDlg({
                           title: 'Eliminar columna',
                           message: `¿Seguro que deseas eliminar la columna "${card.titulo}"? Esta acción no se puede deshacer.`,
-                          onConfirm: () => deleteColumn(card.id),
+                          onConfirm: () => { deleteColumn(card.id); toast.error('Columna eliminada', `"${card.titulo}"`) },
                         });
                         return;
                       }
                       setConfirmDlg({
                         title: 'Eliminar tarjeta',
                         message: `¿Seguro que deseas eliminar la tarjeta "${card.titulo}"? Esta acción no se puede deshacer.`,
-                        onConfirm: () => deleteCard(columnId, card.id),
+                        onConfirm: () => { deleteCard(columnId, card.id); toast.error('Tarjeta eliminada', `${card.id} — "${card.titulo}"`) },
                       });
                     }}
                     forceOpen={openColumnId === col.id}
@@ -538,6 +595,10 @@ export function SprintBoard() {
               onCancel={closeModal}
               onSave={payload => {
                 updateCard(editing.columnId, editing.card.id, payload);
+                toast.info('Cambios guardados', `${editing.card.id} — "${payload.titulo || editing.card.titulo}"`)
+                if (payload.owner && payload.owner !== editing.card.owner) {
+                  toast.notice('Responsable asignado', `${payload.owner} para ${editing.card.id}`)
+                }
                 closeModal();
               }}
             />
@@ -571,6 +632,7 @@ function EditForm({ card, members, presetLabels, onSave, onCancel }) {
   const [checklist, setChecklist] = useState(Array.isArray(card.checklist) ? card.checklist : [])
   const [newItem, setNewItem] = useState('')
   const [newTag, setNewTag] = useState('')
+  const toast = useToast()
 
   function toggleTag(tag) {
     setTags((prev) => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]))
@@ -580,6 +642,7 @@ function EditForm({ card, members, presetLabels, onSave, onCancel }) {
     if (!t) return
     setChecklist((prev) => [...prev, { id: 'i' + Date.now(), text: t, done: false }])
     setNewItem('')
+    toast.success('Item agregado', t)
   }
   function toggleItem(id) {
     setChecklist((prev) => prev.map(i => i.id === id ? { ...i, done: !i.done } : i))
@@ -592,6 +655,7 @@ function EditForm({ card, members, presetLabels, onSave, onCancel }) {
     if (!t) return
     if (!tags.includes(t)) setTags(prev => [...prev, t])
     setNewTag('')
+    toast.success('Etiqueta agregada', t)
   }
   function removeTag(t) {
     setTags(prev => prev.filter(x => x !== t))
