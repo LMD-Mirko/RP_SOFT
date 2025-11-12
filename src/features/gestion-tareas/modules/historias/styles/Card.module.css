@@ -1,0 +1,77 @@
+/*
+  Card.module.css
+  - Contenedor de tarjeta de estadísticas
+  - Hover suave y variantes de color del icono
+*/
+
+:root {
+  --radius-2xl: 1rem; /* rounded-2xl */
+  --space-card: 1.25rem; /* p-5 */
+  --transition-card: 300ms ease;
+
+  --gray-200-80: rgba(229, 231, 235, 0.8); /* border-gray-200/80 */
+  --white: #ffffff; 
+  --text-gray-500: #6b7280;
+  --text-gray-900: #111827;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+
+  --blue-50: #eff6ff;
+  --blue-500: #3b82f6;
+  --orange-50: #fff7ed;
+  --orange-500: #f97316;
+  --green-50: #ecfdf5;
+  --green-500: #10b981;
+  --violet-50: #f5f3ff;
+  --violet-500: #8b5cf6;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--gray-200-80);
+  background-color: var(--white);
+  padding: var(--space-card);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-card), box-shadow var(--transition-card);
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.iconContainer {
+  display: flex;
+  height: 3rem; /* h-12 */
+  width: 3rem;  /* w-12 */
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+.blue { color: var(--blue-500); background-color: var(--blue-50); }
+.orange { color: var(--orange-500); background-color: var(--orange-50); }
+.green { color: var(--green-500); background-color: var(--green-50); }
+.violet { color: var(--violet-500); background-color: var(--violet-50); }
+
+.title {
+  margin-top: 0.75rem; /* mt-3 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500;     /* font-medium */
+  color: var(--text-gray-500);
+}
+
+.value {
+  margin-top: 0.25rem; /* mt-1 */
+  font-size: 1.5rem;   /* text-2xl */
+  font-weight: 700;     /* font-bold */
+  color: var(--text-gray-900);
+}
+
+.card svg {
+  transition: transform var(--transition-card);
+}
+.card:hover svg {
+  transform: scale(1.03);
+}

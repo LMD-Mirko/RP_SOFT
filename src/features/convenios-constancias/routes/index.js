@@ -1,2 +1,0 @@
-export { ModuleRouter } from './router'
-

@@ -1,0 +1,70 @@
+/*
+  Button Component Styles (layout > typography > colors > spacing > others)
+  - Base button with light variant and focus/disabled states
+  - Mirrors Tailwind base + variant classes
+*/
+
+:root {
+  /* colors */
+  --metrics-gray-100: #f3f4f6;
+  --metrics-gray-200: #e5e7eb;
+  --metrics-gray-900: #111827;
+  --metrics-ring: #3b82f6; /* fallback ring color */
+  --metrics-ring-offset: #ffffff;
+}
+
+/* layout */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem; /* rounded-md */
+  will-change: box-shadow, transform;
+}
+
+/* typography */
+.button {
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+}
+
+/* colors */
+.light {
+  background-color: var(--metrics-gray-100);
+  color: var(--metrics-gray-900);
+}
+
+.light:hover {
+  background-color: var(--metrics-gray-200);
+}
+
+/* spacing */
+.button {
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+}
+
+/* others */
+.button {
+  transition-property: all;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--metrics-ring), 0 0 0 4px var(--metrics-ring-offset);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* SVG icon interactivity inside button */
+.button:hover svg,
+.button:focus-visible svg {
+  transform: rotate(10deg);
+  transition: transform 300ms ease-in-out, color 300ms ease-in-out;
+}
+
+.iconLeft { margin-right: 0.5rem; /* mr-2 */ }
