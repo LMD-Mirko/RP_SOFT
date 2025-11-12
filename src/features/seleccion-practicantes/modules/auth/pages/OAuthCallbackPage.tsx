@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { useToast } from '@shared/components/Toast'
 import styles from './LoginPage.module.css'
 import { handleMicrosoftRedirect } from '../utils/microsoftOAuth'
-import { oauthLogin } from '../services/auth.service'
+import { oauthLogin, getUserRole } from '../services/auth.service'
 import { setAuthTokens } from '../../../shared/utils/cookieHelper'
+import { redirectByRole } from '../utils/redirectByRole'
 
 export default function OAuthCallbackPage() {
   const navigate = useNavigate()
@@ -24,11 +25,26 @@ export default function OAuthCallbackPage() {
           return
         }
 
+        // Validar que todos los campos requeridos estén presentes
+        if (!microsoftData.provider || !microsoftData.provider_id || !microsoftData.email || !microsoftData.username) {
+          const missingFields = []
+          if (!microsoftData.provider) missingFields.push('provider')
+          if (!microsoftData.provider_id) missingFields.push('provider_id')
+          if (!microsoftData.email) missingFields.push('email')
+          if (!microsoftData.username) missingFields.push('username')
+          toast.error(`Faltan campos requeridos: ${missingFields.join(', ')}`, 4000, 'Error de autenticación')
+          navigate('/')
+          return
+        }
+
         const response = await oauthLogin({
           provider: microsoftData.provider,
           provider_id: microsoftData.provider_id,
           email: microsoftData.email,
           username: microsoftData.username,
+          name: microsoftData.name || '',
+          paternal_lastname: microsoftData.paternal_lastname || '',
+          maternal_lastname: microsoftData.maternal_lastname || '',
         })
 
         // Guardar tokens en cookies
@@ -48,7 +64,7 @@ export default function OAuthCallbackPage() {
             'rpsoft_user',
             JSON.stringify({
               email: response.user.email || microsoftData.email,
-              username: response.user.username || microsoftData.username,
+              name: response.user.name || microsoftData.name,
               role: response.user.role || 'practicante',
               loginTime: new Date().toISOString(),
               provider: 'microsoft',
@@ -56,21 +72,51 @@ export default function OAuthCallbackPage() {
           )
         }
 
+        // Obtener el rol del usuario y redirigir
+        try {
+          const roleData = await getUserRole()
+          if (roleData) {
+            // Actualizar datos del usuario con información del rol
+            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}')
+            localStorage.setItem(
+              'rpsoft_user',
+              JSON.stringify({
+                ...userData,
+                ...roleData,
+                loginTime: new Date().toISOString(),
+              }),
+            )
+            
+            setStatus('success')
+            const userName = response.user?.name || microsoftData.name || microsoftData.email
+            toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
+
+            setTimeout(() => {
+              redirectByRole(roleData, navigate)
+            }, 1000)
+          } else {
+            // Si no hay datos de rol, redirigir a dashboard por defecto
+            setStatus('success')
+            const userName = response.user?.name || microsoftData.name || microsoftData.email
+            toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
+            
+            setTimeout(() => {
+              navigate('/dashboard')
+            }, 1000)
+          }
+        } catch (roleError) {
+          // Si falla obtener el rol, redirigir a dashboard por defecto
+          setStatus('success')
+          const userName = response.user?.name || microsoftData.name || microsoftData.email
+          toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
+          
+          setTimeout(() => {
+            navigate('/dashboard')
+          }, 1000)
+        }
+
         localStorage.removeItem('rpsoft_selection_data')
         localStorage.removeItem('rpsoft_current_step')
-
-        setStatus('success')
-        const userName = response.user?.username || microsoftData.username || microsoftData.email
-        toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
-
-        const userData = response.user || JSON.parse(localStorage.getItem('rpsoft_user') || '{}')
-        setTimeout(() => {
-          if (userData?.role === 'admin') {
-            navigate('/admin/dashboard')
-          } else {
-            navigate('/dashboard')
-          }
-        }, 1000)
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Error al procesar la autenticación con Microsoft'

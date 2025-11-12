@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { useToast } from '@shared/components/Toast'
@@ -7,11 +7,68 @@ import { getRefreshToken, clearAuthTokens } from '@features/seleccion-practicant
 import { LogoutAnimation } from './LogoutAnimation'
 import styles from './SidebarFooter.module.css'
 
+/**
+ * Genera las iniciales a partir del nombre completo
+ * @param {string} fullName - Nombre completo del usuario
+ * @returns {string} Iniciales (máximo 2 caracteres)
+ */
+const getInitials = (fullName) => {
+  if (!fullName || !fullName.trim()) {
+    return 'U'
+  }
+
+  const parts = fullName.trim().split(/\s+/)
+  
+  if (parts.length === 1) {
+    return parts[0].charAt(0).toUpperCase()
+  }
+  
+  // Tomar la primera letra del primer nombre y la primera letra del último apellido
+  const firstInitial = parts[0].charAt(0).toUpperCase()
+  const lastInitial = parts[parts.length - 1].charAt(0).toUpperCase()
+  
+  return `${firstInitial}${lastInitial}`
+}
+
 export function SidebarFooter() {
   const navigate = useNavigate()
   const toast = useToast()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [showAnimation, setShowAnimation] = useState(false)
+  const [userData, setUserData] = useState(null)
+
+  // Obtener datos del usuario desde localStorage
+  useEffect(() => {
+    const loadUserData = () => {
+      try {
+        const stored = localStorage.getItem('rpsoft_user')
+        if (stored) {
+          const parsed = JSON.parse(stored)
+          setUserData(parsed)
+        }
+      } catch (error) {
+        // Si hay error al parsear, usar valores por defecto
+        setUserData(null)
+      }
+    }
+
+    loadUserData()
+
+    // Escuchar cambios en localStorage
+    const handleStorageChange = () => {
+      loadUserData()
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    
+    // También verificar periódicamente por si cambia en la misma pestaña
+    const interval = setInterval(loadUserData, 1000)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      clearInterval(interval)
+    }
+  }, [])
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -64,12 +121,20 @@ export function SidebarFooter() {
       <div className={styles.footer}>
         <div className={styles.userInfo}>
           <div className={styles.userAvatar}>
-            <span className={styles.userAvatarText}>A</span>
+            <span className={styles.userAvatarText}>
+              {userData?.full_name ? getInitials(userData.full_name) : 'U'}
+            </span>
           </div>
           <div className={styles.userDetails}>
-            <p className={styles.userName}>Carlos Mendoza</p>
-            <p className={styles.userEmail}>admin@rpsoft.com</p>
-            <p className={styles.userRole}>Admin</p>
+            <p className={styles.userName}>
+              {userData?.full_name || userData?.name || 'Usuario'}
+            </p>
+            <p className={styles.userEmail}>
+              {userData?.email || 'Sin email'}
+            </p>
+            <p className={styles.userRole}>
+              {userData?.role_name || userData?.role || 'Usuario'}
+            </p>
           </div>
         </div>
         <button 

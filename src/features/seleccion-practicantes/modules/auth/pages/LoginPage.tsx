@@ -52,20 +52,9 @@ export default function LoginPage() {
 
       const response = await loginUser(credentials)
       
-      // Determinar el rol del usuario (puede venir en la respuesta o usar lógica por defecto)
-      let role = response.user?.role || 'practicante'
-      if (email.toLowerCase() === 'admin@rpsoft.com' || response.user?.is_admin) {
-        role = 'admin'
-      }
-
-      const userName = response.user?.username || response.user?.email || email
+      // El hook useAuth ya maneja la obtención del rol y la redirección
+      const userName = response.user?.name || response.user?.email || email
       toast.success(`¡Bienvenido, ${userName}!`, 3000, 'Sesión iniciada')
-
-      if (role === 'admin') {
-        navigate('/admin/dashboard')
-      } else {
-        navigate('/dashboard')
-      }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Error al iniciar sesión'
       setError(errorMsg)

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useToast } from '@shared/components/Toast'
 import styles from './RegisterPage.module.css'
@@ -12,9 +12,9 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [fullName, setFullName] = useState('')
-  const [nameParts, setNameParts] = useState({ firstName: '', lastName: '' })
-  const [username, setUsername] = useState('')
+  const [name, setName] = useState('')
+  const [paternalLastname, setPaternalLastname] = useState('')
+  const [maternalLastname, setMaternalLastname] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -26,58 +26,16 @@ export default function RegisterPage() {
     error: oauthError,
   } = useMicrosoftOAuth()
 
-  // Parsear el campo de apellidos y nombres para obtener first_name y last_name
-  useEffect(() => {
-    const normalized = fullName.trim().replace(/\s+/g, ' ')
-
-    if (!normalized) {
-      setNameParts({ firstName: '', lastName: '' })
-      setUsername('')
-      return
-    }
-
-    let parsedFirstName = ''
-    let parsedLastName = ''
-
-    if (normalized.includes(',')) {
-      const [lastSegment, firstSegment] = normalized.split(',').map((segment) => segment.trim())
-      parsedLastName = lastSegment || ''
-      parsedFirstName = firstSegment || ''
-    } else {
-      const parts = normalized.split(' ')
-
-      if (parts.length === 1) {
-        parsedFirstName = parts[0]
-      } else {
-        // Considerar que los apellidos van primero: "Apellidos Nombres"
-        parsedLastName = parts.slice(0, parts.length - 1).join(' ')
-        parsedFirstName = parts.slice(-1).join(' ')
-      }
-    }
-
-    setNameParts({ firstName: parsedFirstName, lastName: parsedLastName })
-
-    const generatedUsername = `${parsedFirstName}${parsedLastName}`.replace(/\s+/g, '')
-    setUsername(generatedUsername)
-  }, [fullName])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
 
-    if (!email || !password || !confirmPassword || !fullName.trim()) {
-      const errorMsg = 'Por favor completa todos los campos'
+    if (!email || !password || !confirmPassword || !name.trim() || !paternalLastname.trim()) {
+      const errorMsg = 'Por favor completa todos los campos obligatorios'
       setError(errorMsg)
       toast.error(errorMsg, 3000, 'Error de validación')
-      setIsLoading(false)
-      return
-    }
-
-    if (!nameParts.firstName || !nameParts.lastName) {
-      const errorMsg = 'Ingresa apellidos y nombres (por ejemplo: "Miranda Miranda Adrian")'
-      setError(errorMsg)
-      toast.error(errorMsg, 4000, 'Formato incorrecto')
       setIsLoading(false)
       return
     }
@@ -110,21 +68,18 @@ export default function RegisterPage() {
     try {
       const userData = {
         email,
-        username: username || `${nameParts.firstName}${nameParts.lastName}`.replace(/\s+/g, ''),
         password,
-        first_name: nameParts.firstName,
-        last_name: nameParts.lastName,
+        name: name.trim(),
+        paternal_lastname: paternalLastname.trim(),
+        maternal_lastname: maternalLastname.trim() || '',
       }
 
       toast.info('Creando tu cuenta...', 2000, 'Registro')
       const response = await registerUser(userData)
       
-      const userName = response.user?.username || `${nameParts.firstName} ${nameParts.lastName}`.trim()
+      // El hook useAuth ya maneja la obtención del rol y la redirección
+      const userName = response.user?.name || name.trim()
       toast.success(`¡Cuenta creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
-      
-      setTimeout(() => {
-        navigate('/dashboard')
-      }, 500)
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Error al registrar usuario'
       setError(errorMsg)
@@ -204,12 +159,34 @@ export default function RegisterPage() {
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label}>Apellidos y nombres</label>
+              <label className={styles.label}>Nombres</label>
               <input
                 type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Apellidos y nombres"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Juan"
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>Apellido Paterno</label>
+              <input
+                type="text"
+                value={paternalLastname}
+                onChange={(e) => setPaternalLastname(e.target.value)}
+                placeholder="Pérez"
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>Apellido Materno (opcional)</label>
+              <input
+                type="text"
+                value={maternalLastname}
+                onChange={(e) => setMaternalLastname(e.target.value)}
+                placeholder="García"
                 className={styles.input}
               />
             </div>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login as loginService, register as registerService } from '../services/authService';
+import { login as loginService, register as registerService, getUserRole } from '../services/authService';
 import { setAuthTokens, clearAuthTokens } from '../../../shared/utils/cookieHelper';
+import { redirectByRole } from '../utils/redirectByRole';
 
 /**
  * Hook para manejar la autenticación
@@ -47,6 +48,28 @@ export const useAuth = () => {
         );
       }
 
+      // Obtener el rol del usuario y redirigir
+      try {
+        const roleData = await getUserRole();
+        if (roleData) {
+          // Actualizar datos del usuario con información del rol
+          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+          localStorage.setItem(
+            'rpsoft_user',
+            JSON.stringify({
+              ...userData,
+              ...roleData,
+              loginTime: new Date().toISOString(),
+            })
+          );
+          // Redirigir según el rol
+          redirectByRole(roleData, navigate);
+        }
+      } catch (roleError) {
+        // Si falla obtener el rol, redirigir a dashboard por defecto
+        navigate('/dashboard');
+      }
+
       // Limpiar datos temporales
       localStorage.removeItem('rpsoft_selection_data');
       localStorage.removeItem('rpsoft_current_step');
@@ -63,7 +86,7 @@ export const useAuth = () => {
 
   /**
    * Realiza el registro del usuario
-   * @param {Object} userData - { email, username, password, first_name, last_name }
+   * @param {Object} userData - { email, password, name, paternal_lastname, maternal_lastname }
    */
   const register = async (userData) => {
     setIsLoading(true);
@@ -94,6 +117,28 @@ export const useAuth = () => {
             loginTime: new Date().toISOString(),
           })
         );
+      }
+
+      // Obtener el rol del usuario y redirigir
+      try {
+        const roleData = await getUserRole();
+        if (roleData) {
+          // Actualizar datos del usuario con información del rol
+          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+          localStorage.setItem(
+            'rpsoft_user',
+            JSON.stringify({
+              ...userData,
+              ...roleData,
+              loginTime: new Date().toISOString(),
+            })
+          );
+          // Redirigir según el rol
+          redirectByRole(roleData, navigate);
+        }
+      } catch (roleError) {
+        // Si falla obtener el rol, redirigir a dashboard por defecto
+        navigate('/dashboard');
       }
 
       // Limpiar datos temporales

@@ -38,13 +38,45 @@ export const loginWithMicrosoftPopup = async () => {
     const msal = await getMsalInstance()
     const response = await msal.loginPopup(loginRequest)
 
-    const userInfo = await getUserInfoFromMicrosoft(response.accessToken)
+    let userInfo = {}
+    try {
+      userInfo = await getUserInfoFromMicrosoft(response.accessToken)
+    } catch (graphError) {
+      // Si falla Graph API, usar datos básicos de MSAL
+      userInfo = {
+        email: response.account.username || response.account.userPrincipalName || '',
+        name: response.account.name || '',
+      }
+    }
+
+    // Asegurar que todos los campos requeridos tengan valores
+    const provider = 'microsoft'
+    // Priorizar el id de Microsoft Graph API, luego los IDs de MSAL
+    const provider_id = userInfo.id || userInfo.provider_id || response.account.id || response.account.homeAccountId || response.account.localAccountId || ''
+    const email = userInfo.email || userInfo.mail || response.account.username || response.account.userPrincipalName || ''
+    const username = userInfo.username || generateUsername(
+      userInfo.name || response.account.name || '',
+      userInfo.paternal_lastname || '',
+      userInfo.maternal_lastname || '',
+      email
+    ) || (email ? email.split('@')[0] : 'user')
+    const name = userInfo.name || response.account.name || ''
+    const paternal_lastname = userInfo.paternal_lastname || ''
+    const maternal_lastname = userInfo.maternal_lastname || ''
+
+    // Validar campos requeridos
+    if (!provider_id || !email || !username) {
+      throw new Error('No se pudieron obtener todos los datos requeridos de Microsoft')
+    }
 
     return {
-      provider: 'microsoft',
-      provider_id: response.account.homeAccountId || response.account.localAccountId,
-      email: response.account.username || userInfo.mail || userInfo.userPrincipalName,
-      username: userInfo.displayName || response.account.name || response.account.username,
+      provider,
+      provider_id,
+      email,
+      username,
+      name,
+      paternal_lastname,
+      maternal_lastname,
       accessToken: response.accessToken,
       account: response.account,
     }
@@ -78,13 +110,45 @@ export const handleMicrosoftRedirect = async () => {
     const response = await msal.handleRedirectPromise()
 
     if (response) {
-      const userInfo = await getUserInfoFromMicrosoft(response.accessToken)
+      let userInfo = {}
+      try {
+        userInfo = await getUserInfoFromMicrosoft(response.accessToken)
+      } catch (graphError) {
+        // Si falla Graph API, usar datos básicos de MSAL
+        userInfo = {
+          email: response.account.username || response.account.userPrincipalName || '',
+          name: response.account.name || '',
+        }
+      }
+
+      // Asegurar que todos los campos requeridos tengan valores
+      const provider = 'microsoft'
+      // Priorizar el id de Microsoft Graph API, luego los IDs de MSAL
+      const provider_id = userInfo.id || userInfo.provider_id || response.account.id || response.account.homeAccountId || response.account.localAccountId || ''
+      const email = userInfo.email || userInfo.mail || response.account.username || response.account.userPrincipalName || ''
+      const username = userInfo.username || generateUsername(
+        userInfo.name || response.account.name || '',
+        userInfo.paternal_lastname || '',
+        userInfo.maternal_lastname || '',
+        email
+      ) || (email ? email.split('@')[0] : 'user')
+      const name = userInfo.name || response.account.name || ''
+      const paternal_lastname = userInfo.paternal_lastname || ''
+      const maternal_lastname = userInfo.maternal_lastname || ''
+
+      // Validar campos requeridos
+      if (!provider_id || !email || !username) {
+        throw new Error('No se pudieron obtener todos los datos requeridos de Microsoft')
+      }
 
       return {
-        provider: 'microsoft',
-        provider_id: response.account.homeAccountId || response.account.localAccountId,
-        email: response.account.username || userInfo.mail || userInfo.userPrincipalName,
-        username: userInfo.displayName || response.account.name || response.account.username,
+        provider,
+        provider_id,
+        email,
+        username,
+        name,
+        paternal_lastname,
+        maternal_lastname,
         accessToken: response.accessToken,
         account: response.account,
       }
@@ -98,9 +162,58 @@ export const handleMicrosoftRedirect = async () => {
 }
 
 /**
+ * Genera un username a partir del nombre y apellidos
+ * @param {string} name - Nombre del usuario
+ * @param {string} paternalLastname - Apellido paterno
+ * @param {string} maternalLastname - Apellido materno
+ * @param {string} email - Email como fallback
+ * @returns {string} Username generado
+ */
+const generateUsername = (name, paternalLastname, maternalLastname, email) => {
+  // Intentar generar username a partir de nombre y apellidos
+  const namePart = (name || '').trim().toLowerCase().replace(/\s+/g, '')
+  const paternalPart = (paternalLastname || '').trim().toLowerCase().replace(/\s+/g, '')
+  const maternalPart = (maternalLastname || '').trim().toLowerCase().replace(/\s+/g, '')
+  
+  if (namePart && paternalPart) {
+    return `${namePart}${paternalPart}${maternalPart}`.toLowerCase()
+  }
+  
+  // Fallback: usar email sin dominio
+  if (email) {
+    return email.split('@')[0].toLowerCase()
+  }
+  
+  return 'user'
+}
+
+/**
+ * Divide el surname de Microsoft en apellido paterno y materno
+ * @param {string} surname - Apellidos completos (ej: "RAMOS LIMAS")
+ * @returns {Object} { paternal_lastname, maternal_lastname }
+ */
+const splitSurname = (surname) => {
+  if (!surname || !surname.trim()) {
+    return { paternal_lastname: '', maternal_lastname: '' }
+  }
+
+  const parts = surname.trim().split(/\s+/)
+  
+  if (parts.length === 1) {
+    return { paternal_lastname: parts[0], maternal_lastname: '' }
+  }
+  
+  // Si hay dos o más palabras, la primera es paterno y el resto materno
+  return {
+    paternal_lastname: parts[0],
+    maternal_lastname: parts.slice(1).join(' '),
+  }
+}
+
+/**
  * Obtiene información del usuario desde Microsoft Graph API
  * @param {string} accessToken - Token de acceso de Microsoft
- * @returns {Promise<Object>} Información del usuario
+ * @returns {Promise<Object>} Información del usuario procesada
  */
 const getUserInfoFromMicrosoft = async (accessToken) => {
   try {
@@ -115,7 +228,25 @@ const getUserInfoFromMicrosoft = async (accessToken) => {
       throw new Error(`Error al obtener información del usuario: ${response.status}`)
     }
 
-    return await response.json()
+    const userInfo = await response.json()
+    
+    // Procesar los datos según el formato esperado por el backend
+    const { paternal_lastname, maternal_lastname } = splitSurname(userInfo.surname || '')
+    const name = userInfo.givenName || userInfo.displayName?.split(',')[1]?.trim() || ''
+    const email = userInfo.mail || userInfo.userPrincipalName || ''
+    
+    // Generar username
+    const username = generateUsername(name, paternal_lastname, maternal_lastname, email)
+    
+    return {
+      ...userInfo,
+      name,
+      paternal_lastname,
+      maternal_lastname,
+      email,
+      username,
+      provider_id: userInfo.id || userInfo.provider_id || '',
+    }
   } catch (error) {
     console.error('Error al obtener información del usuario:', error)
     return {}
