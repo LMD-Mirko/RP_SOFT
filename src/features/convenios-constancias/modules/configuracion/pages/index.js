@@ -1,2 +1,2 @@
-export { default as ConfiguracionPage } from '../Configuracion'
+export { default as ConfiguracionPage } from './firmaEmpresa/Configuracion'
 

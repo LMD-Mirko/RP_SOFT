@@ -53,16 +53,37 @@ export function EditorFirmaModal({ isOpen, onClose, onSave, firmaActual, documen
       const reader = new FileReader()
       reader.onloadend = () => {
         setFirmaPreview(reader.result)
-        // Posicionar la firma en el centro del documento por defecto
-        if (containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect()
-          const centerX = (rect.width / zoom - firmaSize.width) / 2
-          const centerY = (rect.height / zoom - firmaSize.height) / 2
-          setFirmaPosition({ 
-            x: Math.max(0, centerX), 
-            y: Math.max(0, centerY) 
-          })
+        // Obtener dimensiones de la imagen para calcular posición inicial
+        const img = new Image()
+        img.onload = () => {
+          // Calcular tamaño inicial manteniendo proporción
+          const maxWidth = 200
+          const maxHeight = 100
+          let width = img.width
+          let height = img.height
+          
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height)
+            width = width * ratio
+            height = height * ratio
+          }
+          
+          setFirmaSize({ width: Math.round(width), height: Math.round(height) })
+          
+          // Posicionar la firma en el centro del documento por defecto
+          if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect()
+            const docWidth = rect.width / zoom
+            const docHeight = rect.height / zoom
+            const centerX = Math.max(0, (docWidth - width) / 2)
+            const centerY = Math.max(0, (docHeight - height) / 2)
+            setFirmaPosition({ 
+              x: centerX, 
+              y: centerY 
+            })
+          }
         }
+        img.src = reader.result
         toast.success('Firma cargada correctamente')
       }
       reader.readAsDataURL(file)
@@ -74,38 +95,44 @@ export function EditorFirmaModal({ isOpen, onClose, onSave, firmaActual, documen
   const handleMouseDown = useCallback((e) => {
     if (!firmaPreview || !containerRef.current) return
     e.preventDefault()
+    e.stopPropagation()
     setIsDragging(true)
     const rect = containerRef.current.getBoundingClientRect()
+    // Calcular posición relativa al contenedor sin zoom
     const scaledX = firmaPosition.x * zoom
     const scaledY = firmaPosition.y * zoom
     setDragStart({
-      x: e.clientX - rect.left - scaledX,
-      y: e.clientY - rect.top - scaledY,
+      x: (e.clientX - rect.left) / zoom - firmaPosition.x,
+      y: (e.clientY - rect.top) / zoom - firmaPosition.y,
     })
   }, [firmaPreview, firmaPosition, zoom])
 
   const handleMouseMove = useCallback((e) => {
     if (!isDragging || !containerRef.current) return
     e.preventDefault()
+    e.stopPropagation()
     const rect = containerRef.current.getBoundingClientRect()
-    const newX = (e.clientX - rect.left - dragStart.x) / zoom
-    const newY = (e.clientY - rect.top - dragStart.y) / zoom
     
-    // Obtener dimensiones del documento
+    // Calcular nueva posición considerando el zoom
+    const newX = (e.clientX - rect.left) / zoom - dragStart.x
+    const newY = (e.clientY - rect.top) / zoom - dragStart.y
+    
+    // Obtener dimensiones reales del documento (sin zoom)
     const docWidth = rect.width / zoom
     const docHeight = rect.height / zoom
     
-    // Limitar dentro del contenedor (asumiendo firma de ~150x80px)
-    const firmaWidth = 150
-    const firmaHeight = 80
-    const maxX = docWidth - firmaWidth
-    const maxY = docHeight - firmaHeight
+    // Usar dimensiones reales de la firma
+    const firmaWidth = firmaSize.width
+    const firmaHeight = firmaSize.height
+    const maxX = Math.max(0, docWidth - firmaWidth)
+    const maxY = Math.max(0, docHeight - firmaHeight)
     
+    // Limitar dentro del contenedor
     setFirmaPosition({
       x: Math.max(0, Math.min(newX, maxX)),
       y: Math.max(0, Math.min(newY, maxY)),
     })
-  }, [isDragging, dragStart, zoom])
+  }, [isDragging, dragStart, zoom, firmaSize])
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
@@ -400,74 +427,117 @@ export function EditorFirmaModal({ isOpen, onClose, onSave, firmaActual, documen
         {/* Área de edición */}
         <div className={styles.editorArea}>
           {documentoDisponible ? (
-            <div
-              ref={containerRef}
-              className={styles.documentContainer}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
-            >
-              {documentoActual?.type === 'application/pdf' ? (
-                <iframe
-                  src={`${documentoPreview}#toolbar=0&navpanes=0&scrollbar=1`}
-                  className={styles.pdfViewer}
-                  title="Documento PDF"
-                />
-              ) : documentoPreview ? (
-                <img
-                  src={documentoPreview}
-                  alt="Documento"
-                  className={styles.documentImage}
-                />
-              ) : (
-                <div className={styles.pdfDocument}>
-                  <div className={styles.pdfContent}>
-                    <div className={styles.pdfHeader}>
-                      <h3>Documento PDF</h3>
-                      <p>No hay documento cargado</p>
-                    </div>
-                    <div className={styles.pdfBody}>
-                      <p>Por favor carga un documento para firmar.</p>
+            <div className={styles.editorWrapper}>
+              <div
+                ref={containerRef}
+                className={styles.documentContainer}
+                style={{ 
+                  transform: `scale(${zoom})`, 
+                  transformOrigin: 'top left',
+                  position: 'relative',
+                }}
+              >
+                {documentoActual?.type === 'application/pdf' ? (
+                  <div className={styles.pdfWrapper}>
+                    <iframe
+                      src={`${documentoPreview}#toolbar=0&navpanes=0&scrollbar=1`}
+                      className={styles.pdfViewer}
+                      title="Documento PDF"
+                    />
+                    {/* Overlay para firma en PDF - debe estar después del iframe para aparecer encima */}
+                    {firmaPreview && (
+                      <div
+                        ref={firmaRef}
+                        className={`${styles.firmaOverlay} ${isDragging ? styles.dragging : ''}`}
+                        style={{
+                          position: 'absolute',
+                          left: `${firmaPosition.x}px`,
+                          top: `${firmaPosition.y}px`,
+                          width: `${firmaSize.width}px`,
+                          height: `${firmaSize.height}px`,
+                          zIndex: 1000,
+                        }}
+                        onMouseDown={handleMouseDown}
+                      >
+                        <img
+                          src={firmaPreview}
+                          alt="Firma"
+                          className={styles.firmaImage}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                          }}
+                          draggable={false}
+                        />
+                        <div className={styles.firmaHandle}>
+                          <Move size={16} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : documentoPreview ? (
+                  <>
+                    <img
+                      src={documentoPreview}
+                      alt="Documento"
+                      className={styles.documentImage}
+                      draggable={false}
+                    />
+                    {/* Firma posicionable para imágenes */}
+                    {firmaPreview && (
+                      <div
+                        ref={firmaRef}
+                        className={`${styles.firmaOverlay} ${isDragging ? styles.dragging : ''}`}
+                        style={{
+                          position: 'absolute',
+                          left: `${firmaPosition.x}px`,
+                          top: `${firmaPosition.y}px`,
+                          width: `${firmaSize.width}px`,
+                          height: `${firmaSize.height}px`,
+                          zIndex: 1000,
+                        }}
+                        onMouseDown={handleMouseDown}
+                      >
+                        <img
+                          src={firmaPreview}
+                          alt="Firma"
+                          className={styles.firmaImage}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                          }}
+                          draggable={false}
+                        />
+                        <div className={styles.firmaHandle}>
+                          <Move size={16} />
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className={styles.pdfDocument}>
+                    <div className={styles.pdfContent}>
+                      <div className={styles.pdfHeader}>
+                        <h3>Documento PDF</h3>
+                        <p>No hay documento cargado</p>
+                      </div>
+                      <div className={styles.pdfBody}>
+                        <p>Por favor carga un documento para firmar.</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-
-              {/* Firma posicionable */}
-              {firmaPreview && documentoDisponible && (
+                )}
+              </div>
+              {/* Event listeners globales para el drag */}
+              {isDragging && (
                 <div
-                  ref={firmaRef}
-                  className={`${styles.firmaOverlay} ${isDragging ? styles.dragging : ''}`}
-                  style={{
-                    left: `${firmaPosition.x}px`,
-                    top: `${firmaPosition.y}px`,
-                  }}
-                  onMouseDown={handleMouseDown}
-                >
-                  <img
-                    src={firmaPreview}
-                    alt="Firma"
-                    className={styles.firmaImage}
-                    style={{
-                      width: `${firmaSize.width}px`,
-                      height: `${firmaSize.height}px`,
-                    }}
-                    onLoad={() => {
-                      // Asegurar que la firma sea visible
-                      if (firmaRef.current) {
-                        firmaRef.current.style.display = 'block'
-                      }
-                    }}
-                    onError={(e) => {
-                      console.error('Error cargando imagen de firma:', e)
-                      toast.error('Error al cargar la imagen de la firma')
-                    }}
-                  />
-                  <div className={styles.firmaHandle}>
-                    <Move size={16} />
-                  </div>
-                </div>
+                  className={styles.dragOverlay}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                />
               )}
             </div>
           ) : (

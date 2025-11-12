@@ -1,45 +1,38 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FileText } from 'lucide-react'
 import { Button } from '@shared/components/Button'
+import { useToast } from '@shared/components/Toast'
+import { useConfiguracion } from '../../hooks/useConfiguracion'
 import styles from './Compromiso.module.css'
 
-const plantillasIniciales = [
-  {
-    id: 1,
-    nombre: 'Acuerdo de Confidencialidad',
-    configurada: true,
-    activa: true,
-  },
-  {
-    id: 2,
-    nombre: 'Sesión de Derechos de Autor',
-    configurada: true,
-    activa: true,
-  },
-  {
-    id: 3,
-    nombre: 'Aceptación del Reglamento Interno',
-    configurada: true,
-    activa: true,
-  },
-  {
-    id: 4,
-    nombre: 'Términos y Condiciones',
-    configurada: true,
-    activa: true,
-  },
-]
-
 export default function Compromiso() {
-  const [plantillas, setPlantillas] = useState(plantillasIniciales)
+  const toast = useToast()
+  const { getSection, updateSection, loading } = useConfiguracion()
+  const [plantillas, setPlantillas] = useState([])
+
+  // Cargar plantillas al montar
+  useEffect(() => {
+    if (!loading) {
+      const savedCompromisos = getSection('compromisos')
+      if (savedCompromisos && Array.isArray(savedCompromisos)) {
+        setPlantillas(savedCompromisos)
+      }
+    }
+  }, [loading, getSection])
 
   const handleToggleActivo = (id) => {
-    setPlantillas((prev) =>
-      prev.map((plantilla) =>
-        plantilla.id === id
-          ? { ...plantilla, activa: !plantilla.activa }
-          : plantilla
-      )
+    const updated = plantillas.map((plantilla) =>
+      plantilla.id === id
+        ? { ...plantilla, activa: !plantilla.activa }
+        : plantilla
+    )
+    setPlantillas(updated)
+    updateSection('compromisos', updated)
+    const plantilla = updated.find((p) => p.id === id)
+    toast.success(
+      plantilla.activa
+        ? 'Plantilla activada'
+        : 'Plantilla desactivada'
     )
   }
 

@@ -1,64 +1,66 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FileText, Upload, Save } from 'lucide-react'
 import { Input } from '@shared/components/Input'
 import { Button } from '@shared/components/Button'
 import { useToast } from '@shared/components/Toast'
+import { useConfiguracion } from '../../hooks/useConfiguracion'
 import styles from './Constacia.module.css'
-
-const camposDinamicos = [
-  {
-    id: 1,
-    campo: 'NOMBRE_COMPLETO',
-    descripcion: 'Nombre Completo',
-    fuente: 'Perfil del estudiante',
-  },
-  {
-    id: 2,
-    campo: 'DNI',
-    descripcion: 'DNI',
-    fuente: 'Perfil del estudiante',
-  },
-  {
-    id: 3,
-    campo: 'HORAS_ACUMULADAS',
-    descripcion: 'Horas Acumuladas',
-    fuente: 'Módulo de asistencia',
-  },
-  {
-    id: 4,
-    campo: 'TAREAS_REALIZADAS',
-    descripcion: 'Tareas Realizadas',
-    fuente: 'Módulo Tasks',
-  },
-  {
-    id: 5,
-    campo: 'EVALUACION_FINAL',
-    descripcion: 'Evaluación Final',
-    fuente: 'Módulo de evaluaciones',
-  },
-  {
-    id: 6,
-    campo: 'ROLES_ASUMIDOS',
-    descripcion: 'Roles Asumidos',
-    fuente: 'Perfil del estudiante',
-  },
-]
 
 export default function Constacia() {
   const toast = useToast()
+  const { getSection, updateSection, loading } = useConfiguracion()
   const [plantillaPath, setPlantillaPath] = useState('/templates/constancia-base.pdf')
+  const [camposDinamicos, setCamposDinamicos] = useState([])
+
+  // Cargar configuración al montar
+  useEffect(() => {
+    if (!loading) {
+      const savedConstancia = getSection('constancia')
+      if (savedConstancia) {
+        if (savedConstancia.plantillaPath) {
+          setPlantillaPath(savedConstancia.plantillaPath)
+        }
+        if (savedConstancia.camposDinamicos) {
+          setCamposDinamicos(savedConstancia.camposDinamicos)
+        }
+      }
+    }
+  }, [loading, getSection])
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Aquí iría la lógica para subir el archivo
-      setPlantillaPath(file.name)
+      const fileName = file.name
+      setPlantillaPath(fileName)
+      const savedConstancia = getSection('constancia') || {}
+      const updated = {
+        ...savedConstancia,
+        plantillaPath: fileName,
+      }
+      updateSection('constancia', updated)
       toast.success('Plantilla cargada correctamente')
     }
   }
 
+  const handlePathChange = (e) => {
+    const value = e.target.value
+    setPlantillaPath(value)
+    const savedConstancia = getSection('constancia') || {}
+    const updated = {
+      ...savedConstancia,
+      plantillaPath: value,
+    }
+    updateSection('constancia', updated)
+  }
+
   const handleSave = () => {
-    // Aquí iría la lógica para guardar la configuración
+    const savedConstancia = getSection('constancia') || {}
+    const updated = {
+      ...savedConstancia,
+      plantillaPath,
+      camposDinamicos: camposDinamicos.length > 0 ? camposDinamicos : savedConstancia.camposDinamicos,
+    }
+    updateSection('constancia', updated)
     toast.success('Configuración guardada correctamente')
   }
 
@@ -79,7 +81,7 @@ export default function Constacia() {
             <div className={styles.inputWithButton}>
               <Input
                 value={plantillaPath}
-                onChange={(e) => setPlantillaPath(e.target.value)}
+                onChange={handlePathChange}
                 placeholder="/templates/constancia-base.pdf"
                 className={styles.pathInput}
               />

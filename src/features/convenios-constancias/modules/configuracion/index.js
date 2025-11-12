@@ -3,4 +3,4 @@
  * Mini proyecto independiente para la funcionalidad de configuración
  */
 
-export { default as Configuracion } from './Configuracion'
+export { default as Configuracion } from './pages/firmaEmpresa/Configuracion'
