@@ -40,6 +40,8 @@ const ConveniosConstanciasIndex = lazy(() =>
   import('@features/convenios-constancias').then((m) => ({ default: m.ConveniosConstanciasIndex }))
 )
 
+
+
 // Placeholders
 const Dashboard = () => null
 const Configuracion = () => null
@@ -120,6 +122,7 @@ export function Router() {
               </Suspense>
             }
           />
+
 
           <Route path="/configuracion" element={<Configuracion />} />
           <Route path="*" element={<Navigate to="/" replace />} />
