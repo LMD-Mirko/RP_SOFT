@@ -6,8 +6,8 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { Dashboard } from '../modules/Dashboard'
-import Auditoria from '../pages/Auditoria'
-import Configuracion from '../pages/Configuracion'
+import { Auditoria } from '../modules/auditoria'
+import { Configuracion } from '../modules/configuracion'
 import { RevisionDocumentos } from '../modules/RevisionDocumentos'
 
 /**

@@ -78,6 +78,17 @@
   box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
 }
 
+.success {
+  background-color: #10b981;
+  color: white;
+}
+
+.success:hover:not(:disabled) {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+}
+
 /* Sizes */
 .sm {
   padding: 0.5rem 1rem;
