@@ -6,6 +6,7 @@ export function MainLayout() {
   const location = useLocation()
   const isModuleRoute = location.pathname !== '/' && 
     !location.pathname.startsWith('/configuracion') &&
+    !location.pathname.startsWith('/directorio-practicantes') &&
     (location.pathname.startsWith('/seleccion-practicantes') ||
      location.pathname.startsWith('/transcripcion-reuniones') ||
      location.pathname.startsWith('/gestion-tareas') ||

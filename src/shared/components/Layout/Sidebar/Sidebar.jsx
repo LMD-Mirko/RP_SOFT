@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Users,
+  UserCheck,
   Mic,
   ClipboardList,
   ClockCheck,
@@ -38,6 +39,7 @@ const menuItems = [
         label: 'Selección Practicantes',
         path: '/seleccion-practicantes',
       },
+
       {
         icon: Mic,
         label: 'Transcripción Reuniones',

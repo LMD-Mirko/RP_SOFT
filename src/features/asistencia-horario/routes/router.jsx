@@ -6,6 +6,8 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
+import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
+import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
 
 /**
  * Router del Módulo
@@ -31,7 +33,11 @@ export function ModuleRouter() {
         />
         <Route
           path="practicantes"
-          element={<div><h2>Practicantes</h2></div>}
+          element={<PracticantesDashboard />}
+        />
+        <Route
+          path="practicantes/:id"
+          element={<PerfilPracticante />}
         />
         <Route
           path="gestion-horarios"
