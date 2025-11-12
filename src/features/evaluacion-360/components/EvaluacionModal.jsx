@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
+import { usePracticantes } from '../context/PracticantesContext'
 import styles from './EvaluacionModal.module.css'
 
 export function EvaluacionModal({ practicante, onClose }) {
   const [currentStep, setCurrentStep] = useState(1)
   const [responses, setResponses] = useState({})
   const [comments, setComments] = useState('')
+  const { updatePracticante } = usePracticantes()
 
   const preguntas = {
     1: [
@@ -38,8 +40,24 @@ export function EvaluacionModal({ practicante, onClose }) {
   }
 
   const handleSave = () => {
-    // Aquí guardarías la evaluación
-    console.log('Evaluación guardada:', { practicante, responses, comments })
+    // Calcular la nota promedio en escala de 0 a 20
+    const totalPreguntas = Object.keys(responses).length
+    const sumaRespuestas = Object.values(responses).reduce((sum, val) => sum + val, 0)
+    const promedioRespuestas = sumaRespuestas / totalPreguntas // Promedio de 0-4
+    const notaSobre20 = Math.round((promedioRespuestas / 4) * 20) // Convertir a escala 0-20 y redondear
+    
+    // Actualizar el practicante con la nota y estado
+    updatePracticante(practicante.id, {
+      nota: notaSobre20,
+      estado: 'Evaluado',
+      evaluacion360: {
+        responses,
+        comments,
+        fecha: new Date().toISOString()
+      }
+    })
+    
+    console.log('Evaluación guardada:', { practicante, responses, comments, nota: notaSobre20 })
     onClose()
   }
 

@@ -1,10 +1,10 @@
 import { ModuleRouter } from './routes'
-import { ToastProvider } from '@shared/components/Toast'
+import { PracticantesProvider } from './context/PracticantesContext'
 
 export function Evaluacion360Index() {
   return (
-    <ToastProvider>
+    <PracticantesProvider>
       <ModuleRouter />
-    </ToastProvider>
+    </PracticantesProvider>
   )
 }

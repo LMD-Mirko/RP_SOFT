@@ -8,6 +8,7 @@ import { Layout } from '../components/Layout'
 import { EventosEvaluacionPage } from '../modules/eventos-evaluacion/pages'
 import { Evaluacion360Page } from '../modules/evaluacion-360/pages'
 import { EvaluacionIndividualPage } from '../modules/evaluacion-individual/pages'
+import { EvaluacionTecnicaPage } from '../modules/evaluacion-tecnica/pages'
 
 /**
  * Router del Módulo
@@ -31,6 +32,10 @@ export function ModuleRouter() {
         <Route
           path="evaluacion-individual"
           element={<EvaluacionIndividualPage />}
+        />
+        <Route
+          path="evaluacion-tecnica"
+          element={<EvaluacionTecnicaPage />}
         />
       </Route>
     </Routes>
