@@ -46,10 +46,9 @@ export function EvaluacionModal({ practicante, onClose }) {
     const promedioRespuestas = sumaRespuestas / totalPreguntas // Promedio de 0-4
     const notaSobre20 = Math.round((promedioRespuestas / 4) * 20) // Convertir a escala 0-20 y redondear
     
-    // Actualizar el practicante con la nota y estado
+    // Actualizar el practicante con la nota 360 y estado
     updatePracticante(practicante.id, {
-      nota: notaSobre20,
-      estado: 'Evaluado',
+      nota360: notaSobre20,
       evaluacion360: {
         responses,
         comments,
@@ -57,7 +56,7 @@ export function EvaluacionModal({ practicante, onClose }) {
       }
     })
     
-    console.log('Evaluación guardada:', { practicante, responses, comments, nota: notaSobre20 })
+    console.log('Evaluación 360 guardada:', { practicante, responses, comments, nota: notaSobre20 })
     onClose()
   }
 

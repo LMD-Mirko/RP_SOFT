@@ -29,11 +29,6 @@ const menuItems = [
       },
       {
         icon: User,
-        label: 'Evaluación Individual',
-        path: '/evaluacion-360/evaluacion-individual',
-      },
-      {
-        icon: User,
         label: 'Evaluación Técnica',
         path: '/evaluacion-360/evaluacion-tecnica',
       },

@@ -12,12 +12,22 @@ export function PracticantesProvider({ children }) {
       proyecto: 'Innovación',
       sala: '-',
       estado: 'No evaluado',
-      nota: '-'
+      nota360: '-',
+      notaTecnica: '-',
+      evaluacion360: null,
+      evaluacionTecnica: null
     }
   ])
 
   const addPracticante = (practicante) => {
-    setPracticantes(prev => [...prev, { ...practicante, id: Date.now() }])
+    setPracticantes(prev => [...prev, { 
+      ...practicante, 
+      id: Date.now(),
+      nota360: '-',
+      notaTecnica: '-',
+      evaluacion360: null,
+      evaluacionTecnica: null
+    }])
   }
 
   const updatePracticante = (id, updates) => {

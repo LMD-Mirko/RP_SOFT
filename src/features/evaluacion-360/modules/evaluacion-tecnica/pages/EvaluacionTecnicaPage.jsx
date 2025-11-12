@@ -214,8 +214,8 @@ export function EvaluacionTecnicaPage() {
                   <td>{practicante.servidor}</td>
                   <td>{practicante.proyecto}</td>
                   <td>{practicante.sala}</td>
-                  <td>{practicante.estado}</td>
-                  <td>{practicante.nota}</td>
+                  <td>{practicante.evaluacionTecnica ? 'Evaluado' : 'No evaluado'}</td>
+                  <td>{practicante.notaTecnica}</td>
                   <td>
                     <button
                       className={styles.evaluarButton}

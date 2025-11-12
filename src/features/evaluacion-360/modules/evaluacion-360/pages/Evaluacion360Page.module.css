@@ -78,41 +78,47 @@
 }
 
 .stats {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
 }
 
 .statCard {
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  flex: 1;
+  padding: 1.25rem;
+  border-radius: 12px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  position: relative;
+  gap: 1rem;
 }
 
-.statNumber {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #1f2937;
+.statIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1;
+  margin-bottom: 0.25rem;
 }
 
 .statLabel {
   font-size: 0.875rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
-}
-
-.statIcon {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  font-size: 1.25rem;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .filtersSection {

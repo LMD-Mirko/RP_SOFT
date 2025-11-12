@@ -49,17 +49,34 @@ export function Evaluacion360Page() {
 
       {/* Stats */}
       <div className={styles.stats}>
-        <div className={styles.statCard}>
-          <div className={styles.statNumber}>20</div>
-          <div className={styles.statLabel}>Practicantes Evaluados</div>
+        <div className={styles.statCard} style={{ backgroundColor: '#E3F2FD' }}>
+          <div className={styles.statIcon} style={{ color: '#1976D2' }}>
+            <Search className="w-5 h-5" />
+          </div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>20</div>
+            <div className={styles.statLabel}>Practicantes Evaluados</div>
+          </div>
         </div>
-        <div className={styles.statCard}>
-          <div className={styles.statNumber}>10</div>
-          <div className={styles.statLabel}>Practicantes en Riesgo</div>
+
+        <div className={styles.statCard} style={{ backgroundColor: '#FFEBEE' }}>
+          <div className={styles.statIcon} style={{ color: '#D32F2F' }}>
+            ⚠
+          </div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>10</div>
+            <div className={styles.statLabel}>Practicantes en Riesgo</div>
+          </div>
         </div>
-        <div className={styles.statCard}>
-          <div className={styles.statNumber}>15</div>
-          <div className={styles.statLabel}>Promedio General</div>
+
+        <div className={styles.statCard} style={{ backgroundColor: '#E8F5E9' }}>
+          <div className={styles.statIcon} style={{ color: '#388E3C' }}>
+            💬
+          </div>
+          <div className={styles.statContent}>
+            <div className={styles.statValue}>15</div>
+            <div className={styles.statLabel}>Promedio General</div>
+          </div>
         </div>
       </div>
 
@@ -140,8 +157,8 @@ export function Evaluacion360Page() {
                 <td>{practicante.servidor}</td>
                 <td>{practicante.proyecto}</td>
                 <td>{practicante.sala}</td>
-                <td>{practicante.estado}</td>
-                <td>{practicante.nota}</td>
+                <td>{practicante.evaluacion360 ? 'Evaluado' : 'No evaluado'}</td>
+                <td>{practicante.nota360}</td>
                 <td>
                   <button
                     className={styles.evaluarButton}
