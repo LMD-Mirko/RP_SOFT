@@ -3,6 +3,7 @@ import { TranscripcionesPage } from './pages/TranscripcionesPage.jsx'
 import { ScrumScrumPage } from './pages/ScrumScrumPage.jsx'
 import { DailyScrumPage } from './pages/DailyScrumPage.jsx'
 import { Layout } from './components/Layout.jsx'
+import { PanelCentralPage } from './pages/PanelCentralPage.jsx'
 export { TranscripcionesPage } from './pages/TranscripcionesPage.jsx'
 
 function Placeholder({ title }) {
@@ -16,7 +17,7 @@ export function TranscripcionReunionesIndex() {
         <Route index element={<TranscripcionesPage />} />
         <Route path="daily-scrum" element={<DailyScrumPage />} />
         <Route path="scrum-scrum" element={<ScrumScrumPage />} />
-        <Route path="panel-central" element={<Placeholder title="Panel Central" />} />
+        <Route path="panel-central" element={<PanelCentralPage />} />
         <Route path="transcripciones" element={<TranscripcionesPage />} />
       </Route>
     </Routes>
