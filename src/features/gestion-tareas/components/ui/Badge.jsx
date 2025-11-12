@@ -1,5 +1,5 @@
 export function Badge({ children, variant = 'default', className = '' }) {
-  const base = 'inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium';
+  const base = 'inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-semibold';
   const variants = {
     default: 'bg-gray-100 text-gray-700',
     warning: 'bg-orange-100 text-orange-700',

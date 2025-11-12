@@ -12,8 +12,10 @@ export function getSprintStats() {
   })
 }
 
-export function getSprintColumns() {
-  const columns = [
+const STORAGE_KEY = 'sprint_columns'
+
+function getDefaultColumns() {
+  return [
     {
       id: 'col-1',
       titulo: 'Product Backlog',
@@ -119,7 +121,22 @@ export function getSprintColumns() {
       ],
     },
   ]
-  return Promise.resolve(columns)
+}
+
+export function getSprintColumns() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) return Promise.resolve(JSON.parse(raw))
+  } catch (e) {
+    // ignore read errors
+  }
+  const seed = getDefaultColumns()
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seed))
+  } catch (e) {
+    // ignore write errors
+  }
+  return Promise.resolve(seed)
 }
 
 export function getMembers() {
@@ -130,4 +147,13 @@ export function getMembers() {
     { id: 'u4', iniciales: 'M', color: 'bg-violet-500' },
     { id: 'u5', iniciales: 'AM', color: 'bg-orange-500' },
   ])
+}
+
+export function saveColumns(columns) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(columns))
+  } catch (e) {
+    // ignore write errors
+  }
+  return Promise.resolve(true)
 }
