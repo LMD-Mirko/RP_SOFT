@@ -1,0 +1,258 @@
+/**
+ * Hook personalizado para manejar OAuth con Google
+ * Facilita el uso de OAuth en los componentes
+ */
+
+import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { oauthLogin, getUserRole } from '../services/authService';
+import { setAuthTokens } from '../../../shared/utils/cookieHelper';
+import { redirectByRole } from '../utils/redirectByRole';
+
+/**
+ * Hook para manejar OAuth con Google
+ * @returns {Object} Funciones y estados para OAuth
+ */
+export const useGoogleOAuth = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  /**
+   * Maneja el login/registro con Google
+   * @param {Function} onSuccess - Callback opcional cuando el login es exitoso
+   * @param {number} roleId - ID del rol a asignar (1 para postulante, 2 para admin)
+   */
+  const handleGoogleAuth = useCallback(async (onSuccess, roleId = 1) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // 1. Autenticar con Google usando Google Identity Services
+      const googleData = await loginWithGoogle();
+
+      // Validar que todos los campos requeridos estén presentes
+      if (!googleData.provider || !googleData.provider_id || !googleData.email) {
+        const missingFields = []
+        if (!googleData.provider) missingFields.push('provider')
+        if (!googleData.provider_id) missingFields.push('provider_id')
+        if (!googleData.email) missingFields.push('email')
+        throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`)
+      }
+      
+      // Guardar role_id en sessionStorage para el callback (si se usa redirect)
+      sessionStorage.setItem('oauth_role_id', roleId.toString())
+
+      // 2. Enviar datos al backend con role_id
+      const response = await oauthLogin({
+        provider: googleData.provider,
+        provider_id: googleData.provider_id,
+        email: googleData.email,
+        name: googleData.name || '',
+        paternal_lastname: googleData.paternal_lastname || '',
+        maternal_lastname: googleData.maternal_lastname || '',
+        role_id: roleId,
+      });
+
+      // 3. Guardar tokens en cookies
+      if (response.tokens) {
+        const accessToken = response.tokens.access;
+        const refreshToken = response.tokens.refresh;
+        if (accessToken) {
+          setAuthTokens(accessToken, refreshToken);
+        }
+      } else if (response.token) {
+        // Compatibilidad con formato anterior
+        setAuthTokens(response.token, null);
+      }
+
+      if (response.user) {
+        localStorage.setItem(
+          'rpsoft_user',
+          JSON.stringify({
+            email: response.user.email || googleData.email,
+            name: response.user.name || googleData.name,
+            role: response.user.role || 'practicante',
+            loginTime: new Date().toISOString(),
+            provider: 'google',
+          })
+        );
+      }
+
+      // 4. Obtener el rol del usuario y redirigir
+      try {
+        const roleData = await getUserRole();
+        if (roleData) {
+          // Actualizar datos del usuario con información del rol
+          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+          localStorage.setItem(
+            'rpsoft_user',
+            JSON.stringify({
+              ...userData,
+              ...roleData,
+              loginTime: new Date().toISOString(),
+            })
+          );
+          
+          // 5. Navegar o ejecutar callback
+          if (onSuccess) {
+            onSuccess(response);
+          } else {
+            // Redirigir según el rol
+            redirectByRole(roleData, navigate);
+          }
+        } else {
+          // Si no hay datos de rol, redirigir a dashboard por defecto
+          if (onSuccess) {
+            onSuccess(response);
+          } else {
+            navigate('/dashboard');
+          }
+        }
+      } catch (roleError) {
+        // Si falla obtener el rol, redirigir a dashboard por defecto
+        if (onSuccess) {
+          onSuccess(response);
+        } else {
+          navigate('/dashboard');
+        }
+      }
+
+      // 6. Limpiar datos temporales
+      localStorage.removeItem('rpsoft_selection_data');
+      localStorage.removeItem('rpsoft_current_step');
+      sessionStorage.removeItem('oauth_role_id');
+
+      setIsLoading(false);
+      return response;
+    } catch (err) {
+      const errorMessage = err.message || 'Error al autenticar con Google';
+      setError(errorMessage);
+      setIsLoading(false);
+      throw err;
+    }
+  }, [navigate]);
+
+  return {
+    handleGoogleAuth,
+    isLoading,
+    error,
+    clearError: () => setError(null),
+  };
+};
+
+/**
+ * Inicia el flujo de login con Google usando Google Identity Services
+ * @returns {Promise<Object>} Datos del usuario autenticado
+ */
+const loginWithGoogle = async () => {
+  return new Promise((resolve, reject) => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    
+    if (!clientId) {
+      reject(new Error('VITE_GOOGLE_CLIENT_ID no está configurado en el archivo .env'));
+      return;
+    }
+
+    // Cargar Google Identity Services si no está cargado
+    const loadGoogleScript = () => {
+      return new Promise((scriptResolve, scriptReject) => {
+        if (window.google && window.google.accounts) {
+          scriptResolve();
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          if (window.google && window.google.accounts) {
+            scriptResolve();
+          } else {
+            scriptReject(new Error('Google Identity Services no se cargó correctamente'));
+          }
+        };
+        script.onerror = () => {
+          scriptReject(new Error('Error al cargar Google Identity Services'));
+        };
+        document.head.appendChild(script);
+      });
+    };
+
+    loadGoogleScript()
+      .then(() => {
+        try {
+          // Usar OAuth 2.0 Token Client para obtener access token
+          const tokenClient = window.google.accounts.oauth2.initTokenClient({
+            client_id: clientId,
+            scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+            callback: async (tokenResponse) => {
+              if (tokenResponse.error) {
+                reject(new Error(tokenResponse.error));
+                return;
+              }
+              
+              // Obtener información del usuario con el access token
+              try {
+                await getUserInfoFromGoogle(tokenResponse.access_token, resolve, reject);
+              } catch (error) {
+                reject(error);
+              }
+            },
+          });
+
+          // Solicitar el token
+          tokenClient.requestAccessToken({ prompt: 'consent' });
+        } catch (error) {
+          reject(new Error(`Error al inicializar Google Auth: ${error.message}`));
+        }
+      })
+      .catch(reject);
+  });
+};
+
+/**
+ * Obtiene información del usuario desde Google usando el access token
+ */
+const getUserInfoFromGoogle = async (accessToken, resolve, reject) => {
+  try {
+    const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error al obtener información del usuario: ${response.status}`);
+    }
+
+    const userInfo = await response.json();
+    
+    const provider = 'google';
+    const provider_id = userInfo.id || '';
+    const email = userInfo.email || '';
+    const name = userInfo.given_name || userInfo.name || '';
+    
+    // Intentar dividir el nombre en nombre y apellidos
+    const paternalLastname = userInfo.family_name || '';
+    const maternalLastname = '';
+
+    if (!provider_id || !email) {
+      reject(new Error('No se pudieron obtener todos los datos requeridos de Google'));
+      return;
+    }
+
+    resolve({
+      provider,
+      provider_id,
+      email,
+      name,
+      paternal_lastname: paternalLastname,
+      maternal_lastname: maternalLastname,
+    });
+  } catch (error) {
+    reject(new Error(`Error al obtener información del usuario: ${error.message}`));
+  }
+};
+

@@ -1,10 +1,10 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useToast } from '@shared/components/Toast'
 import styles from './RegisterPage.module.css'
-import { useMicrosoftOAuth } from '../hooks/useMicrosoftOAuth'
-import { useAuth } from '../hooks/authHook'
+import { useMicrosoftOAuth } from '../../hooks/useMicrosoftOAuth'
+import { useAuth } from '../../hooks/authHook'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -12,9 +12,8 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [name, setName] = useState('')
-  const [paternalLastname, setPaternalLastname] = useState('')
-  const [maternalLastname, setMaternalLastname] = useState('')
+  const [fullName, setFullName] = useState('')
+  const [nameParts, setNameParts] = useState({ firstName: '', lastName: '' })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -26,16 +25,65 @@ export default function RegisterPage() {
     error: oauthError,
   } = useMicrosoftOAuth()
 
+  // Parsear el campo de nombres y apellidos para formato peruano
+  // Formato esperado: "Nombres Apellidos" (nombres primero, apellidos después)
+  useEffect(() => {
+    const normalized = fullName.trim().replace(/\s+/g, ' ')
+
+    if (!normalized) {
+      setNameParts({ firstName: '', lastName: '' })
+      return
+    }
+
+    let parsedFirstName = ''
+    let parsedLastName = ''
+
+    if (normalized.includes(',')) {
+      // Formato: "Nombres, Apellidos"
+      const [firstSegment, lastSegment] = normalized.split(',').map((segment) => segment.trim())
+      parsedFirstName = firstSegment || ''
+      parsedLastName = lastSegment || ''
+    } else {
+      // Formato: "Nombres Apellidos" (formato peruano típico)
+      const parts = normalized.split(' ')
+
+      if (parts.length === 1) {
+        // Solo un nombre/apellido - asumimos que es nombre
+        parsedFirstName = parts[0]
+      } else if (parts.length === 2) {
+        // "Nombre Apellido" - el primero es nombre, el segundo es apellido
+        parsedFirstName = parts[0]
+        parsedLastName = parts[1]
+      } else {
+        // 3 o más partes: "Nombres Apellido Paterno Apellido Materno"
+        // En Perú, típicamente los primeros 1-2 son nombres, el resto son apellidos
+        // Asumimos que los primeros 1-2 son nombres, el resto son apellidos
+        const nameCount = parts.length >= 4 ? 2 : 1
+        parsedFirstName = parts.slice(0, nameCount).join(' ')
+        parsedLastName = parts.slice(nameCount).join(' ')
+      }
+    }
+
+    setNameParts({ firstName: parsedFirstName, lastName: parsedLastName })
+  }, [fullName])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
 
-    if (!email || !password || !confirmPassword || !name.trim() || !paternalLastname.trim()) {
+    if (!email || !password || !confirmPassword || !fullName.trim()) {
       const errorMsg = 'Por favor completa todos los campos obligatorios'
       setError(errorMsg)
       toast.error(errorMsg, 3000, 'Error de validación')
+      setIsLoading(false)
+      return
+    }
+
+    if (!nameParts.firstName || !nameParts.lastName) {
+      const errorMsg = 'Ingresa nombres y apellidos (por ejemplo: "Juan Carlos García López")'
+      setError(errorMsg)
+      toast.error(errorMsg, 4000, 'Formato incorrecto')
       setIsLoading(false)
       return
     }
@@ -66,19 +114,24 @@ export default function RegisterPage() {
     }
 
     try {
+      // Separar apellidos en paterno y materno (si hay dos palabras)
+      const lastNameParts = nameParts.lastName.trim().split(' ')
+      const paternalLastname = lastNameParts[0] || ''
+      const maternalLastname = lastNameParts.slice(1).join(' ') || ''
+
       const userData = {
         email,
         password,
-        name: name.trim(),
-        paternal_lastname: paternalLastname.trim(),
-        maternal_lastname: maternalLastname.trim() || '',
+        name: nameParts.firstName.trim(),
+        paternal_lastname: paternalLastname,
+        maternal_lastname: maternalLastname,
       }
 
       toast.info('Creando tu cuenta...', 2000, 'Registro')
       const response = await registerUser(userData)
       
       // El hook useAuth ya maneja la obtención del rol y la redirección
-      const userName = response.user?.name || name.trim()
+      const userName = response.user?.name || nameParts.firstName.trim()
       toast.success(`¡Cuenta creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Error al registrar usuario'
@@ -92,7 +145,8 @@ export default function RegisterPage() {
   const handleMicrosoftRegister = async () => {
     try {
       toast.info('Conectando con Microsoft...', 2000, 'Registro')
-      await handleMicrosoftAuth()
+      // role_id: 1 para registro normal (postulante)
+      await handleMicrosoftAuth(undefined, 1)
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Error al autenticar con Microsoft'
       setError(errorMsg)
@@ -159,34 +213,12 @@ export default function RegisterPage() {
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label}>Nombres</label>
+              <label className={styles.label}>Nombres y Apellidos</label>
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Juan"
-                className={styles.input}
-              />
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label}>Apellido Paterno</label>
-              <input
-                type="text"
-                value={paternalLastname}
-                onChange={(e) => setPaternalLastname(e.target.value)}
-                placeholder="Pérez"
-                className={styles.input}
-              />
-            </div>
-
-            <div className={styles.field}>
-              <label className={styles.label}>Apellido Materno (opcional)</label>
-              <input
-                type="text"
-                value={maternalLastname}
-                onChange={(e) => setMaternalLastname(e.target.value)}
-                placeholder="García"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Ingrese nombres y apellidos"
                 className={styles.input}
               />
             </div>

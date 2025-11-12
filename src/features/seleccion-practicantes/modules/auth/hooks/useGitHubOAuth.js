@@ -1,43 +1,42 @@
 /**
- * Hook personalizado para manejar OAuth con Microsoft
+ * Hook personalizado para manejar OAuth con GitHub
  * Facilita el uso de OAuth en los componentes
  */
 
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginWithMicrosoftPopup } from '../utils/microsoftOAuth';
-import { oauthLogin, getUserRole } from '../services/auth.service';
+import { oauthLogin, getUserRole } from '../services/authService';
 import { setAuthTokens } from '../../../shared/utils/cookieHelper';
 import { redirectByRole } from '../utils/redirectByRole';
 
 /**
- * Hook para manejar OAuth con Microsoft
+ * Hook para manejar OAuth con GitHub
  * @returns {Object} Funciones y estados para OAuth
  */
-export const useMicrosoftOAuth = () => {
+export const useGitHubOAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   /**
-   * Maneja el login/registro con Microsoft
+   * Maneja el login/registro con GitHub
    * @param {Function} onSuccess - Callback opcional cuando el login es exitoso
    * @param {number} roleId - ID del rol a asignar (1 para postulante, 2 para admin)
    */
-  const handleMicrosoftAuth = useCallback(async (onSuccess, roleId = 1) => {
+  const handleGitHubAuth = useCallback(async (onSuccess, roleId = 1) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // 1. Autenticar con Microsoft
-      const microsoftData = await loginWithMicrosoftPopup();
+      // 1. Autenticar con GitHub
+      const githubData = await loginWithGitHub();
 
       // Validar que todos los campos requeridos estén presentes
-      if (!microsoftData.provider || !microsoftData.provider_id || !microsoftData.email) {
+      if (!githubData.provider || !githubData.provider_id || !githubData.email) {
         const missingFields = []
-        if (!microsoftData.provider) missingFields.push('provider')
-        if (!microsoftData.provider_id) missingFields.push('provider_id')
-        if (!microsoftData.email) missingFields.push('email')
+        if (!githubData.provider) missingFields.push('provider')
+        if (!githubData.provider_id) missingFields.push('provider_id')
+        if (!githubData.email) missingFields.push('email')
         throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`)
       }
       
@@ -46,12 +45,12 @@ export const useMicrosoftOAuth = () => {
 
       // 2. Enviar datos al backend con role_id
       const response = await oauthLogin({
-        provider: microsoftData.provider,
-        provider_id: microsoftData.provider_id,
-        email: microsoftData.email,
-        name: microsoftData.name || '',
-        paternal_lastname: microsoftData.paternal_lastname || '',
-        maternal_lastname: microsoftData.maternal_lastname || '',
+        provider: githubData.provider,
+        provider_id: githubData.provider_id,
+        email: githubData.email,
+        name: githubData.name || '',
+        paternal_lastname: githubData.paternal_lastname || '',
+        maternal_lastname: githubData.maternal_lastname || '',
         role_id: roleId,
       });
 
@@ -71,11 +70,11 @@ export const useMicrosoftOAuth = () => {
         localStorage.setItem(
           'rpsoft_user',
           JSON.stringify({
-            email: response.user.email || microsoftData.email,
-            name: response.user.name || microsoftData.name,
+            email: response.user.email || githubData.email,
+            name: response.user.name || githubData.name,
             role: response.user.role || 'practicante',
             loginTime: new Date().toISOString(),
-            provider: 'microsoft',
+            provider: 'github',
           })
         );
       }
@@ -122,11 +121,12 @@ export const useMicrosoftOAuth = () => {
       // 6. Limpiar datos temporales
       localStorage.removeItem('rpsoft_selection_data');
       localStorage.removeItem('rpsoft_current_step');
+      sessionStorage.removeItem('oauth_role_id');
 
       setIsLoading(false);
       return response;
     } catch (err) {
-      const errorMessage = err.message || 'Error al autenticar con Microsoft';
+      const errorMessage = err.message || 'Error al autenticar con GitHub';
       setError(errorMessage);
       setIsLoading(false);
       throw err;
@@ -134,11 +134,38 @@ export const useMicrosoftOAuth = () => {
   }, [navigate]);
 
   return {
-    handleMicrosoftAuth,
+    handleGitHubAuth,
     isLoading,
     error,
     clearError: () => setError(null),
   };
 };
 
+/**
+ * Inicia el flujo de login con GitHub usando OAuth redirect
+ * @returns {Promise<Object>} Datos del usuario autenticado
+ */
+const loginWithGitHub = async () => {
+  return new Promise((resolve, reject) => {
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+    
+    if (!clientId) {
+      reject(new Error('VITE_GITHUB_CLIENT_ID no está configurado en el archivo .env'));
+      return;
+    }
+
+    // Generar un state aleatorio para seguridad
+    const state = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    sessionStorage.setItem('github_oauth_state', state);
+    sessionStorage.setItem('github_oauth_resolve', JSON.stringify({ resolve, reject }));
+
+    // Construir la URL de autorización de GitHub
+    const redirectUri = `${window.location.origin}/auth/github/callback`;
+    const scope = 'user:email';
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`;
+
+    // Redirigir a GitHub
+    window.location.href = authUrl;
+  });
+};
 

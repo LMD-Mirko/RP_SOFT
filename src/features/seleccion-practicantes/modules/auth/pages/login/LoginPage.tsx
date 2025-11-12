@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useToast } from '@shared/components/Toast'
 import styles from './LoginPage.module.css'
-import { useMicrosoftOAuth } from '../hooks/useMicrosoftOAuth'
-import { useAuth } from '../hooks/authHook'
+import { useMicrosoftOAuth } from '../../hooks/useMicrosoftOAuth'
+import { useAuth } from '../../hooks/authHook'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -52,7 +52,6 @@ export default function LoginPage() {
 
       const response = await loginUser(credentials)
       
-      // El hook useAuth ya maneja la obtención del rol y la redirección
       const userName = response.user?.name || response.user?.email || email
       toast.success(`¡Bienvenido, ${userName}!`, 3000, 'Sesión iniciada')
     } catch (err) {
@@ -93,7 +92,8 @@ export default function LoginPage() {
             onClick={async () => {
               try {
                 toast.info('Conectando con Microsoft...', 2000, 'Autenticación')
-                await handleMicrosoftAuth()
+                // role_id: 1 para login (postulante por defecto)
+                await handleMicrosoftAuth(undefined, 1)
               } catch (err) {
                 const errorMsg = err instanceof Error ? err.message : 'Error al autenticar con Microsoft'
                 setError(errorMsg)

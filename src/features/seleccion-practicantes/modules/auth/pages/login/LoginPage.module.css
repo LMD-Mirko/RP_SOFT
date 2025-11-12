@@ -1,0 +1,673 @@
+/* Container con animación de entrada */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #dbeafe, #ffffff, #f3e8ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Background con blobs animados mejorados */
+.background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+  filter: blur(60px);
+  opacity: 0.3;
+  animation: blobFloat 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.blob:nth-child(1) {
+  top: 0;
+  left: 25%;
+  background-color: #bfdbfe;
+  animation-delay: 0s;
+}
+
+.blobDelay1 {
+  top: 0;
+  right: 25%;
+  background-color: #e9d5ff;
+  animation-delay: 2s;
+}
+
+.blobDelay2 {
+  bottom: -2rem;
+  left: 50%;
+  background-color: #fce7f3;
+  animation-delay: 4s;
+}
+
+@keyframes blobFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(60px, -80px) scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: translate(-50px, 60px) scale(0.9) rotate(-5deg);
+  }
+  75% {
+    transform: translate(40px, 40px) scale(1.05) rotate(3deg);
+  }
+}
+
+/* Content con animación de entrada */
+.content {
+  position: relative;
+  width: 100%;
+  max-width: 28rem;
+  animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes slideUpFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card con efectos mejorados */
+.card {
+  background: white;
+  border-radius: 1.25rem;
+  padding: 2.5rem;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  animation: cardPulse 3s ease-in-out infinite;
+}
+
+@keyframes cardPulse {
+  0%, 100% {
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+  50% {
+    box-shadow: 
+      0 25px 30px -5px rgba(59, 130, 246, 0.15),
+      0 15px 15px -5px rgba(59, 130, 246, 0.1),
+      0 0 0 1px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Header con animación */
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+  animation: headerFade 1s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+@keyframes headerFade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Logo mejorado con múltiples efectos */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%);
+  margin-bottom: 1.5rem;
+  box-shadow: 
+    0 15px 25px -5px rgba(0, 0, 0, 0.3),
+    0 8px 10px -5px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: logoBounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s forwards;
+  transform: scale(0) rotate(-180deg);
+  position: relative;
+  overflow: hidden;
+}
+
+.logo::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, #3b82f6, #2563eb, #1d4ed8);
+  opacity: 0;
+  animation: logoGlow 3s ease-in-out infinite;
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.logo::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 70%
+  );
+  animation: logoShine 3s infinite;
+}
+
+@keyframes logoBounce {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15) rotate(15deg);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(0.95) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes logoShine {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes logoGlow {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.1);
+  }
+}
+
+.logoText {
+  color: white;
+  font-weight: 700;
+  font-size: 2rem;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: logoTextPulse 2s ease-in-out infinite;
+}
+
+@keyframes logoTextPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #111827 0%, #374151 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleSlide 0.8s ease-out 0.3s forwards;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@keyframes titleSlide {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subtitle {
+  color: #4b5563;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  animation: subtitleFade 0.8s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+@keyframes subtitleFade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Error Alert con animación */
+.errorAlert {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border-left: 4px solid #ef4444;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  animation: errorShake 0.5s ease-out;
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.errorText {
+  color: #b91c1c;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Microsoft Button mejorado */
+.microsoftButton {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  animation: buttonFade 0.8s ease-out 0.5s forwards;
+  opacity: 0;
+}
+
+@keyframes buttonFade {
+  to {
+    opacity: 1;
+  }
+}
+
+.microsoftButton::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 120, 212, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.microsoftButton:hover:not(:disabled)::before {
+  width: 300px;
+  height: 300px;
+}
+
+.microsoftButton:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #0078d4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 120, 212, 0.15);
+}
+
+.microsoftButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.microsoftButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.microsoftIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s;
+}
+
+.microsoftButton:hover:not(:disabled) .microsoftIcon {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* Divider */
+.divider {
+  position: relative;
+  margin-bottom: 1.5rem;
+  animation: dividerFade 0.8s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+@keyframes dividerFade {
+  to {
+    opacity: 1;
+  }
+}
+
+.dividerLine {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+}
+
+.dividerLine::before {
+  content: '';
+  width: 100%;
+  border-top: 1px solid #d1d5db;
+  animation: dividerExpand 0.8s ease-out 0.6s forwards;
+  transform: scaleX(0);
+  transform-origin: center;
+}
+
+@keyframes dividerExpand {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.dividerText {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  font-size: 0.875rem;
+}
+
+.dividerText span {
+  padding: 0 0.75rem;
+  background-color: white;
+  color: #6b7280;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: formFade 0.8s ease-out 0.7s forwards;
+  opacity: 0;
+}
+
+@keyframes formFade {
+  to {
+    opacity: 1;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  animation: fieldSlide 0.5s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.field:nth-child(1) {
+  animation-delay: 0.8s;
+}
+
+.field:nth-child(2) {
+  animation-delay: 0.9s;
+}
+
+@keyframes fieldSlide {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #000000;
+  transition: color 0.2s;
+}
+
+.field:focus-within .label {
+  color: #3b82f6;
+}
+
+.input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 0.75rem;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  font-size: 0.9375rem;
+}
+
+.input:hover {
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.05);
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 
+    0 0 0 3px rgba(59, 130, 246, 0.1),
+    0 4px 6px -1px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Submit Button */
+.submitButton {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.5rem;
+  animation: submitButtonFade 0.8s ease-out 1s forwards;
+  opacity: 0;
+}
+
+@keyframes submitButtonFade {
+  to {
+    opacity: 1;
+  }
+}
+
+.submitButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.submitButton:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.2),
+    0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Footer */
+.footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  animation: footerFade 0.8s ease-out 1.1s forwards;
+  opacity: 0;
+}
+
+@keyframes footerFade {
+  to {
+    opacity: 1;
+  }
+}
+
+.footerText {
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.link {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #3b82f6;
+  transition: width 0.3s;
+}
+
+.link:hover {
+  color: #2563eb;
+}
+
+.link:hover::after {
+  width: 100%;
+}
+
+.disclaimer {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.75rem;
+  margin-top: 1.5rem;
+  animation: disclaimerFade 0.8s ease-out 1.2s forwards;
+  opacity: 0;
+}
+
+@keyframes disclaimerFade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .card {
+    padding: 2rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .logo {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .logoText {
+    font-size: 1.75rem;
+  }
+}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@shared/components/Toast'
-import styles from './LoginPage.module.css'
-import { handleMicrosoftRedirect } from '../utils/microsoftOAuth'
-import { oauthLogin, getUserRole } from '../services/auth.service'
-import { setAuthTokens } from '../../../shared/utils/cookieHelper'
-import { redirectByRole } from '../utils/redirectByRole'
+import styles from '../login/LoginPage.module.css'
+import { handleMicrosoftRedirect } from '../../utils/microsoftOAuth'
+import { oauthLogin, getUserRole } from '../../services/auth.service'
+import { setAuthTokens } from '../../../../shared/utils/cookieHelper'
+import { redirectByRole } from '../../utils/redirectByRole'
 
 export default function OAuthCallbackPage() {
   const navigate = useNavigate()
@@ -26,26 +26,32 @@ export default function OAuthCallbackPage() {
         }
 
         // Validar que todos los campos requeridos estén presentes
-        if (!microsoftData.provider || !microsoftData.provider_id || !microsoftData.email || !microsoftData.username) {
+        if (!microsoftData.provider || !microsoftData.provider_id || !microsoftData.email) {
           const missingFields = []
           if (!microsoftData.provider) missingFields.push('provider')
           if (!microsoftData.provider_id) missingFields.push('provider_id')
           if (!microsoftData.email) missingFields.push('email')
-          if (!microsoftData.username) missingFields.push('username')
           toast.error(`Faltan campos requeridos: ${missingFields.join(', ')}`, 4000, 'Error de autenticación')
           navigate('/')
           return
         }
 
+        // Obtener role_id de sessionStorage si existe (guardado antes de redirigir a OAuth)
+        // Si no existe, usar 1 por defecto (postulante)
+        const roleId = parseInt(sessionStorage.getItem('oauth_role_id') || '1', 10)
+        
         const response = await oauthLogin({
           provider: microsoftData.provider,
           provider_id: microsoftData.provider_id,
           email: microsoftData.email,
-          username: microsoftData.username,
           name: microsoftData.name || '',
           paternal_lastname: microsoftData.paternal_lastname || '',
           maternal_lastname: microsoftData.maternal_lastname || '',
+          role_id: roleId,
         })
+        
+        // Limpiar el role_id de sessionStorage después de usarlo
+        sessionStorage.removeItem('oauth_role_id')
 
         // Guardar tokens en cookies
         if (response.tokens) {

@@ -2,8 +2,8 @@ import React from 'react'
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useToast } from '@shared/components/Toast'
-import { checkEmail, passwordResetRequest } from '../services/authService'
-import styles from './LoginPage.module.css'
+import { checkEmail, passwordResetRequest } from '../../services/authService'
+import styles from '../login/LoginPage.module.css'
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate()

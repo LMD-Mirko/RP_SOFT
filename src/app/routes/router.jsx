@@ -23,6 +23,9 @@ const ForgotPasswordPage = lazy(() =>
 const ResetPasswordPage = lazy(() =>
   import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.ResetPasswordPage }))
 )
+const RegisterAdminPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.RegisterAdminPage }))
+)
 
 // Lazy loading de módulos - se cargan bajo demanda
 const SeleccionPracticantesIndex = lazy(() =>
@@ -104,6 +107,14 @@ export function Router() {
           element={
             <Suspense fallback={null}>
               <ResetPasswordPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/admin/register"
+          element={
+            <Suspense fallback={null}>
+              <RegisterAdminPage />
             </Suspense>
           }
         />

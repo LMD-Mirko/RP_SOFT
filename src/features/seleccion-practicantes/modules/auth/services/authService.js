@@ -34,6 +34,20 @@ export const register = async (userData) => {
 };
 
 /**
+ * Realiza el registro de administrador
+ * @param {Object} userData - Datos del administrador { email, password, name, paternal_lastname, maternal_lastname }
+ * @returns {Promise} Respuesta del servidor
+ */
+export const registerAdmin = async (userData) => {
+  try {
+    const response = await post('auth/register-admin/', userData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * Realiza el logout del usuario
  * @param {string} refreshToken - Token de refresh para invalidar en el servidor
  * @returns {Promise} Respuesta del servidor
@@ -95,17 +109,17 @@ export const passwordResetConfirm = async (data) => {
  *   provider: 'microsoft' | 'google',
  *   provider_id: string,
  *   email: string,
- *   username: string,
  *   name: string,
  *   paternal_lastname: string,
- *   maternal_lastname: string
+ *   maternal_lastname: string,
+ *   role_id: number
  * }
  * @returns {Promise} Respuesta del servidor con token y datos del usuario
  */
 export const oauthLogin = async (oauthData) => {
   // Validar que todos los campos requeridos estén presentes
-  const requiredFields = ['provider', 'provider_id', 'email', 'username'];
-  const missingFields = requiredFields.filter(field => !oauthData[field]);
+  const requiredFields = ['provider', 'provider_id', 'email', 'role_id'];
+  const missingFields = requiredFields.filter(field => !oauthData[field] && oauthData[field] !== 0);
   
   if (missingFields.length > 0) {
     throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
@@ -143,6 +157,7 @@ export const getUserRole = async () => {
 export default {
   login,
   register,
+  registerAdmin,
   logout,
   checkEmail,
   passwordResetRequest,
