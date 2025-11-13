@@ -1,5 +1,5 @@
 import { CheckSquare, Square } from 'lucide-react'
-import styles from '../pages/TranscripcionesPage.module.css'
+import styles from '../../modules/grabaciones/pages/TranscripcionesPage.module.css'
 import { TranscriptionItem } from './TranscriptionItem'
 
 export function TranscriptionList({ items = [], selected = new Set(), onToggleAll, onToggleOne, onDelete, onRename, onPin, onUnpin, onInfo, onBulkDelete, onBulkPin, onBulkUnpin, selectedPinnedCount = 0, onChangeType, onDownload }) {

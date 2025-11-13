@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react'
-import styles from '../pages/TranscripcionesPage.module.css'
+import styles from '../../modules/grabaciones/pages/TranscripcionesPage.module.css'
 
 export function SearchBar({ value, onChange, placeholder = 'Buscar en las transcripciones...' }) {
   return (

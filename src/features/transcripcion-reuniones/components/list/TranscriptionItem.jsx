@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { CheckSquare, Square, Download, MoreVertical, Pin } from 'lucide-react'
-import styles from '../pages/TranscripcionesPage.module.css'
+import styles from '../../modules/grabaciones/pages/TranscripcionesPage.module.css'
 
 export function TranscriptionItem({ item, selected, onToggle, onDownload, onMore, onDelete, onRename, onPin, onUnpin, onInfo, selectedCount = 0, onBulkDelete, onBulkPin, onBulkUnpin, selectedPinnedCount = 0, onChangeType }) {
   const [menuOpen, setMenuOpen] = useState(false)

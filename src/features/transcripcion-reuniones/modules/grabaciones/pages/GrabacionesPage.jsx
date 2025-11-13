@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
 import styles from './TranscripcionesPage.module.css'
-import { SearchBar } from '../components/SearchBar'
-import { DateFilter } from '../components/DateFilter'
-import { TranscriptionList } from '../components/TranscriptionList'
-import { RenameModal } from '../components/RenameModal'
-import { DeleteModal } from '../components/DeleteModal'
-import { BulkDeleteModal } from '../components/BulkDeleteModal'
-import { InfoModal } from '../components/InfoModal'
-import { DownloadModal } from '../components/DownloadModal'
+import { SearchBar } from '../../../components/filters/SearchBar'
+import { DateFilter } from '../../../components/filters/DateFilter'
+import { TranscriptionList } from '../../../components/list/TranscriptionList'
+import { RenameModal } from '../../../components/modals/RenameModal'
+import { DeleteModal } from '../../../components/modals/DeleteModal'
+import { BulkDeleteModal } from '../../../components/modals/BulkDeleteModal'
+import { InfoModal } from '../../../components/modals/InfoModal'
+import { DownloadModal } from '../../../components/modals/DownloadModal'
 
 const MOCK_ITEMS = [
   { name: 'grabacion_20251013_110003_cdbf0914_mezclada', sizeKB: 201.6, type: 'audio.docx', date: '13 oct' },

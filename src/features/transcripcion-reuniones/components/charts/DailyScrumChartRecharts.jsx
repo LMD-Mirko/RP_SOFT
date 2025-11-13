@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import styles from '../pages/DailyScrumPage.module.css'
+import styles from '../../modules/daily-scrum/pages/DailyScrumPage.module.css'
 import AnimatedAreaChart from './AnimatedAreaChart'
 import { useEffect } from 'react'
 

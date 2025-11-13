@@ -1,6 +1,6 @@
 import styles from './ScrumScrumPage.module.css'
-import { TranscripcionesPage } from './TranscripcionesPage.jsx'
-import { DailyScrumChartRecharts } from '../components/DailyScrumChartRecharts'
+import { TranscripcionesPage } from '../../grabaciones/pages/GrabacionesPage.jsx'
+import { DailyScrumChartRecharts } from '../../../components/charts/DailyScrumChartRecharts'
 import { useState } from 'react'
 
 export function ScrumScrumPage() {

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import styles from '../pages/DailyScrumPage.module.css'
+import styles from '../../modules/daily-scrum/pages/DailyScrumPage.module.css'
 
 function generateSeries(length, min, max) {
   const arr = []

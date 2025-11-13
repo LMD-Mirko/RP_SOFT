@@ -1,6 +1,6 @@
 import styles from './DailyScrumPage.module.css'
 import { useMemo } from 'react'
-import WeeklyTranscriptionsBarChart from '../components/WeeklyTranscriptionsBarChart'
+import WeeklyTranscriptionsBarChart from '../../../components/charts/WeeklyTranscriptionsBarChart'
 
 export function DailyScrumPage() {
   const dailyCount = useMemo(() => Math.floor(6 + Math.random() * 10), [])

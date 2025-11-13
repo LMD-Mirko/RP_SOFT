@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Calendar as CalendarIcon } from 'lucide-react'
-import styles from '../pages/TranscripcionesPage.module.css'
+import styles from '../../modules/grabaciones/pages/TranscripcionesPage.module.css'
 
 export function DateFilter({ value, onChange }) {
   const nativeRef = useRef(null)
