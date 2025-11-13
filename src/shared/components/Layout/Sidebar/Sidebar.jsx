@@ -12,6 +12,7 @@ import {
   Settings,
   ChevronDown,
   ChevronRight,
+  QrCode,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
@@ -71,6 +72,16 @@ const menuItems = [
     ],
   },
   {
+    title: 'HERRAMIENTAS',
+    items: [
+      {
+        icon: QrCode,
+        label: 'Generador QR',
+        path: '/generador-qr',
+      },
+    ],
+  },
+  {
     title: 'CUENTA',
     items: [
       {
@@ -89,6 +100,7 @@ export function Sidebar() {
   const [expandedSections, setExpandedSections] = useState({
     PRINCIPAL: true,
     'GESTIÓN DE MODULOS': true,
+    HERRAMIENTAS: true,
     CUENTA: true,
   })
 
