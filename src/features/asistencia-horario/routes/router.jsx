@@ -8,6 +8,7 @@ import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
+import { Inicio } from '../modules/inicio/pages/nicolayus'
 
 /**
  * Router del Módulo
@@ -61,7 +62,7 @@ export function ModuleRouter() {
         {/* Rutas de Practicante */}
         <Route
           path="practicante/inicio"
-          element={<div><h2>Inicio - Practicante</h2></div>}
+          element={<Inicio />}
         />
         <Route
           path="practicante/mi-asistencia"
