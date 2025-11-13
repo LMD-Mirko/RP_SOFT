@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Users, FileText, Code2, CheckCircle2, Eye, Play, ChevronDown, User } from 'lucide-react'
+import { Users, FileText, Code2, CheckCircle2, Eye, Play, ChevronDown, User, Pencil } from 'lucide-react'
 import { Input } from '../../../components/ui/Input'
 import { Select } from '../../../components/ui/Select'
 import { Button } from '../../../components/ui/Button'
@@ -123,71 +123,83 @@ export function SelectionPanel() {
         ) : applicants.length === 0 ? (
           <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center text-gray-600 shadow-sm">No se encontraron postulantes</div>
         ) : (
-          applicants.map((a) => {
-            const e = estadoToBadge(a.estado)
-            const et = etapaToBadge(a.etapa)
-            return (
-              <div key={a.id} className="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-200 overflow-hidden">
-                <div className="grid grid-cols-1 sm:grid-cols-6 items-center gap-3 sm:gap-0 sm:divide-x sm:divide-gray-200">
-                  {/* 1) Identidad (Col 1) */}
-                  <div className="flex items-center gap-3 min-w-0 sm:px-4">
-                    <IconCircle color="blue">
-                      <User size={18} />
-                    </IconCircle>
-                    <div className="min-w-0">
-                      <div className="font-semibold text-gray-800 text-sm md:text-base truncate">{a.nombre}</div>
-                      <div className="text-gray-500 text-sm truncate break-all">{a.correo}</div>
-                    </div>
-                  </div>
-
-                  {/* 2) Estado (Col 2) */}
-                  <div className="flex items中心 sm:justify-center sm:px-4">
-                    <Badge variant={e.variant}>
-                      {e.label}
-                    </Badge>
-                  </div>
-
-                  {/* 3) Etapa (Col 3) */}
-                  <div className="flex items-center sm:justify-center sm:px-4">
-                    <Badge variant={et.variant}>
-                      {et.label}
-                    </Badge>
-                  </div>
-
-                  {/* 4) Ciclo (Col 4) */}
-                  <div className="flex items-center sm:justify-center text-sm text-gray-500 font-medium sm:px-4">
-                    <span>Ciclo: {a.ciclo}</span>
-                  </div>
-
-                  {/* 5) Fecha (Col 5) */}
-                  <div className="flex items-center sm:justify-center gap-2 sm:px-4">
-                    <span className="text-sm text-gray-500 font-medium">{a.fechaPostulacion?.split(' ')[0]}</span>
-                  </div>
-
-                  {/* 6) Acciones (Col 6) */}
-                  <div className="flex items-center justify-center gap-2 sm:px-4">
-                    <Button
-                      variant="light"
-                      className="h-9 w-9 p-0 rounded-full flex items-center justify-center"
-                      onClick={() => openDetails(a.id)}
-                      aria-label="Ver detalles"
-                    >
-                      <Eye size={18} />
-                    </Button>
-                    <Button
-                      variant="success"
-                      className="h-9 px-4 rounded-full text-sm font-medium flex items-center gap-2 min-w-[110px] justify-center"
-                      onClick={() => openStartTest(a.id)}
-                      aria-label="Iniciar prueba"
-                    >
-                      <Play size={18} />
-                      <span>INICIAR</span>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )
-          })
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div className="w-full overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr className="text-left text-gray-600">
+                    <th className="px-6 py-4 font-semibold">Nombre</th>
+                    <th className="px-6 py-4 font-semibold">Correo</th>
+                    <th className="px-6 py-4 font-semibold">Etapa</th>
+                    <th className="px-6 py-4 font-semibold">Estado</th>
+                    <th className="px-6 py-4 font-semibold">Fecha</th>
+                    <th className="px-6 py-4 font-semibold text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {applicants.map((a) => {
+                    const e = estadoToBadge(a.estado)
+                    const et = etapaToBadge(a.etapa)
+                    return (
+                      <tr key={a.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <IconCircle color="blue">
+                              <User size={18} />
+                            </IconCircle>
+                            <div className="min-w-0">
+                              <div className="font-medium text-gray-800 truncate">{a.nombre}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">
+                          <div className="truncate break-all">{a.correo}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge variant={et.variant}>{et.label}</Badge>
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge variant={e.variant}>{e.label}</Badge>
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">
+                          {a.fechaPostulacion?.split(' ')[0]}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-center gap-2">
+                            <Button
+                              variant="light"
+                              className="h-9 w-9 p-0 rounded-full flex items-center justify-center"
+                              onClick={() => openDetails(a.id)}
+                              aria-label="Vista previa"
+                            >
+                              <Eye size={18} />
+                            </Button>
+                            <Button
+                              variant="light"
+                              className="h-9 w-9 p-0 rounded-full flex items-center justify-center"
+                              onClick={() => openDetails(a.id)}
+                              aria-label="Editar"
+                            >
+                              <Pencil size={18} />
+                            </Button>
+                            <Button
+                              variant="success"
+                              className="h-9 px-4 rounded-full text-sm font-medium flex items-center gap-2 min-w-[110px] justify-center"
+                              onClick={() => openStartTest(a.id)}
+                              aria-label="Iniciar"
+                            >
+                              <Play size={18} />
+                              <span>INICIAR</span>
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
       </div>
 
