@@ -1,6 +1,6 @@
 import React from "react";
 import LeftPanel from "../components/LeftPanel";
-import Chat from "@shared/components/ChatPanel";
+import { ChatPanel as Chat } from "@shared/components/ChatPanel";
 import Sidebar from "../components/Sidebar";
 
 export default function Main() {

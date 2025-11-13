@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { Sidebar } from '@shared/components/Layout/Sidebar'
 import { Header } from '@shared/components/Layout/Header'
-import { ChatPanel } from '@shared/components/ChatPanel/ChatPanel'
+import { ChatPanel } from '@shared/components/ChatPanel'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
 
 export function MainLayout() {

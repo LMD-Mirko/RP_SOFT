@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
 import { Plus, Mic, Send, FileText, FileSpreadsheet, QrCode } from 'lucide-react'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
-import { ChatSidebar } from './ChatSidebar'
-import { QRGeneratorModal } from './QRGeneratorModal'
+import { ChatSidebar } from '../ChatSidebar/ChatSidebar'
+import { QRGeneratorModal } from '../QRGeneratorModal/QRGeneratorModal'
 import styles from './ChatPanel.module.css'
 
 export function ChatPanel() {
