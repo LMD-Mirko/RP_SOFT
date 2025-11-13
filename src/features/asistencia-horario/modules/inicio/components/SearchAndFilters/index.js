@@ -1,1 +1,0 @@
-export { SearchAndFilters } from './SearchAndFilters.jsx'

@@ -1,1 +1,0 @@
-export { PracticanteCard } from './PracticanteCard.jsx'
