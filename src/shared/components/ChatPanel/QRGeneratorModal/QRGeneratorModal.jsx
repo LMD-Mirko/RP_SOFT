@@ -15,6 +15,11 @@ export function QRGeneratorModal({ isOpen, onClose }) {
     }
   }
 
+  const handleClear = () => {
+    setUrl('')
+    setQrGenerated(false)
+  }
+
   const handleClose = () => {
     setUrl('')
     setQrGenerated(false)
@@ -74,13 +79,21 @@ export function QRGeneratorModal({ isOpen, onClose }) {
         />
 
         <div className={styles.content}>
-          <button 
-            className={styles.generateButton}
-            onClick={handleGenerate}
-            disabled={!url.trim()}
-          >
-            GENERAR
-          </button>
+          <div className={styles.buttonsContainer}>
+            <button 
+              className={styles.generateButton}
+              onClick={handleGenerate}
+              disabled={!url.trim()}
+            >
+              GENERAR
+            </button>
+            <button 
+              className={styles.clearButton}
+              onClick={handleClear}
+            >
+              Limpiar
+            </button>
+          </div>
 
           <div className={styles.qrContainer}>
             {qrGenerated ? (

@@ -97,6 +97,12 @@
   align-items: flex-start;
 }
 
+.buttonsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .generateButton {
   padding: 1rem 2rem;
   background-color: #202124;
@@ -118,6 +124,23 @@
   background-color: #dadce0;
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+.clearButton {
+  padding: 1rem 2rem;
+  background-color: #f1f3f4;
+  color: #202124;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.clearButton:hover {
+  background-color: #e8eaed;
 }
 
 .qrContainer {
