@@ -8,6 +8,7 @@ import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
+import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
 
 /**
  * Router del Módulo
@@ -41,7 +42,7 @@ export function ModuleRouter() {
         />
         <Route
           path="gestion-horarios"
-          element={<div><h2>Gestión de Horarios</h2></div>}
+          element={<GestionHorariosDashboard />}
         />
         
         {/* Rutas de Módulos */}

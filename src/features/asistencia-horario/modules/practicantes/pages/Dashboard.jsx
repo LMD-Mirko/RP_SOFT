@@ -131,16 +131,16 @@ export function Dashboard() {
 
   const filteredPracticantes = mockPracticantes.filter(practicante => {
     const matchesSearch = practicante.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         practicante.email.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesServer = selectedServer === 'todos' || 
-                         practicante.servidor === selectedServer
-    
-    const matchesStatus = selectedStatus === 'todos' || 
-                         practicante.estado === selectedStatus
-    
-    const matchesCohort = selectedCohort === 'todas' || 
-                         practicante.cohorte.includes(selectedCohort)
+      practicante.email.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesServer = selectedServer === 'todos' ||
+      practicante.servidor === selectedServer
+
+    const matchesStatus = selectedStatus === 'todos' ||
+      practicante.estado === selectedStatus
+
+    const matchesCohort = selectedCohort === 'todas' ||
+      practicante.cohorte.includes(selectedCohort)
 
     return matchesSearch && matchesServer && matchesStatus && matchesCohort
   })
@@ -165,7 +165,7 @@ export function Dashboard() {
           <h1>Directorio de Practicantes</h1>
           <p>Gestiona y monitorea a todos los practicantes del programa</p>
         </div>
-        
+
         <div className={styles.actions}>
           <button className={styles.exportButton}>
             <Download size={16} />
@@ -183,7 +183,7 @@ export function Dashboard() {
       </div>
 
       <StatsCards />
-      
+
       <SearchAndFilters
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
@@ -202,7 +202,7 @@ export function Dashboard() {
       </div>
 
       <div className={styles.pagination}>
-        <button 
+        <button
           className={styles.paginationButton}
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
@@ -212,7 +212,7 @@ export function Dashboard() {
         <span className={styles.paginationInfo}>
           Página {currentPage} de {totalPages}
         </span>
-        <button 
+        <button
           className={styles.paginationButton}
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
