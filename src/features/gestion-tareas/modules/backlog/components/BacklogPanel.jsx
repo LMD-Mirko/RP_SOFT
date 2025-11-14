@@ -36,9 +36,9 @@ export function BacklogPanel() {
   const [sortBy, setSortBy] = useState('Por Prioridad')
 
   return (
-    <div className="pl-4 sm:pl-6 lg:pl-8 pr-0 py-6">
+    <div className="pl-4 sm:pl-6 lg:pl-8 pr-0 pt-8 pb-12">
       <div className="ml-12">
-        <div className="mb-6 flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4">
+        <div className="mb-10 flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">Backlog del Producto</h1>
             <p className="text-gray-600">Gestiona y prioriza las historias de usuario del proyecto</p>
@@ -102,18 +102,18 @@ export function BacklogPanel() {
           </div>
         </div>
 
-        <div className="space-y-[15px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {loading ? (
-            <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center text-gray-600 shadow-sm">Cargando...</div>
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center text-gray-600 shadow-sm col-span-full">Cargando...</div>
           ) : stories.length === 0 ? (
-            <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center text-gray-600 shadow-sm">No hay historias</div>
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center text-gray-600 shadow-sm col-span-full">No hay historias</div>
           ) : (
             stories.map((st) => {
               const pb = priorityBadge(st.prioridad)
               const sb = stateBadge(st.estado)
               return (
-                <div key={st.id} className="rounded-2xl border border-gray-200 bg-white px-6 py-6 shadow-sm hover:shadow-md transition">
-                  <div className="flex flex-col gap-3">
+                <div key={st.id} className="rounded-2xl border border-gray-200 bg-white px-6 py-6 shadow-sm hover:shadow-md transition h-full flex flex-col">
+                  <div className="flex flex-col gap-3 flex-1">
                     <div className="flex items-start justify-between">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-xs font-semibold text-gray-500 mr-2">{st.id}</span>

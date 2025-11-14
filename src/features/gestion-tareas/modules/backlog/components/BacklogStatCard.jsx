@@ -11,14 +11,14 @@ export function BacklogStatCard({ title, value, icon: Icon, color = 'gray', clas
     <div className={`rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition ${className}`}>
       <div className="min-h-[110px] flex flex-col">
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-500">{title}</div>
+          <div className="text-base md:text-lg font-semibold text-gray-600">{title}</div>
           {Icon ? (
             <span className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${c.bg}`}>
               <Icon size={22} />
             </span>
           ) : null}
         </div>
-        <div className={`mt-2 text-4xl leading-tight font-extrabold text-center ${c.text}`}>{value}</div>
+        <div className={`mt-3 text-4xl md:text-4xl leading-tight font-extrabold text-center ${c.text}`}>{value}</div>
       </div>
     </div>
   )

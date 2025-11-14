@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Users, FileText, Code2, CheckCircle2, Eye, Play, ChevronDown, User, Pencil } from 'lucide-react'
+import { Users, FileText, Code2, CheckCircle2, Eye, Play, Trash2, ChevronDown, User } from 'lucide-react'
 import { Input } from '../../../components/ui/Input'
 import { Select } from '../../../components/ui/Select'
 import { Button } from '../../../components/ui/Button'
@@ -48,9 +48,9 @@ export function SelectionPanel() {
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-6">
+    <div className="px-4 sm:px-6 lg:px-8 pt-8 pb-12">
       <div className="w-full">
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+      <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Panel de Selección</h1>
           <p className="text-sm text-gray-500">Gestiona el Proceso completo de Selección de Practicantes Senati</p>
@@ -118,6 +118,15 @@ export function SelectionPanel() {
       <div className="h-4" />
 
       <div className="space-y-3">
+        <div className="flex justify-end mb-1">
+          <Button
+            variant="dark"
+            className="h-9 px-5 rounded-full text-sm font-medium flex items-center justify-center"
+            type="button"
+          >
+            Agregar Seleccionado
+          </Button>
+        </div>
         {loading ? (
           <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center text-gray-600 shadow-sm">Cargando...</div>
         ) : applicants.length === 0 ? (
@@ -166,31 +175,30 @@ export function SelectionPanel() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-center gap-2">
-                            <Button
-                              variant="light"
-                              className="h-9 w-9 p-0 rounded-full flex items-center justify-center"
+                            <button
+                              type="button"
+                              className="h-9 w-9 rounded-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
                               onClick={() => openDetails(a.id)}
                               aria-label="Vista previa"
                             >
                               <Eye size={18} />
-                            </Button>
-                            <Button
-                              variant="light"
-                              className="h-9 w-9 p-0 rounded-full flex items-center justify-center"
-                              onClick={() => openDetails(a.id)}
-                              aria-label="Editar"
+                            </button>
+                            <button
+                              type="button"
+                              className="h-9 w-9 rounded-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                              onClick={() => {/* TODO: implementar eliminación de postulante */}}
+                              aria-label="Eliminar postulante"
                             >
-                              <Pencil size={18} />
-                            </Button>
-                            <Button
-                              variant="success"
-                              className="h-9 px-4 rounded-full text-sm font-medium flex items-center gap-2 min-w-[110px] justify-center"
+                              <Trash2 size={18} />
+                            </button>
+                            <button
+                              type="button"
+                              className="h-9 w-9 rounded-full flex items-center justify-center bg-emerald-500 text-white hover:bg-emerald-600"
                               onClick={() => openStartTest(a.id)}
-                              aria-label="Iniciar"
+                              aria-label="Iniciar prueba técnica"
                             >
                               <Play size={18} />
-                              <span>INICIAR</span>
-                            </Button>
+                            </button>
                           </div>
                         </td>
                       </tr>
