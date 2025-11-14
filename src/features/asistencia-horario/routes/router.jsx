@@ -13,6 +13,7 @@ import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages
 import { Reports } from '../modules/reportes/pages/Reports'
 import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
 import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
+import { Inicio } from '../modules/inicio/pages/nicolayus'
 
 /**
  * Router del Módulo
@@ -66,7 +67,7 @@ export function ModuleRouter() {
         {/* Rutas de Practicante */}
         <Route
           path="practicante/inicio"
-          element={<div><h2>Inicio - Practicante</h2></div>}
+          element={<Inicio />}
         />
         <Route
           path="practicante/mi-asistencia"
