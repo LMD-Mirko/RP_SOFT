@@ -1,25 +1,57 @@
-import { Star, TrendingUp, Tags, Copy } from "lucide-react"
+import { Star, TrendingUp, Tags, Copy, Ellipsis, Eye, Pencil, Trash2 } from "lucide-react"
 import { Button } from "./ui/Button"
 import { Badge } from "./ui/Badge"
+import { TemplateModal } from "./TemplateModal"
+import { ConfirmModal } from "./ConfirmModal"
 import styles from "../styles/TemplateCard.module.css"
 
-export function TemplateCard({ tpl }) {
+import { useState } from "react"
+
+export function TemplateCard({ tpl, onFavorite, onDuplicate, onDelete, onUpdate }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [showView, setShowView] = useState(false)
+  const [showEdit, setShowEdit] = useState(false)
+  const [showDelete, setShowDelete] = useState(false)
+
   return (
+    <>
     <div className={styles.card}>
       <div className={styles.top}>
         <div className={styles.code}>{tpl.code}</div>
-        <button className={styles.optionsButton}>
-          <span className={styles.srOnly}>Opciones</span>
-          <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" width={20} height={20}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-          </svg>
-        </button>
-      </div>
-
-      <div className={styles.stars}>
-        {Array.from({ length: tpl.stars || 0 }).map((_, i) => (
-          <Star key={i} size={16} fill="currentColor" />
-        ))}
+        <div className={styles.topActions}>
+          <button
+            className={`${styles.favoriteButton} ${tpl.favorito ? styles.favoriteActive : ''}`}
+            title={tpl.favorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+            onClick={onFavorite}
+          >
+            <Star size={18} className={styles.starIcon} />
+          </button>
+          <button
+            className={styles.optionsButton}
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+          >
+            <span className={styles.srOnly}>Opciones</span>
+            <Ellipsis size={18} />
+          </button>
+          {menuOpen && (
+            <div className={styles.menu} role="menu">
+              <button className={styles.menuItem} onClick={() => { setShowView(true); setMenuOpen(false) }}>
+                <Eye size={16} /> Ver Detalles
+              </button>
+              <button className={styles.menuItem} onClick={() => { setShowEdit(true); setMenuOpen(false) }}>
+                <Pencil size={16} /> Editar
+              </button>
+              <button className={styles.menuItem} onClick={() => { onDuplicate(); setMenuOpen(false) }}>
+                <Copy size={16} /> Duplicar
+              </button>
+              <button className={styles.menuItemDanger} onClick={() => { setShowDelete(true); setMenuOpen(false) }}>
+                <Trash2 size={16} /> Eliminar
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <h3 className={styles.title}>{tpl.title}</h3>
@@ -34,14 +66,35 @@ export function TemplateCard({ tpl }) {
           <span className={styles.metric} title="Clones">
             <TrendingUp size={16} /> {tpl.clones}
           </span>
-          <span className={styles.metric} title="Puntos">
-            <Tags size={16} /> {tpl.puntos}pts
+          <span className={styles.metric} title="Proyecto">
+            <Tags size={16} /> {tpl.proyecto}
           </span>
         </div>
-        <Button variant="light" className={styles.cloneButton}>
+        <Button variant="light" className={styles.cloneButton} onClick={onDuplicate}>
           <Copy size={16} className={styles.iconLeft} /> Clonar
         </Button>
       </div>
     </div>
+      <TemplateModal
+        isOpen={showView}
+        mode="view"
+        tpl={tpl}
+        onClose={() => setShowView(false)}
+      />
+      <TemplateModal
+        isOpen={showEdit}
+        mode="edit"
+        tpl={tpl}
+        onClose={() => setShowEdit(false)}
+        onSave={(updates) => { onUpdate(updates); setShowEdit(false) }}
+      />
+      <ConfirmModal
+        isOpen={showDelete}
+        title="Eliminar plantilla"
+        message="¿Estás seguro de eliminar esta plantilla? Esta acción no se puede deshacer."
+        onCancel={() => setShowDelete(false)}
+        onConfirm={() => { onDelete(); setShowDelete(false) }}
+      />
+    </>
   )
 }

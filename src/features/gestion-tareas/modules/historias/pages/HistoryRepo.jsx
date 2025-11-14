@@ -1,4 +1,4 @@
-import { Upload, Plus, FolderOpen, Star, TrendingUp, Tags, Search, Filter } from "lucide-react"
+import { Upload, FolderOpen, Star, TrendingUp, Tags, Search, Filter } from "lucide-react"
 import { useState } from "react"
 import { useHistoryRepo } from "../../../hooks/useHistoryRepo"
 import { Card } from "../components/ui/Card"
@@ -6,18 +6,20 @@ import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
 import { Select } from "../components/ui/Select"
 import { TemplateCard } from "../components/TemplateCard"
+import { ImportModal } from "../components/ImportModal"
 import styles from "../styles/HistoryRepo.module.css"
 
 export function HistoryRepo() {
   const {
     loading, stats, filters, templates,
     query, setQuery, categoria, setCategoria,
-    etiqueta, setEtiqueta, puntos, setPuntos,
-    orden, setOrden, tab, setTab
+    etiqueta, setEtiqueta, proyecto, setProyecto,
+    orden, setOrden,
+    toggleFavorito, duplicateTemplate, deleteTemplate, updateTemplate,
   } = useHistoryRepo()
 
-  const tabs = ['Todas', 'Más populares', 'Recientes', 'Favoritas']
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [importOpen, setImportOpen] = useState(false)
 
   return (
     <div className={styles.page}>
@@ -32,11 +34,8 @@ export function HistoryRepo() {
               </p>
             </div>
             <div className={styles.actions}>
-              <Button variant="light">
+              <Button variant="light" onClick={() => setImportOpen(true)}>
                 <Upload size={18} className={styles.iconLeft} /> Importar Plantillas
-              </Button>
-              <Button variant="dark">
-                <Plus size={18} className={styles.iconLeft} /> Nueva Plantilla
               </Button>
             </div>
           </div>
@@ -78,7 +77,7 @@ export function HistoryRepo() {
                   { value: orden, setter: setOrden, options: filters.orden },
                   { value: categoria, setter: setCategoria, options: filters.categorias },
                   { value: etiqueta, setter: setEtiqueta, options: filters.etiquetas },
-                  { value: puntos, setter: setPuntos, options: filters.puntos },
+                  { value: proyecto, setter: setProyecto, options: filters.proyectos },
                 ].map((f, i) => (
                   <div key={i} className={styles.selectWrapper}>
                     <Select
@@ -103,9 +102,19 @@ export function HistoryRepo() {
             ) : templates.length === 0 ? (
               <div className={styles.placeholderCard}>No se encontraron plantillas</div>
             ) : (
-              templates.map((tpl) => <TemplateCard key={tpl.code} tpl={tpl} />)
+              templates.map((tpl) => (
+                <TemplateCard
+                  key={tpl.code}
+                  tpl={tpl}
+                  onFavorite={() => toggleFavorito(tpl.code)}
+                  onDuplicate={() => duplicateTemplate(tpl.code)}
+                  onDelete={() => deleteTemplate(tpl.code)}
+                  onUpdate={(updates) => updateTemplate(tpl.code, updates)}
+                />
+              ))
             )}
           </div>
+          <ImportModal isOpen={importOpen} onClose={() => setImportOpen(false)} onImport={() => {}} />
         </div>
       </div>
     </div>
