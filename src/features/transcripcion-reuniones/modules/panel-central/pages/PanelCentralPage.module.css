@@ -5,17 +5,6 @@
   padding: 24px;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.titleGroup {
-  display: flex;
-  flex-direction: column;
-}
-
 .title {
   font-size: 28px;
   font-weight: 800;
@@ -25,87 +14,13 @@
   color: #6b7280;
 }
 
-.datePicker {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+ .headerSimple { display: flex; flex-direction: column; gap: 4px; }
 
-.dateInput {
-  padding: 8px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.cardHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #111827;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.metric {
-  font-size: 28px;
-  font-weight: 800;
-}
-
-.chipRow {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.chip {
-  border-radius: 16px;
-  font-size: 12px;
-  padding: 4px 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.chipGreen { color: #10b981; }
-.chipAmber { color: #f59e0b; }
-.chipRed { color: #ef4444; }
-
-.muted { color: #6b7280; font-size: 12px; }
-
-.progress {
-  margin-top: 8px;
-  height: 8px;
-  background: #f3f4f6;
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  width: 0%;
-  background: #10b981;
-}
-
-.filters {
-  display: flex;
-  gap: 8px;
-}
-
-.filterChip {
-  border-radius: 16px;
-  font-size: 12px;
-  padding: 6px 10px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-}
+ .libraryWrapper { margin-top: 8px; }
+ .libraryHeader { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+ .searchInput { max-width: 420px; }
+ .sectionHeader { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+ .sectionTitle { font-weight: 700; }
+ .sectionDate { color: #6b7280; font-size: 12px; }
+ .sectionSummary { display: flex; gap: 16px; color: #6b7280; font-size: 12px; }
+ .listItem { display: flex; justify-content: space-between; align-items: center; width: 100%; }
