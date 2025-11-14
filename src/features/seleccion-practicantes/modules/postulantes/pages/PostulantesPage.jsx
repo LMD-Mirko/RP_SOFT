@@ -1,173 +1,180 @@
-import { useState } from 'react'
-import { Search, Plus, Eye, Edit, Trash2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { Search, Eye, CheckCircle, XCircle } from 'lucide-react'
+import { Pagination } from 'antd'
 import { Table } from '@shared/components/UI/Table'
-import { Input } from '@shared/components/Input'
-import { Button } from '@shared/components/Button'
-import { PostulanteModal } from '../components/PostulanteModal'
 import { PostulanteDetailModal } from '../components/PostulanteDetailModal'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
-import { useToast } from '@shared/components/Toast'
+import { usePostulantes } from '../hooks/usePostulantes'
 import styles from './PostulantesPage.module.css'
 
-// Datos mock para demostración
-const mockPostulantes = [
-  {
-    id: 1,
-    nombre: 'Juan Pérez',
-    correo: 'juan.perez@senati.pe',
-    dni: '12345678',
-    telefono: '+51 987 654 321',
-    direccion: 'Av. Principal 123, Lima',
-    fechaNacimiento: '1995-05-15',
-    etapa: 'Prueba Técnica',
-    estado: 'En Progreso',
-    fecha: '2025-01-15',
-  },
-  {
-    id: 2,
-    nombre: 'María García',
-    correo: 'maria.garcia@senati.pe',
-    dni: '87654321',
-    telefono: '+51 987 654 322',
-    direccion: 'Jr. Los Olivos 456, Lima',
-    fechaNacimiento: '1998-08-20',
-    etapa: 'Formulario',
-    estado: 'Completado',
-    fecha: '2025-01-15',
-  },
-  {
-    id: 3,
-    nombre: 'Carlos López',
-    correo: 'carlos.lopez@senati.pe',
-    dni: '11223344',
-    telefono: '+51 987 654 323',
-    direccion: 'Calle Las Flores 789, Arequipa',
-    fechaNacimiento: '1997-03-10',
-    etapa: 'Entrevista',
-    estado: 'Pendiente',
-    fecha: '2025-01-15',
-  },
-  {
-    id: 4,
-    nombre: 'Ana Ramírez',
-    correo: 'ana.ramirez@senati.pe',
-    dni: '55667788',
-    telefono: '+51 987 654 324',
-    direccion: 'Av. Libertad 321, Trujillo',
-    fechaNacimiento: '1996-11-25',
-    etapa: 'Prueba Técnica',
-    estado: 'En Progreso',
-    fecha: '2025-01-14',
-  },
-  {
-    id: 5,
-    nombre: 'Pedro Sánchez',
-    correo: 'pedro.sanchez@senati.pe',
-    dni: '99887766',
-    telefono: '+51 987 654 325',
-    direccion: 'Mz. B Lote 15, Villa El Salvador',
-    fechaNacimiento: '1999-02-14',
-    etapa: 'Formulario',
-    estado: 'Completado',
-    fecha: '2025-01-13',
-  },
-]
+/**
+ * Mapea los datos de la API al formato esperado por los componentes
+ */
+const mapPostulanteFromAPI = (apiData) => {
+  const personalData = apiData.personal_data || {}
+  
+  // Mapear estado basado en accepted y process_status
+  let estado = 'Pendiente'
+  if (apiData.accepted === true) {
+    estado = 'Aceptado'
+  } else if (apiData.accepted === false && apiData.process_status === 'rejected') {
+    estado = 'Rechazado'
+  }
+
+  return {
+    id: apiData.id,
+    user_id: apiData.user_id,
+    job_posting_id: apiData.job_posting_id,
+    nombre: apiData.user_full_name || 
+            `${apiData.user_name || ''} ${apiData.user_paternal_lastname || ''} ${apiData.user_maternal_lastname || ''}`.trim() || 
+            'Sin nombre',
+    correo: apiData.user_email || '',
+    username: apiData.user_username || '',
+    dni: apiData.user_document_number || personalData.document_number || '',
+    documentType: apiData.user_document_type_name || '',
+    telefono: apiData.user_phone || personalData.phone || '',
+    direccion: personalData.address || '',
+    fechaNacimiento: personalData.birth_date || '',
+    sex: apiData.user_sex || personalData.sex || '',
+    photoUrl: apiData.user_photo_url || '',
+    etapa: apiData.current_stage || apiData.process_status || 'Postulación',
+    processStatus: apiData.process_status || '',
+    estado: estado,
+    accepted: apiData.accepted,
+    fecha: apiData.registration_date || apiData.created_at || new Date().toISOString(),
+    lastUpdate: apiData.last_update_date || apiData.updated_at || '',
+    // Ubicación
+    country: apiData.user_country_name || '',
+    region: apiData.user_region_name || '',
+    province: apiData.user_province_name || '',
+    district: apiData.user_district_name || personalData.district || '',
+    // Datos personales adicionales
+    specialty: personalData.specialty || null,
+    career: personalData.career || '',
+    semester: personalData.semester || '',
+    experienceLevel: personalData.experience_level || '',
+    // Estado de cuenta
+    isActive: apiData.user_is_active,
+    accountStatus: apiData.user_account_status || '',
+    isEmailVerified: apiData.user_is_email_verified || false,
+    // Datos originales de la API
+    _apiData: apiData,
+  }
+}
 
 export function PostulantesPage() {
-  const [postulantes, setPostulantes] = useState(mockPostulantes)
+  const [searchParams] = useSearchParams()
+  const convocatoriaId = searchParams.get('convocatoria')
+  
+  const filters = {}
+  if (convocatoriaId) {
+    filters.job_posting_id = parseInt(convocatoriaId)
+  }
+
+  const { postulantes: apiPostulantes, loading, pagination, aceptarPostulante, rechazarPostulante, loadPostulantes } = usePostulantes(filters)
   const [searchTerm, setSearchTerm] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [pageSize, setPageSize] = useState(20)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
-  const [selectedPostulante, setSelectedPostulante] = useState(null)
   const [postulanteToView, setPostulanteToView] = useState(null)
-  const [postulanteToDelete, setPostulanteToDelete] = useState(null)
-  const toast = useToast()
+  const [postulanteToAction, setPostulanteToAction] = useState(null)
+  const [actionType, setActionType] = useState(null) // 'aceptar' | 'rechazar'
+  const [searchDebounce, setSearchDebounce] = useState(null)
 
-  const filteredPostulantes = postulantes.filter(
-    (postulante) =>
-      postulante.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      postulante.correo.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Mapear postulantes de la API
+  const postulantes = apiPostulantes.map(mapPostulanteFromAPI)
 
-  const handleSave = (formData) => {
-    if (formData.id) {
-      // Editar postulante existente
-      setPostulantes((prev) =>
-        prev.map((p) =>
-          p.id === formData.id
-            ? {
-                ...p,
-                nombre: formData.nombre,
-                correo: formData.correo,
-                dni: formData.dni || p.dni || '',
-                telefono: formData.telefono || p.telefono || '',
-                direccion: formData.direccion || p.direccion || '',
-                fechaNacimiento: formData.fechaNacimiento || p.fechaNacimiento || '',
-                etapa: formData.etapa,
-                estado: formData.estado,
-                fecha: formData.fecha,
-              }
-            : p
-        )
-      )
-      toast.success('Postulante actualizado correctamente')
-    } else {
-      // Crear nuevo postulante
-      const newPostulante = {
-        id: Date.now(),
-        nombre: formData.nombre,
-        correo: formData.correo,
-        dni: formData.dni || '',
-        telefono: formData.telefono || '',
-        direccion: formData.direccion || '',
-        fechaNacimiento: formData.fechaNacimiento || '',
-        etapa: formData.etapa,
-        estado: formData.estado,
-        fecha: formData.fecha || new Date().toISOString().split('T')[0],
-      }
-      setPostulantes((prev) => [newPostulante, ...prev])
-      toast.success('Postulante creado correctamente')
+  const loadPostulantesWithFilters = (page = 1, page_size = pageSize) => {
+    const params = { page, page_size, ...filters }
+    if (searchTerm.trim()) {
+      params.search = searchTerm.trim()
     }
-    setSelectedPostulante(null)
+    loadPostulantes(page, params)
   }
 
-  const handleEdit = (postulante) => {
-    setSelectedPostulante(postulante)
-    setIsModalOpen(true)
-  }
+  useEffect(() => {
+    loadPostulantesWithFilters(1, pageSize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [convocatoriaId])
 
-  const handleDelete = (postulante) => {
-    setPostulanteToDelete(postulante)
-    setIsConfirmModalOpen(true)
-  }
-
-  const confirmDelete = () => {
-    if (postulanteToDelete) {
-      setPostulantes((prev) => prev.filter((p) => p.id !== postulanteToDelete.id))
-      toast.success('Postulante eliminado correctamente')
-      setPostulanteToDelete(null)
+  useEffect(() => {
+    if (pagination.page_size && pagination.page_size !== pageSize) {
+      setPageSize(pagination.page_size)
     }
-    setIsConfirmModalOpen(false)
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination.page_size])
+
+  useEffect(() => {
+    if (searchDebounce) clearTimeout(searchDebounce)
+    const timeout = setTimeout(() => {
+      loadPostulantesWithFilters(1, pageSize)
+    }, searchTerm ? 500 : 0)
+    setSearchDebounce(timeout)
+    return () => { if (timeout) clearTimeout(timeout) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm])
+
+  useEffect(() => {
+    loadPostulantesWithFilters(1, pageSize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageSize])
 
   const handleViewDetail = (postulante) => {
     setPostulanteToView(postulante)
     setIsDetailModalOpen(true)
   }
 
+  const handleAceptar = (postulante) => {
+    setPostulanteToAction(postulante)
+    setActionType('aceptar')
+    setIsConfirmModalOpen(true)
+  }
+
+  const handleRechazar = (postulante) => {
+    setPostulanteToAction(postulante)
+    setActionType('rechazar')
+    setIsConfirmModalOpen(true)
+  }
+
+  const confirmAction = async () => {
+    if (postulanteToAction) {
+      try {
+        if (actionType === 'aceptar') {
+          await aceptarPostulante(postulanteToAction.id)
+        } else if (actionType === 'rechazar') {
+          await rechazarPostulante(postulanteToAction.id)
+        }
+        setPostulanteToAction(null)
+        setActionType(null)
+        loadPostulantesWithFilters(pagination.page, pagination.page_size)
+      } catch (error) {
+        // El error ya se maneja en el hook
+      }
+    }
+    setIsConfirmModalOpen(false)
+  }
+
+  const handlePageChange = (page, size) => {
+    const newPageSize = size || pageSize
+    if (size && size !== pageSize) {
+      setPageSize(newPageSize)
+    }
+    loadPostulantesWithFilters(page, newPageSize)
+  }
+
   const getEtapaBadge = (etapa) => {
     return <span className={styles.badgeEtapa}>{etapa}</span>
   }
 
-  const getEstadoBadge = (estado) => {
-    if (estado === 'Completado') {
-      return <span className={styles.badgeEstadoCompleted}>{estado}</span>
+  const getEstadoBadge = (estado, accepted) => {
+    if (estado === 'Aceptado' || accepted === true) {
+      return <span className={styles.badgeEstadoCompleted}>Aceptado</span>
     }
-    if (estado === 'En Progreso') {
-      return <span className={styles.badgeEstadoProgress}>{estado}</span>
+    if (estado === 'Rechazado' || accepted === false) {
+      return <span className={styles.badgeEstadoPending}>Rechazado</span>
     }
-    return <span className={styles.badgeEstadoPending}>{estado}</span>
+    return <span className={styles.badgeEstadoProgress}>Pendiente</span>
   }
 
   const formatDate = (dateString) => {
@@ -188,16 +195,6 @@ export function PostulantesPage() {
           <h1 className={styles.title}>Gestión de Postulantes</h1>
           <p className={styles.subtitle}>Administra todos los candidatos registrados</p>
         </div>
-        <Button
-          onClick={() => {
-            setSelectedPostulante(null)
-            setIsModalOpen(true)
-          }}
-          variant="primary"
-          icon={Plus}
-        >
-          Nuevo Postulante
-        </Button>
       </div>
 
       {/* Search */}
@@ -214,86 +211,105 @@ export function PostulantesPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className={styles.tableSection}>
-        <Table>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Nombre</Table.HeaderCell>
-              <Table.HeaderCell>Correo</Table.HeaderCell>
-              <Table.HeaderCell align="center">Etapa</Table.HeaderCell>
-              <Table.HeaderCell align="center">Estado</Table.HeaderCell>
-              <Table.HeaderCell align="center">Fecha</Table.HeaderCell>
-              <Table.HeaderCell align="center" width="200px">Acciones</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {filteredPostulantes.length > 0 ? (
-              filteredPostulantes.map((postulante) => (
-                <Table.Row key={postulante.id}>
-                  <Table.Cell>
-                    <span className={styles.nombre}>{postulante.nombre}</span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className={styles.correo}>{postulante.correo}</span>
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    {getEtapaBadge(postulante.etapa)}
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    {getEstadoBadge(postulante.estado)}
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    <span className={styles.fecha}>{formatDate(postulante.fecha)}</span>
-                  </Table.Cell>
-                  <Table.Cell align="center">
-                    <div className={styles.actions}>
-                      <button
-                        onClick={() => handleViewDetail(postulante)}
-                        className={styles.actionButtonView}
-                        title="Ver Detalle"
-                      >
-                        <Eye size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleEdit(postulante)}
-                        className={styles.actionButton}
-                        title="Editar"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(postulante)}
-                        className={styles.actionButtonDelete}
-                        title="Eliminar"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </Table.Cell>
-                </Table.Row>
-              ))
-            ) : (
-              <Table.Empty colSpan={6}>
-                {searchTerm
-                  ? 'No se encontraron postulantes con ese criterio de búsqueda'
-                  : 'No hay postulantes registrados'}
-              </Table.Empty>
-            )}
-          </Table.Body>
-        </Table>
-      </div>
+      {/* Table Container */}
+      <div className={styles.tableContainer}>
+        <div className={styles.tableSection}>
+          <Table>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Nombre</Table.HeaderCell>
+                <Table.HeaderCell>Correo</Table.HeaderCell>
+                <Table.HeaderCell align="center">Etapa</Table.HeaderCell>
+                <Table.HeaderCell align="center">Estado</Table.HeaderCell>
+                <Table.HeaderCell align="center">Fecha</Table.HeaderCell>
+                <Table.HeaderCell align="center" width="200px">Acciones</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {loading ? (
+                <Table.Empty colSpan={6}>
+                  Cargando postulantes...
+                </Table.Empty>
+              ) : postulantes.length > 0 ? (
+                postulantes.map((postulante) => (
+                  <Table.Row key={postulante.id}>
+                    <Table.Cell>
+                      <span className={styles.nombre}>{postulante.nombre}</span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className={styles.correo}>{postulante.correo}</span>
+                    </Table.Cell>
+                    <Table.Cell align="center">
+                      {getEtapaBadge(postulante.etapa)}
+                    </Table.Cell>
+                    <Table.Cell align="center">
+                      {getEstadoBadge(postulante.estado, postulante.accepted)}
+                    </Table.Cell>
+                    <Table.Cell align="center">
+                      <span className={styles.fecha}>{formatDate(postulante.fecha)}</span>
+                    </Table.Cell>
+                    <Table.Cell align="center">
+                      <div className={styles.actions}>
+                        <button
+                          onClick={() => handleViewDetail(postulante)}
+                          className={styles.actionButtonView}
+                          title="Ver Detalle"
+                        >
+                          <Eye size={16} />
+                        </button>
+                        {(postulante.estado === 'Pendiente' || postulante.accepted === null || postulante.accepted === undefined) && (
+                          <>
+                            <button
+                              onClick={() => handleAceptar(postulante)}
+                              className={styles.actionButton}
+                              title="Aceptar"
+                            >
+                              <CheckCircle size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleRechazar(postulante)}
+                              className={styles.actionButtonDelete}
+                              title="Rechazar"
+                            >
+                              <XCircle size={16} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </Table.Cell>
+                  </Table.Row>
+                ))
+              ) : (
+                <Table.Empty colSpan={6}>
+                  {searchTerm
+                    ? 'No se encontraron postulantes con ese criterio de búsqueda'
+                    : 'No hay postulantes registrados'}
+                </Table.Empty>
+              )}
+            </Table.Body>
+          </Table>
+        </div>
 
-      {/* Modal de Crear/Editar */}
-      <PostulanteModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setSelectedPostulante(null)
-        }}
-        onSave={handleSave}
-        postulante={selectedPostulante}
-      />
+        {!loading && pagination.total > 0 && (
+          <div className={styles.pagination}>
+            <Pagination
+              current={pagination.page || 1}
+              total={pagination.total || 0}
+              pageSize={pagination.page_size || 20}
+              pageSizeOptions={['10', '20', '30', '50', '100']}
+              showSizeChanger={true}
+              showQuickJumper={pagination.total > 50}
+              showTotal={(total, range) => {
+                if (total === 0) return 'Sin postulantes'
+                return `${range[0]}-${range[1]} de ${total} postulantes`
+              }}
+              onChange={handlePageChange}
+              onShowSizeChange={handlePageChange}
+              hideOnSinglePage={false}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Modal de Detalles */}
       <PostulanteDetailModal
@@ -310,18 +326,19 @@ export function PostulantesPage() {
         isOpen={isConfirmModalOpen}
         onClose={() => {
           setIsConfirmModalOpen(false)
-          setPostulanteToDelete(null)
+          setPostulanteToAction(null)
+          setActionType(null)
         }}
-        onConfirm={confirmDelete}
-        title="Eliminar Postulante"
+        onConfirm={confirmAction}
+        title={actionType === 'aceptar' ? 'Aceptar Postulante' : 'Rechazar Postulante'}
         message={
-          postulanteToDelete
-            ? `¿Seguro que deseas eliminar a ${postulanteToDelete.nombre}?`
-            : '¿Seguro que deseas eliminar este postulante?'
+          postulanteToAction
+            ? `¿Seguro que deseas ${actionType === 'aceptar' ? 'aceptar' : 'rechazar'} a ${postulanteToAction.nombre}?`
+            : `¿Seguro que deseas ${actionType === 'aceptar' ? 'aceptar' : 'rechazar'} este postulante?`
         }
-        confirmText="Eliminar"
+        confirmText={actionType === 'aceptar' ? 'Aceptar' : 'Rechazar'}
         cancelText="Cancelar"
-        type="danger"
+        type={actionType === 'aceptar' ? 'success' : 'danger'}
       />
     </div>
   )

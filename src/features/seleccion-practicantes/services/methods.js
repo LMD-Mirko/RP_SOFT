@@ -63,7 +63,7 @@ const refreshAccessToken = async () => {
 
   try {
     const response = await axios.post(
-      `${sanitizeBaseUrl(BASE_URL)}/auth/token/refresh/`,
+      `${sanitizeBaseUrl(BASE_URL)}/auth/refresh/`,
       { refresh: refreshToken },
       {
         headers: {
@@ -118,6 +118,26 @@ httpClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Manejar error de usuario inactivo
+    if (error.response?.data?.code === 'user_inactive' || 
+        (error.response?.data?.detail && error.response.data.detail.includes('inactive'))) {
+      // Limpiar tokens y datos del usuario
+      clearAuthTokens();
+      localStorage.removeItem('rpsoft_user');
+      
+      // Redirigir al login con mensaje
+      if (typeof window !== 'undefined') {
+        const errorMessage = error.response?.data?.detail || 'Tu cuenta está inactiva. Por favor, contacta al administrador.';
+        sessionStorage.setItem('login_error', errorMessage);
+        window.location.href = '/';
+      }
+      
+      const inactiveError = new Error(error.response?.data?.detail || 'User is inactive');
+      inactiveError.code = 'user_inactive';
+      inactiveError.status = error.response?.status || 403;
+      return Promise.reject(inactiveError);
+    }
+
     // Si el error es 401 y no es una petición de refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
@@ -154,8 +174,23 @@ httpClient.interceptors.response.use(
   }
 );
 
-const normalizeEndpoint = (endpoint) =>
-  endpoint ? (endpoint.startsWith('/') ? endpoint : `/${endpoint}`) : '/';
+const normalizeEndpoint = (endpoint) => {
+  if (!endpoint) return '/';
+  
+  // Separar el endpoint de los query params
+  const [path, queryString] = endpoint.split('?');
+  
+  // Normalizar el path
+  let normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  
+  // Asegurar que el path termine con / (excepto si es solo /)
+  if (normalizedPath !== '/' && !normalizedPath.endsWith('/')) {
+    normalizedPath = `${normalizedPath}/`;
+  }
+  
+  // Reconstruir con query params si existen
+  return queryString ? `${normalizedPath}?${queryString}` : normalizedPath;
+};
 
 const executeRequest = async (method, endpoint, data, options = {}) => {
   try {
@@ -167,12 +202,26 @@ const executeRequest = async (method, endpoint, data, options = {}) => {
     });
     return response.data;
   } catch (error) {
+    // Si el error ya fue procesado por el interceptor (user_inactive), re-lanzarlo
+    if (error.code === 'user_inactive') {
+      throw error;
+    }
+
     if (error.response) {
+      // Preservar el código de error si existe
+      const errorCode = error.response.data?.code;
       const message =
         error.response.data?.message ||
         error.response.data?.detail ||
         `Error HTTP: ${error.response.status}`;
-      throw new Error(message);
+      
+      const customError = new Error(message);
+      if (errorCode) {
+        customError.code = errorCode;
+      }
+      customError.status = error.response.status;
+      customError.response = error.response;
+      throw customError;
     }
 
     if (error.request) {

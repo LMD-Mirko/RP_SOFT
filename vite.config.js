@@ -15,10 +15,14 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      // Proxy para todas las peticiones a la API
+      // Redirige /api/* a http://localhost:8000/api/* para evitar CORS
       '/api': {
         target: process.env.VITE_PROXY_TARGET || 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
+        // Mantener el /api en el path para que el backend lo reciba
+        // rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },

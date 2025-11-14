@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Select } from '@shared/components/Select';
 import { CreditCard } from 'lucide-react';
-import { getDocumentTypes } from '@features/seleccion-practicantes/services/documentTypeService';
+import { getDocumentTypes } from './documentTypeService';
 
 /**
  * Componente Select para selección de tipo de documento

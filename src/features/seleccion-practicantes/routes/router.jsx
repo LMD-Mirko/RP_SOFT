@@ -15,6 +15,12 @@ import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
 import { HistorialPage } from '../modules/historial/pages'
 import { PostulacionPage } from '../modules/Practicante-Form/pages'
+import { PerfilPage } from '../modules/perfil/pages'
+import { UsuariosPage } from '../modules/usuarios/pages'
+import { RolesPage } from '../modules/roles/pages'
+import { EspecialidadesPage } from '../modules/especialidades/pages'
+import { TiposDocumentoPage } from '../modules/tipos-documento/pages'
+import { RequireRole } from './RequireRole'
 
 
 /**
@@ -59,8 +65,44 @@ export function ModuleRouter() {
           path="historial"
           element={<HistorialPage />}
         />
+        <Route
+          path="usuarios"
+          element={
+            <RequireRole requireAdmin={true}>
+              <UsuariosPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="roles"
+          element={
+            <RequireRole requireAdmin={true}>
+              <RolesPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="especialidades"
+          element={
+            <RequireRole requireAdmin={true}>
+              <EspecialidadesPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="tipos-documento"
+          element={
+            <RequireRole requireAdmin={true}>
+              <TiposDocumentoPage />
+            </RequireRole>
+          }
+        />
         
         {/* Rutas de Cuenta */}
+        <Route
+          path="perfil"
+          element={<PerfilPage />}
+        />
         <Route
           path="configuracion"
           element={<div><h2>Configuración</h2></div>}

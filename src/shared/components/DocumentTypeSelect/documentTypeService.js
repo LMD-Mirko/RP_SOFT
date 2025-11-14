@@ -2,7 +2,7 @@
  * Servicio para obtener tipos de documentos
  */
 
-import { get } from './methods';
+import { get } from '@features/seleccion-practicantes/services/methods';
 
 /**
  * Obtiene todos los tipos de documentos disponibles
@@ -10,7 +10,7 @@ import { get } from './methods';
  */
 export const getDocumentTypes = async () => {
   try {
-    const response = await get('document-types');
+    const response = await get('document-types/');
     return response.results || [];
   } catch (error) {
     console.error('Error al obtener tipos de documentos:', error);

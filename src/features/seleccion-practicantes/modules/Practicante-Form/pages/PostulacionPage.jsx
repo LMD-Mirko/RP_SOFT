@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { DatosPersonalesStep } from '../components/DatosPersonales'
 import { PerfilStep } from '../components/Perfil'
 import { TecnicaStep } from '../components/Tecnica'
@@ -7,6 +7,8 @@ import { PsicologiaStep } from '../components/Psicologia'
 import { MotivacionStep } from '../components/Motivacion'
 import { CVStep } from '../components/CV'
 import { ConfirmacionStep } from '../components/Confirmacion'
+import { usePostulacion } from '../hooks/usePostulacion'
+import { useToast } from '@shared/components/Toast'
 import styles from './PostulacionPage.module.css'
 
 const STEPS = [
@@ -21,6 +23,18 @@ const STEPS = [
 
 export function PostulacionPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const toast = useToast()
+  const { 
+    loading, 
+    convocatoriaId, 
+    postularse, 
+    guardarDatosPersonales, 
+    subirCV,
+    iniciarEvaluacion,
+    obtenerDatosPersonales 
+  } = usePostulacion()
+  
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     // Datos Personales
@@ -31,6 +45,12 @@ export function PostulacionPage() {
     fechaNacimiento: '',
     distrito: '',
     direccion: '',
+    sexo: 'M',
+    especialidadId: '',
+    carrera: '',
+    semestre: '',
+    nivelExperiencia: 'principiante',
+    selectedData: null,
 
     // Perfil
     areaInteres: '',
@@ -56,12 +76,81 @@ export function PostulacionPage() {
     cvFile: null,
   })
 
+  // Verificar si hay convocatoriaId y postularse automáticamente
+  useEffect(() => {
+    const checkPostulacion = async () => {
+      const id = searchParams.get('convocatoria');
+      if (id) {
+        try {
+          await postularse(parseInt(id));
+        } catch (error) {
+          // Si ya está postulado o hay error, continuar de todas formas
+          console.log('Error o ya postulado:', error);
+        }
+      }
+    };
+    checkPostulacion();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  // Cargar datos personales si existen
+  useEffect(() => {
+    if (currentStep === 1) {
+      obtenerDatosPersonales().then(data => {
+        if (data) {
+          // Mapear datos de la API al formato del formulario
+          setFormData(prev => ({
+            ...prev,
+            dni: data.document_number || '',
+            tipoDocumento: data.document_type_id || '',
+            fechaNacimiento: data.birth_date || '',
+            telefono: data.phone?.replace('+51', '') || '',
+            sexo: data.sex || 'M',
+            direccion: data.address || '',
+            especialidadId: data.specialty_id || '',
+            carrera: data.career || '',
+            semestre: data.semester || '',
+            nivelExperiencia: data.experience_level || 'principiante',
+            distrito: data.district_id || '',
+            selectedData: {
+              distrito: { id: data.district_id, name: '' },
+              provincia: { id: data.province_id, name: '' },
+              region: { id: data.region_id, name: '' },
+            },
+          }));
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
+
   const updateFormData = (stepData) => {
     setFormData(prev => ({ ...prev, ...stepData }))
   }
 
-  const handleNext = (stepData) => {
+  const handleNext = async (stepData) => {
     updateFormData(stepData)
+    
+    // Si es el paso 1 (Datos Personales), guardar en la API
+    if (currentStep === 1) {
+      try {
+        await guardarDatosPersonales({ ...formData, ...stepData });
+      } catch (error) {
+        // El error ya se maneja en el hook
+        return; // No avanzar si hay error
+      }
+    }
+    
+    // Si es el paso 6 (CV), subir el archivo
+    if (currentStep === 6 && stepData.cvFile) {
+      try {
+        await subirCV(stepData.cvFile);
+      } catch (error) {
+        // El error ya se maneja en el hook
+        return; // No avanzar si hay error
+      }
+    }
+
     if (currentStep < STEPS.length) {
       setCurrentStep(prev => prev + 1)
     }
@@ -76,11 +165,27 @@ export function PostulacionPage() {
   const handleSubmit = async (stepData) => {
     updateFormData(stepData)
 
-    // Aquí iría la lógica para enviar los datos al backend
-    console.log('Datos finales:', { ...formData, ...stepData })
+    try {
+      // Si hay CV, subirlo
+      if (stepData.cvFile) {
+        await subirCV(stepData.cvFile);
+      }
 
-    // Avanzar al paso de confirmación
-    setCurrentStep(STEPS.length)
+      // Iniciar evaluación si hay convocatoriaId
+      if (convocatoriaId) {
+        await iniciarEvaluacion(convocatoriaId);
+      }
+
+      toast.success('Postulación completada exitosamente');
+      
+      // Redirigir al dashboard o página de confirmación
+      setTimeout(() => {
+        navigate('/seleccion-practicantes');
+      }, 2000);
+    } catch (error) {
+      // El error ya se maneja en el hook
+      console.error('Error al completar postulación:', error);
+    }
   }
 
   const CurrentStepComponent = STEPS[currentStep - 1].component

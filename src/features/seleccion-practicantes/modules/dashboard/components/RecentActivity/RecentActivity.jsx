@@ -1,12 +1,14 @@
 import styles from './RecentActivity.module.css'
 
-export function RecentActivity({ activities = [] }) {
+export function RecentActivity({ activities = [], loading = false }) {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Actividad Reciente</h2>
       
       <div className={styles.list}>
-        {activities.length === 0 ? (
+        {loading ? (
+          <p className={styles.empty}>Cargando actividades...</p>
+        ) : activities.length === 0 ? (
           <p className={styles.empty}>No hay actividad reciente</p>
         ) : (
           activities.map((activity, index) => (

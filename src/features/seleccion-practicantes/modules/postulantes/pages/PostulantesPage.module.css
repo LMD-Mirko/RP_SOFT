@@ -41,7 +41,11 @@
 }
 
 .searchContainer {
-  margin-bottom: 1.75rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   animation-delay: 0.1s;
   opacity: 0;
@@ -61,6 +65,7 @@
 
 .searchBox {
   position: relative;
+  width: 100%;
   max-width: 500px;
 }
 
@@ -97,11 +102,41 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.tableSection {
+.tableContainer {
+  margin-bottom: 2rem;
   animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   animation-delay: 0.2s;
   opacity: 0;
   animation-fill-mode: forwards;
+}
+
+.tableSection {
+  background: white;
+  border-radius: 0.75rem 0.75rem 0 0;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pagination {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 0;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-radius: 0 0 0.75rem 0.75rem;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-height: 60px;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.pagination :global(.ant-pagination) {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .nombre {

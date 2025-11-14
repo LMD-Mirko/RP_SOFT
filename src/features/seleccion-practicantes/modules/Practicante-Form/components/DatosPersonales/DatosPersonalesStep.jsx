@@ -3,7 +3,9 @@ import { Input } from '@shared/components/Input'
 import { Button } from '@shared/components/Button'
 import { CascadeSelect } from '@shared/components/CascadeSelect'
 import { DocumentTypeSelect } from '@shared/components/DocumentTypeSelect'
-import { User, Mail, Phone, CreditCard, Calendar, MapPin, Home } from 'lucide-react'
+import { Select } from '@shared/components/Select'
+import { User, Mail, Phone, CreditCard, Calendar, MapPin, Home, BookOpen, Clock } from 'lucide-react'
+import { getSpecialties } from '../../../shared/services'
 import styles from './DatosPersonalesStep.module.css'
 
 // Estilos inline para quitar flechas de inputs numéricos
@@ -23,9 +25,38 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
     fechaNacimiento: data.fechaNacimiento || '',
     distrito: data.distrito || '',
     direccion: data.direccion || '',
+    sexo: data.sexo || 'M',
+    especialidadId: data.especialidadId || '',
+    carrera: data.carrera || '',
+    semestre: data.semestre || '',
+    nivelExperiencia: data.nivelExperiencia || 'principiante',
+    selectedData: data.selectedData || null, // Para guardar datos de ubicación
   })
 
   const [errors, setErrors] = useState({})
+  const [specialties, setSpecialties] = useState([])
+  const [loadingSpecialties, setLoadingSpecialties] = useState(true)
+
+  // Cargar especialidades
+  useEffect(() => {
+    const loadSpecialties = async () => {
+      try {
+        setLoadingSpecialties(true);
+        const response = await getSpecialties();
+        const formatted = (response.results || []).map(spec => ({
+          value: spec.id,
+          label: spec.name,
+          description: spec.description,
+        }));
+        setSpecialties(formatted);
+      } catch (error) {
+        console.error('Error al cargar especialidades:', error);
+      } finally {
+        setLoadingSpecialties(false);
+      }
+    };
+    loadSpecialties();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -43,6 +74,19 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
     }
   }
 
+  // Manejar cambio del CascadeSelect (ubicación)
+  const handleLocationChange = (e) => {
+    const { value, selectedData } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      distrito: value,
+      selectedData: selectedData,
+    }));
+    if (errors.distrito) {
+      setErrors(prev => ({ ...prev, distrito: '' }));
+    }
+  }
+
 
   const validate = () => {
     const newErrors = {}
@@ -55,8 +99,12 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
     if (!formData.dni.trim()) newErrors.dni = 'Requerido'
     else if (formData.dni.length !== 8) newErrors.dni = 'DNI debe tener 8 dígitos'
     if (!formData.fechaNacimiento) newErrors.fechaNacimiento = 'Requerido'
-    if (!formData.distrito) newErrors.distrito = 'Requerido'
+    if (!formData.distrito || !formData.selectedData) newErrors.distrito = 'Requerido'
     if (!formData.direccion.trim()) newErrors.direccion = 'Requerido'
+    if (!formData.especialidadId) newErrors.especialidadId = 'Requerido'
+    if (!formData.carrera.trim()) newErrors.carrera = 'Requerido'
+    if (!formData.semestre.trim()) newErrors.semestre = 'Requerido'
+    if (!formData.nivelExperiencia) newErrors.nivelExperiencia = 'Requerido'
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -177,7 +225,8 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
               id="distrito"
               name="distrito"
               value={formData.distrito}
-              onChange={handleChange}
+              selectedData={formData.selectedData}
+              onChange={handleLocationChange}
               placeholder="Seleccione Región > Provincia > Distrito"
               error={errors.distrito}
               required
@@ -194,6 +243,81 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
             icon={Home}
             iconPosition="left"
             error={errors.direccion}
+            required
+          />
+
+          <div className={styles.formRow}>
+            <Select
+              label="Sexo"
+              id="sexo"
+              name="sexo"
+              value={formData.sexo}
+              onChange={handleChange}
+              options={[
+                { value: 'M', label: 'Masculino' },
+                { value: 'F', label: 'Femenino' },
+              ]}
+              error={errors.sexo}
+              required
+            />
+
+            <Select
+              label="Especialidad"
+              id="especialidadId"
+              name="especialidadId"
+              value={formData.especialidadId}
+              onChange={handleChange}
+              options={specialties}
+              placeholder={loadingSpecialties ? 'Cargando...' : 'Seleccione especialidad'}
+              disabled={loadingSpecialties}
+              error={errors.especialidadId}
+              required
+            />
+          </div>
+
+          <div className={styles.formRow}>
+            <Input
+              label="Carrera"
+              id="carrera"
+              name="carrera"
+              value={formData.carrera}
+              onChange={handleChange}
+              placeholder="Ej: Ingeniería de Sistemas"
+              icon={BookOpen}
+              iconPosition="left"
+              error={errors.carrera}
+              required
+            />
+
+            <Input
+              label="Semestre"
+              id="semestre"
+              name="semestre"
+              type="number"
+              value={formData.semestre}
+              onChange={handleChange}
+              placeholder="Ej: 10"
+              icon={Clock}
+              iconPosition="left"
+              error={errors.semestre}
+              min="1"
+              max="20"
+              required
+            />
+          </div>
+
+          <Select
+            label="Nivel de Experiencia"
+            id="nivelExperiencia"
+            name="nivelExperiencia"
+            value={formData.nivelExperiencia}
+            onChange={handleChange}
+            options={[
+              { value: 'principiante', label: 'Principiante' },
+              { value: 'intermedio', label: 'Intermedio' },
+              { value: 'avanzado', label: 'Avanzado' },
+            ]}
+            error={errors.nivelExperiencia}
             required
           />
 

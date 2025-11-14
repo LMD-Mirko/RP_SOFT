@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { useToast } from '@shared/components/Toast'
+import { useUserProfile } from '@shared/context/UserProfileContext'
 import { logout as logoutService } from '@features/seleccion-practicantes/modules/auth/services/authService'
 import { getRefreshToken, clearAuthTokens } from '@features/seleccion-practicantes/shared/utils/cookieHelper'
 import { LogoutAnimation } from './LogoutAnimation'
@@ -33,9 +34,11 @@ const getInitials = (fullName) => {
 export function SidebarFooter() {
   const navigate = useNavigate()
   const toast = useToast()
+  const { profileImageUrl } = useUserProfile()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [showAnimation, setShowAnimation] = useState(false)
   const [userData, setUserData] = useState(null)
+  const [imageKey, setImageKey] = useState(0)
 
   // Obtener datos del usuario desde localStorage
   useEffect(() => {
@@ -67,6 +70,20 @@ export function SidebarFooter() {
     return () => {
       window.removeEventListener('storage', handleStorageChange)
       clearInterval(interval)
+    }
+  }, [])
+
+  // Escuchar cambios en la imagen de perfil para forzar actualización
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      // Incrementar el key para forzar el re-render de la imagen
+      setImageKey(prev => prev + 1)
+    }
+
+    window.addEventListener('userProfileUpdated', handleProfileUpdate)
+    
+    return () => {
+      window.removeEventListener('userProfileUpdated', handleProfileUpdate)
     }
   }, [])
 
@@ -121,9 +138,29 @@ export function SidebarFooter() {
       <div className={styles.footer}>
         <div className={styles.userInfo}>
           <div className={styles.userAvatar}>
-            <span className={styles.userAvatarText}>
-              {userData?.full_name ? getInitials(userData.full_name) : 'U'}
-            </span>
+            {profileImageUrl ? (
+              <img 
+                key={`${imageKey}-${profileImageUrl}`}
+                src={profileImageUrl}
+                alt="Perfil" 
+                className={styles.userAvatarImage}
+                onError={(e) => {
+                  // Si falla la carga, mostrar iniciales
+                  e.target.style.display = 'none'
+                  const parent = e.target.parentElement
+                  if (parent && !parent.querySelector(`.${styles.userAvatarText}`)) {
+                    const span = document.createElement('span')
+                    span.className = styles.userAvatarText
+                    span.textContent = userData?.full_name ? getInitials(userData.full_name) : 'U'
+                    parent.appendChild(span)
+                  }
+                }}
+              />
+            ) : (
+              <span className={styles.userAvatarText}>
+                {userData?.full_name ? getInitials(userData.full_name) : 'U'}
+              </span>
+            )}
           </div>
           <div className={styles.userDetails}>
             <p className={styles.userName}>

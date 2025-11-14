@@ -2,94 +2,113 @@ import { Users, CheckSquare, Check, X, Clock } from 'lucide-react'
 import { StatsCard } from '../components/StatsCard'
 import { RecentActivity } from '../components/RecentActivity'
 import { UpcomingInterviews } from '../components/UpcomingInterviews'
+import { useDashboard } from '../hooks/useDashboard'
+import { useEffect, useState } from 'react'
 import styles from './DashboardPage.module.css'
 
-// Datos de ejemplo - estos vendrán de un servicio o store en el futuro
-const statsData = [
-  {
-    title: 'Total Postulantes',
-    value: 42,
-    detail: '+12 esta semana',
-    icon: Users,
-    iconColor: 'blue',
-    detailColor: 'success',
-  },
-  {
-    title: 'Convocatorias activas',
-    value: 2,
-    detail: 'Enero y Febrero 2024',
-    icon: CheckSquare,
-    iconColor: 'green',
-    detailColor: 'info',
-  },
-  {
-    title: 'Aceptados',
-    value: 8,
-    detail: '15% de aceptación',
-    icon: Check,
-    iconColor: 'green',
-    detailColor: 'success',
-  },
-  {
-    title: 'Rechazados',
-    value: 5,
-    detail: '12% de rechazo',
-    icon: X,
-    iconColor: 'red',
-    detailColor: 'danger',
-  },
-  {
-    title: 'En proceso',
-    value: 29,
-    detail: '69% en evaluación',
-    icon: Clock,
-    iconColor: 'orange',
-    detailColor: 'warning',
-  },
-]
-
-const recentActivities = [
-  {
-    description: 'Nuevo postulante registrado',
-    name: 'Juan Perez',
-    time: 'Hace 2 horas',
-  },
-  {
-    description: 'Evaluación completada',
-    name: 'Maria Gonzalez',
-    time: 'Hace 3 horas',
-  },
-  {
-    description: 'Entrevista programada',
-    name: 'Carlos Rodriguez',
-    time: 'Hace 5 horas',
-  },
-  {
-    description: 'CV descargado',
-    name: 'Ana Martinez',
-    time: 'Hace 1 día',
-  },
-]
-
-const upcomingInterviews = [
-  {
-    name: 'Juan Perez',
-    date: '20 Ene, 10:00 am',
-    status: 'confirmada',
-  },
-  {
-    name: 'Maria Gonzalez',
-    date: '21 Ene, 2:00 pm',
-    status: 'pendiente',
-  },
-  {
-    name: 'Carlos Rodriguez',
-    date: '22 Ene, 11:00 am',
-    status: 'reservada',
-  },
-]
-
 export function DashboardPage() {
+  const { stats, loading, loadUsersActivity } = useDashboard()
+  const [activities, setActivities] = useState([])
+  const [loadingActivities, setLoadingActivities] = useState(true)
+
+  // Mapear estadísticas de la API al formato esperado
+  const statsData = stats ? [
+    {
+      title: 'Total Postulantes',
+      value: stats.total_postulants || 0,
+      detail: `Total registrados`,
+      icon: Users,
+      iconColor: 'blue',
+      detailColor: 'success',
+    },
+    {
+      title: 'Convocatorias activas',
+      value: stats.active_convocatorias || 0,
+      detail: `De ${stats.total_convocatorias || 0} totales`,
+      icon: CheckSquare,
+      iconColor: 'green',
+      detailColor: 'info',
+    },
+    {
+      title: 'Aceptados',
+      value: stats.aceptados || 0,
+      detail: stats.total_postulants 
+        ? `${Math.round((stats.aceptados / stats.total_postulants) * 100)}% de aceptación`
+        : '0% de aceptación',
+      icon: Check,
+      iconColor: 'green',
+      detailColor: 'success',
+    },
+    {
+      title: 'Rechazados',
+      value: stats.rechazados || 0,
+      detail: stats.total_postulants
+        ? `${Math.round((stats.rechazados / stats.total_postulants) * 100)}% de rechazo`
+        : '0% de rechazo',
+      icon: X,
+      iconColor: 'red',
+      detailColor: 'danger',
+    },
+    {
+      title: 'En proceso',
+      value: stats.pendientes || 0,
+      detail: stats.total_postulants
+        ? `${Math.round((stats.pendientes / stats.total_postulants) * 100)}% en evaluación`
+        : '0% en evaluación',
+      icon: Clock,
+      iconColor: 'orange',
+      detailColor: 'warning',
+    },
+  ] : []
+
+  useEffect(() => {
+    let mounted = true;
+    
+    const loadActivities = async () => {
+      if (!mounted) return;
+      
+      setLoadingActivities(true)
+      try {
+        const response = await loadUsersActivity({ page_size: 5 })
+        if (!mounted) return;
+        
+        const mappedActivities = (response.results || []).map(activity => ({
+          description: activity.description || activity.action || 'Actividad del sistema',
+          name: activity.user_email || activity.user?.email || 'Sistema',
+          time: activity.timestamp 
+            ? new Date(activity.timestamp).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+            : 'Recientemente',
+        }))
+        setActivities(mappedActivities)
+      } catch (error) {
+        console.error('Error al cargar actividades:', error)
+        if (mounted) {
+          setActivities([])
+        }
+      } finally {
+        if (mounted) {
+          setLoadingActivities(false)
+        }
+      }
+    }
+    
+    loadActivities()
+    
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Solo ejecutar una vez al montar
+
+  // Datos mock para próximas entrevistas (se pueden implementar cuando haya endpoints)
+  const upcomingInterviews = []
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -103,24 +122,30 @@ export function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className={styles.statsGrid}>
-        {statsData.map((stat, index) => (
-          <StatsCard
-            key={index}
-            index={index}
-            title={stat.title}
-            value={stat.value}
-            detail={stat.detail}
-            icon={stat.icon}
-            iconColor={stat.iconColor}
-            detailColor={stat.detailColor}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className={styles.loading}>
+          <p>Cargando estadísticas...</p>
+        </div>
+      ) : (
+        <div className={styles.statsGrid}>
+          {statsData.map((stat, index) => (
+            <StatsCard
+              key={index}
+              index={index}
+              title={stat.title}
+              value={stat.value}
+              detail={stat.detail}
+              icon={stat.icon}
+              iconColor={stat.iconColor}
+              detailColor={stat.detailColor}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Bottom Panels */}
       <div className={styles.panelsGrid}>
-        <RecentActivity activities={recentActivities} />
+        <RecentActivity activities={activities} loading={loadingActivities} />
         <UpcomingInterviews interviews={upcomingInterviews} />
       </div>
     </div>

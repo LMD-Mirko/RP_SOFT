@@ -2,6 +2,7 @@ import { Router } from '@app/routes'
 import { ToastProvider } from '@shared/components/Toast'
 import { GeminiProvider } from './features/agente-integrador/context/GeminiContext'
 import { ChatPanelProvider } from '@shared/context/ChatPanelContext'
+import { UserProfileProvider } from '@shared/context/UserProfileContext'
 import { ConfigProvider } from 'antd'
 
 export default function App() {
@@ -17,7 +18,9 @@ export default function App() {
       <ToastProvider>
         <GeminiProvider>
           <ChatPanelProvider>
-            <Router />
+            <UserProfileProvider>
+              <Router />
+            </UserProfileProvider>
           </ChatPanelProvider>
         </GeminiProvider>
       </ToastProvider>

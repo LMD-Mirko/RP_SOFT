@@ -15,6 +15,16 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  // Verificar si hay un error guardado en sessionStorage (por ejemplo, usuario inactivo)
+  React.useEffect(() => {
+    const savedError = sessionStorage.getItem('login_error')
+    if (savedError) {
+      setError(savedError)
+      toast.error(savedError, 5000, 'Cuenta inactiva')
+      sessionStorage.removeItem('login_error')
+    }
+  }, [toast])
+
   const { login: loginUser, error: authError, isLoading: authLoading } = useAuth()
 
   const {

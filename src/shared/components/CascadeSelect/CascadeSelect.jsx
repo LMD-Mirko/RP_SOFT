@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Cascader } from 'antd';
-import { getRegiones, getProvincias, getDistritos } from '@features/seleccion-practicantes/services/ubicacionService';
+import { getRegiones, getProvincias, getDistritos } from './ubicacionService';
 import clsx from 'clsx';
 import styles from './CascadeSelect.module.css';
 
@@ -13,6 +13,7 @@ export function CascadeSelect({
   error,
   helperText,
   value,
+  selectedData,
   onChange,
   placeholder = 'Seleccione ubicación...',
   className,
@@ -25,8 +26,47 @@ export function CascadeSelect({
 }) {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cascaderValue, setCascaderValue] = useState(null);
 
-  // Cargar regiones al montar el componente
+  // Función para cargar la ruta completa cuando hay un valor inicial
+  const loadFullPath = useCallback(async (regionesOptions, pathValue) => {
+    try {
+      const [regionId, provinceId, districtId] = pathValue;
+      
+      // Encontrar la región en las opciones
+      const regionOption = regionesOptions.find(opt => opt.value === regionId);
+      if (!regionOption) return;
+
+      // Cargar provincias de la región
+      const provincias = await getProvincias(regionId);
+      const provinciaOptions = provincias.map(provincia => ({
+        label: provincia.name,
+        value: provincia.id,
+        isLeaf: false,
+      }));
+      regionOption.children = provinciaOptions;
+
+      // Encontrar la provincia
+      const provinciaOption = provinciaOptions.find(opt => opt.value === provinceId);
+      if (!provinciaOption) return;
+
+      // Cargar distritos de la provincia
+      const distritos = await getDistritos(provinceId);
+      const distritoOptions = distritos.map(distrito => ({
+        label: distrito.name,
+        value: distrito.id,
+        isLeaf: true,
+      }));
+      provinciaOption.children = distritoOptions;
+
+      // Actualizar las opciones
+      setOptions([...regionesOptions]);
+    } catch (error) {
+      console.error('Error al cargar ruta completa:', error);
+    }
+  }, []);
+
+  // Cargar regiones al montar el componente y configurar valor inicial
   useEffect(() => {
     const loadRegiones = async () => {
       setLoading(true);
@@ -41,6 +81,23 @@ export function CascadeSelect({
         }));
         
         setOptions(formattedOptions);
+
+        // Si hay selectedData, construir el valor del cascader y cargar la ruta completa
+        if (selectedData?.region?.id && selectedData?.provincia?.id && selectedData?.distrito?.id) {
+          const pathValue = [
+            selectedData.region.id,
+            selectedData.provincia.id,
+            selectedData.distrito.id
+          ];
+          setCascaderValue(pathValue);
+          
+          // Cargar la ruta completa para que se muestre correctamente
+          await loadFullPath(formattedOptions, pathValue);
+        } else if (value && typeof value === 'number') {
+          // Si solo hay un ID de distrito, intentar cargar la ruta completa
+          // Esto requiere una llamada adicional a la API para obtener el distrito y sus padres
+          // Por ahora, solo establecemos el valor si tenemos selectedData
+        }
       } catch (error) {
         console.error('Error al cargar regiones:', error);
         setOptions([]);
@@ -50,7 +107,7 @@ export function CascadeSelect({
     };
 
     loadRegiones();
-  }, []);
+  }, [value, selectedData, loadFullPath]);
 
   // Función para cargar datos hijos dinámicamente
   const loadData = useCallback(async (selectedOptions) => {
@@ -98,6 +155,8 @@ export function CascadeSelect({
 
   // Manejar cambio de selección
   const handleChange = (value, selectedOptions) => {
+    setCascaderValue(value);
+    
     // Si se selecciona un distrito (3 niveles), emitir el evento onChange
     if (value && value.length === 3) {
       const distritoId = value[2];
@@ -125,6 +184,7 @@ export function CascadeSelect({
       onChange?.(event);
     } else if (!value || value.length === 0) {
       // Si se limpia la selección
+      setCascaderValue(null);
       const event = {
         target: {
           name: name,
@@ -151,6 +211,7 @@ export function CascadeSelect({
           options={options}
           loadData={loadData}
           onChange={handleChange}
+          value={cascaderValue}
           placeholder={loading ? 'Cargando...' : placeholder}
           changeOnSelect={false}
           disabled={disabled || loading}

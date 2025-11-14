@@ -2,55 +2,49 @@ import { useState } from 'react'
 import { DocumentList } from '../components/DocumentList'
 import { DocumentActions } from '../components/DocumentActions'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
-import { useToast } from '@shared/components/Toast'
+import { useFiles } from '../hook/useFiles'
 import styles from './CVsPage.module.css'
 
-// Datos mock para demostración
-const mockDocuments = [
-  {
-    id: 1,
-    titulo: 'CV - Juan Pérez',
-    postulante: 'Juan Pérez',
-    fecha: '2025-01-15',
-    tamaño: '2.4 MB',
-    tipo: 'PDF',
-    url: '#',
-  },
-  {
-    id: 2,
-    titulo: 'CV - María García',
-    postulante: 'María García',
-    fecha: '2025-01-15',
-    tamaño: '1.8 MB',
-    tipo: 'PDF',
-    url: '#',
-  },
-  {
-    id: 3,
-    titulo: 'Portafolio - Carlos López',
-    postulante: 'Carlos López',
-    fecha: '2025-01-14',
-    tamaño: '5.2 MB',
-    tipo: 'PDF',
-    url: '#',
-  },
-  {
-    id: 4,
-    titulo: 'CV - Ana Rodríguez',
-    postulante: 'Ana Rodríguez',
-    fecha: '2025-01-13',
-    tamaño: '2.1 MB',
-    tipo: 'PDF',
-    url: '#',
-  },
-]
+/**
+ * Mapea los datos de la API al formato esperado por los componentes
+ */
+const mapDocumentFromAPI = (apiData) => {
+  const formatFileSize = (bytes) => {
+    if (!bytes) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
+  }
+
+  const getFileExtension = (filename) => {
+    if (!filename) return 'PDF'
+    const ext = filename.split('.').pop().toUpperCase()
+    return ext || 'PDF'
+  }
+
+  return {
+    id: apiData.id,
+    titulo: apiData.filename || 'Documento sin nombre',
+    postulante: 'Usuario', // Se puede obtener del contexto de usuario
+    fecha: apiData.uploaded_at || new Date().toISOString(),
+    tamaño: formatFileSize(apiData.file_size),
+    tipo: getFileExtension(apiData.filename),
+    url: apiData.file_url || '',
+    // Datos originales de la API
+    _apiData: apiData,
+  }
+}
 
 export function CVsPage() {
-  const [documents, setDocuments] = useState(mockDocuments)
+  const { files: apiFiles, loading, downloadFile, deleteFile } = useFiles()
   const [selectedDocument, setSelectedDocument] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
-  const toast = useToast()
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
+  // Mapear documentos de la API
+  const documents = apiFiles.map(mapDocumentFromAPI)
 
   const filteredDocuments = documents.filter(
     (doc) =>
@@ -65,37 +59,52 @@ export function CVsPage() {
   const handleDownload = () => {
     if (selectedDocument) {
       setIsDownloadModalOpen(true)
-    } else {
-      toast.warning('Por favor selecciona un documento primero')
     }
   }
 
-  const confirmDownload = () => {
+  const confirmDownload = async () => {
     if (selectedDocument) {
-      // Simular descarga
-      toast.success(`Descargando ${selectedDocument.titulo}...`)
-      setIsDownloadModalOpen(false)
-      // Aquí iría la lógica real de descarga
+      try {
+        await downloadFile(selectedDocument.id)
+        setIsDownloadModalOpen(false)
+      } catch (error) {
+        // El error ya se maneja en el hook
+      }
     }
   }
 
   const handleViewFull = () => {
-    if (selectedDocument) {
-      toast.info(`Abriendo ${selectedDocument.titulo} en nueva ventana...`)
-      // Aquí iría la lógica para abrir el documento completo
+    if (selectedDocument && selectedDocument.url) {
       window.open(selectedDocument.url, '_blank')
-    } else {
-      toast.warning('Por favor selecciona un documento primero')
     }
   }
 
   const handlePrint = () => {
+    if (selectedDocument && selectedDocument.url) {
+      const printWindow = window.open(selectedDocument.url, '_blank')
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print()
+        }
+      }
+    }
+  }
+
+  const handleDelete = () => {
     if (selectedDocument) {
-      toast.info(`Imprimiendo ${selectedDocument.titulo}...`)
-      // Aquí iría la lógica para imprimir
-      window.print()
-    } else {
-      toast.warning('Por favor selecciona un documento primero')
+      setIsDeleteModalOpen(true)
+    }
+  }
+
+  const confirmDelete = async () => {
+    if (selectedDocument) {
+      try {
+        await deleteFile(selectedDocument.id)
+        setSelectedDocument(null)
+        setIsDeleteModalOpen(false)
+      } catch (error) {
+        // El error ya se maneja en el hook
+      }
     }
   }
 
@@ -115,13 +124,19 @@ export function CVsPage() {
       <div className={styles.contentGrid}>
         {/* Panel de Documentos (Izquierda) */}
         <div className={styles.documentsPanel}>
-          <DocumentList
-            documents={filteredDocuments}
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            selectedDocument={selectedDocument}
-            onSelectDocument={handleSelectDocument}
-          />
+          {loading ? (
+            <div className={styles.loading}>
+              <p>Cargando documentos...</p>
+            </div>
+          ) : (
+            <DocumentList
+              documents={filteredDocuments}
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              selectedDocument={selectedDocument}
+              onSelectDocument={handleSelectDocument}
+            />
+          )}
         </div>
 
         {/* Panel de Acciones (Derecha) */}
@@ -130,6 +145,7 @@ export function CVsPage() {
             onDownload={handleDownload}
             onViewFull={handleViewFull}
             onPrint={handlePrint}
+            onDelete={handleDelete}
             hasSelection={!!selectedDocument}
           />
         </div>
@@ -149,6 +165,22 @@ export function CVsPage() {
         confirmText="Descargar"
         cancelText="Cancelar"
         type="info"
+      />
+
+      {/* Modal de Confirmación para Eliminar */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Eliminar Documento"
+        message={
+          selectedDocument
+            ? `¿Seguro que deseas eliminar "${selectedDocument.titulo}"? Esta acción no se puede deshacer.`
+            : '¿Seguro que deseas eliminar este documento?'
+        }
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        type="danger"
       />
     </div>
   )

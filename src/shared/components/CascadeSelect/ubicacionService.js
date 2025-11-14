@@ -3,9 +3,9 @@
  * Utiliza los endpoints de la API para obtener información geográfica
  */
 
-import { get } from './methods';
+import { get } from '@features/seleccion-practicantes/services/methods';
 
-const COUNTRY_ID = 429; // ID de Perú
+const COUNTRY_ID = 184; // ID de Perú
 
 /**
  * Obtiene todas las regiones (departamentos) del país
