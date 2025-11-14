@@ -1,14 +1,27 @@
 /* Container con animación de entrada */
 .container {
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #dbeafe, #ffffff, #f3e8ff);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 25%, #f8fafc 50%, #f0e7ff 75%, #fef3f2 100%);
+  background-size: 400% 400%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
   position: relative;
   overflow: hidden;
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeIn 0.6s ease-out, gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes fadeIn {
@@ -41,24 +54,27 @@
 }
 
 .blob:nth-child(1) {
-  top: 0;
-  left: 25%;
-  background-color: #bfdbfe;
+  top: -10%;
+  left: 10%;
+  background: linear-gradient(135deg, #0ea5a9 0%, #3b82f6 100%);
   animation-delay: 0s;
+  opacity: 0.25;
 }
 
 .blobDelay1 {
-  top: 0;
-  right: 25%;
-  background-color: #e9d5ff;
+  top: 20%;
+  right: 10%;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   animation-delay: 2s;
+  opacity: 0.2;
 }
 
 .blobDelay2 {
-  bottom: -2rem;
+  bottom: -5%;
   left: 50%;
-  background-color: #fce7f3;
+  background: linear-gradient(135deg, #0ea5a9 0%, #06b6d4 100%);
   animation-delay: 4s;
+  opacity: 0.2;
 }
 
 @keyframes blobFloat {
@@ -93,34 +109,35 @@
   }
 }
 
-/* Card con efectos mejorados */
+/* Card con efectos mejorados - Glassmorphism */
 .card {
-  background: white;
-  border-radius: 1.25rem;
-  padding: 2.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 2rem;
+  padding: 3rem 2.5rem;
   box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 0 0 1px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
+    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
   overflow: hidden;
-  animation: cardPulse 3s ease-in-out infinite;
+  animation: cardPulse 4s ease-in-out infinite;
 }
 
 @keyframes cardPulse {
   0%, 100% {
     box-shadow: 
-      0 20px 25px -5px rgba(0, 0, 0, 0.1),
-      0 10px 10px -5px rgba(0, 0, 0, 0.04),
-      0 0 0 1px rgba(0, 0, 0, 0.05);
+      0 25px 50px -12px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
   50% {
     box-shadow: 
-      0 25px 30px -5px rgba(59, 130, 246, 0.15),
-      0 15px 15px -5px rgba(59, 130, 246, 0.1),
-      0 0 0 1px rgba(59, 130, 246, 0.1);
+      0 30px 60px -12px rgba(14, 165, 169, 0.2),
+      0 0 0 1px rgba(59, 130, 246, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 }
 
@@ -311,12 +328,13 @@
 .googleButton {
   flex: 1;
   width: 100%;
-  padding: 0.875rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.75rem;
+  padding: 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 1rem;
   font-weight: 600;
   color: #374151;
-  background-color: white;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -324,6 +342,7 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .googleButton::before {
@@ -345,10 +364,10 @@
 }
 
 .googleButton:hover:not(:disabled) {
-  background-color: #f8f9fa;
+  background: rgba(255, 255, 255, 0.95);
   border-color: #4285f4;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(66, 133, 244, 0.2), 0 0 0 3px rgba(66, 133, 244, 0.1);
 }
 
 .googleButton:active:not(:disabled) {
@@ -376,12 +395,13 @@
 .microsoftButton {
   flex: 1;
   width: 100%;
-  padding: 0.875rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.75rem;
+  padding: 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 1rem;
   font-weight: 600;
   color: #374151;
-  background-color: white;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -389,6 +409,7 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .microsoftButton::before {
@@ -410,10 +431,10 @@
 }
 
 .microsoftButton:hover:not(:disabled) {
-  background-color: #f8f9fa;
+  background: rgba(255, 255, 255, 0.95);
   border-color: #0078d4;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 120, 212, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 120, 212, 0.2), 0 0 0 3px rgba(0, 120, 212, 0.1);
 }
 
 .microsoftButton:active:not(:disabled) {
@@ -542,32 +563,36 @@
 }
 
 .field:focus-within .label {
-  color: #3b82f6;
+  color: #0ea5a9;
 }
 
 .input {
   width: 100%;
-  padding: 0.875rem 1rem;
-  border: 1.5px solid #d1d5db;
-  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 1rem;
   outline: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
   font-size: 0.9375rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .input:hover {
-  border-color: #9ca3af;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.05);
+  border-color: #cbd5e1;
+  box-shadow: 0 0 0 4px rgba(14, 165, 169, 0.08);
+  background: rgba(255, 255, 255, 1);
 }
 
 .input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #0ea5a9;
   box-shadow: 
-    0 0 0 3px rgba(59, 130, 246, 0.1),
-    0 4px 6px -1px rgba(59, 130, 246, 0.1);
+    0 0 0 4px rgba(14, 165, 169, 0.15),
+    0 4px 12px -2px rgba(14, 165, 169, 0.2);
   transform: translateY(-1px);
+  background: rgba(255, 255, 255, 1);
 }
 
 /* Submit Button */
@@ -652,7 +677,7 @@
 }
 
 .link {
-  color: #3b82f6;
+  color: #0ea5a9;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s;
@@ -666,12 +691,12 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: #3b82f6;
+  background: linear-gradient(90deg, #0ea5a9, #3b82f6);
   transition: width 0.3s;
 }
 
 .link:hover {
-  color: #2563eb;
+  color: #06b6d4;
 }
 
 .link:hover::after {
