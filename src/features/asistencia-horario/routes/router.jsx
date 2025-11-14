@@ -12,6 +12,7 @@ import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages
 //import { Botintegrative } from '../modules/bot_integracion/pages/botintegrative'//
 import { Reports } from '../modules/reportes/pages/Reports'
 import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
+import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
 
 /**
  * Router del Módulo
@@ -45,7 +46,7 @@ export function ModuleRouter() {
         />
         <Route
           path="gestion-horarios"
-          element={<div><h2>Gestión de Horarios</h2></div>}
+          element={<GestionHorariosDashboard />}
         />
         
         {/* Rutas de Módulos */}
