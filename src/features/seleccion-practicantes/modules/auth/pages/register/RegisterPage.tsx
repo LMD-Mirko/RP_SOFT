@@ -20,7 +20,7 @@ export default function RegisterPage() {
   const { register: registerUser, error: authError, isLoading: authLoading } = useAuth()
 
   const {
-    handleMicrosoftAuth,
+    handleMicrosoftRegister,
     isLoading: isOAuthLoading,
     error: oauthError,
   } = useMicrosoftOAuth()
@@ -142,17 +142,6 @@ export default function RegisterPage() {
     }
   }
 
-  const handleMicrosoftRegister = async () => {
-    try {
-      toast.info('Conectando con Microsoft...', 2000, 'Registro')
-      // role_id: 1 para registro normal (postulante)
-      await handleMicrosoftAuth(undefined, 1)
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Error al autenticar con Microsoft'
-      setError(errorMsg)
-      toast.error(errorMsg, 4000, 'Error de autenticación')
-    }
-  }
 
   return (
     <div className={styles.container}>
@@ -180,7 +169,16 @@ export default function RegisterPage() {
 
           <button
             type="button"
-            onClick={handleMicrosoftRegister}
+            onClick={async () => {
+              try {
+                toast.info('Conectando con Microsoft...', 2000, 'Registro')
+                await handleMicrosoftRegister(undefined, 1)
+              } catch (err) {
+                const errorMsg = err instanceof Error ? err.message : 'Error al registrar con Microsoft'
+                setError(errorMsg)
+                toast.error(errorMsg, 4000, 'Error de autenticación')
+              }
+            }}
             disabled={isOAuthLoading || isLoading}
             className={styles.microsoftButton}
           >

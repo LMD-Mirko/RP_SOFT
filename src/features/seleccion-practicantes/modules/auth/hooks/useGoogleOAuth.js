@@ -5,7 +5,7 @@
 
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { oauthLogin, getUserRole } from '../services/authService';
+import { oauthLogin, oauthRegister, getUserRole } from '../services/authService';
 import { setAuthTokens } from '../../../shared/utils/cookieHelper';
 import { redirectByRole } from '../utils/redirectByRole';
 
@@ -19,39 +19,23 @@ export const useGoogleOAuth = () => {
   const navigate = useNavigate();
 
   /**
-   * Maneja el login/registro con Google
+   * Maneja el login con Google (solo provider y provider_id)
    * @param {Function} onSuccess - Callback opcional cuando el login es exitoso
-   * @param {number} roleId - ID del rol a asignar (1 para postulante, 2 para admin)
    */
-  const handleGoogleAuth = useCallback(async (onSuccess, roleId = 1) => {
+  const handleGoogleLogin = useCallback(async (onSuccess) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // 1. Autenticar con Google usando Google Identity Services
       const googleData = await loginWithGoogle();
 
-      // Validar que todos los campos requeridos estén presentes
-      if (!googleData.provider || !googleData.provider_id || !googleData.email) {
-        const missingFields = []
-        if (!googleData.provider) missingFields.push('provider')
-        if (!googleData.provider_id) missingFields.push('provider_id')
-        if (!googleData.email) missingFields.push('email')
-        throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`)
+      if (!googleData.provider || !googleData.provider_id) {
+        throw new Error('Faltan campos requeridos: provider o provider_id');
       }
-      
-      // Guardar role_id en sessionStorage para el callback (si se usa redirect)
-      sessionStorage.setItem('oauth_role_id', roleId.toString())
 
-      // 2. Enviar datos al backend con role_id
       const response = await oauthLogin({
         provider: googleData.provider,
         provider_id: googleData.provider_id,
-        email: googleData.email,
-        name: googleData.name || '',
-        paternal_lastname: googleData.paternal_lastname || '',
-        maternal_lastname: googleData.maternal_lastname || '',
-        role_id: roleId,
       });
 
       // 3. Guardar tokens en cookies
@@ -118,10 +102,8 @@ export const useGoogleOAuth = () => {
         }
       }
 
-      // 6. Limpiar datos temporales
       localStorage.removeItem('rpsoft_selection_data');
       localStorage.removeItem('rpsoft_current_step');
-      sessionStorage.removeItem('oauth_role_id');
 
       setIsLoading(false);
       return response;
@@ -133,8 +115,111 @@ export const useGoogleOAuth = () => {
     }
   }, [navigate]);
 
+  /**
+   * Maneja el registro con Google (envía todos los datos con role_id)
+   * @param {Function} onSuccess - Callback opcional cuando el registro es exitoso
+   * @param {number} roleId - ID del rol a asignar (1 para postulante, 2 para admin)
+   */
+  const handleGoogleRegister = useCallback(async (onSuccess, roleId = 1) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const googleData = await loginWithGoogle();
+
+      if (!googleData.provider || !googleData.provider_id || !googleData.email) {
+        const missingFields = []
+        if (!googleData.provider) missingFields.push('provider')
+        if (!googleData.provider_id) missingFields.push('provider_id')
+        if (!googleData.email) missingFields.push('email')
+        throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`)
+      }
+
+      const username = googleData.email.split('@')[0] || '';
+
+      const response = await oauthRegister({
+        provider: googleData.provider,
+        provider_id: googleData.provider_id,
+        email: googleData.email,
+        name: googleData.name || '',
+        paternal_lastname: googleData.paternal_lastname || '',
+        maternal_lastname: googleData.maternal_lastname || '',
+        username: username,
+        role_id: roleId,
+      });
+
+      if (response.tokens) {
+        const accessToken = response.tokens.access;
+        const refreshToken = response.tokens.refresh;
+        if (accessToken) {
+          setAuthTokens(accessToken, refreshToken);
+        }
+      } else if (response.token) {
+        setAuthTokens(response.token, null);
+      }
+
+      if (response.user) {
+        localStorage.setItem(
+          'rpsoft_user',
+          JSON.stringify({
+            email: response.user.email || googleData.email,
+            name: response.user.name || googleData.name,
+            role: response.user.role || 'practicante',
+            loginTime: new Date().toISOString(),
+            provider: 'google',
+          })
+        );
+      }
+
+      try {
+        const roleData = await getUserRole();
+        if (roleData) {
+          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+          localStorage.setItem(
+            'rpsoft_user',
+            JSON.stringify({
+              ...userData,
+              ...roleData,
+              loginTime: new Date().toISOString(),
+            })
+          );
+          
+          if (onSuccess) {
+            onSuccess(response);
+          } else {
+            redirectByRole(roleData, navigate);
+          }
+        } else {
+          if (onSuccess) {
+            onSuccess(response);
+          } else {
+            navigate('/dashboard');
+          }
+        }
+      } catch (roleError) {
+        if (onSuccess) {
+          onSuccess(response);
+        } else {
+          navigate('/dashboard');
+        }
+      }
+
+      localStorage.removeItem('rpsoft_selection_data');
+      localStorage.removeItem('rpsoft_current_step');
+
+      setIsLoading(false);
+      return response;
+    } catch (err) {
+      const errorMessage = err.message || 'Error al registrar con Google';
+      setError(errorMessage);
+      setIsLoading(false);
+      throw err;
+    }
+  }, [navigate]);
+
   return {
-    handleGoogleAuth,
+    handleGoogleLogin,
+    handleGoogleRegister,
     isLoading,
     error,
     clearError: () => setError(null),

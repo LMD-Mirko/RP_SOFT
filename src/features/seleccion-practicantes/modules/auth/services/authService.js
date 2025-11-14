@@ -104,7 +104,42 @@ export const passwordResetConfirm = async (data) => {
 };
 
 /**
- * Envía los datos de OAuth al backend para autenticación/registro
+ * Envía los datos de OAuth al backend para login (solo provider y provider_id)
+ * @param {Object} oauthData - Datos de OAuth {
+ *   provider: 'microsoft' | 'google',
+ *   provider_id: string
+ * }
+ * @returns {Promise} Respuesta del servidor con token y datos del usuario
+ */
+export const oauthLogin = async (oauthData) => {
+  const requiredFields = ['provider', 'provider_id'];
+  const missingFields = requiredFields.filter(field => !oauthData[field]);
+  
+  if (missingFields.length > 0) {
+    throw new Error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
+  }
+
+  try {
+    const response = await post('auth/oauth/', oauthData);
+    return response;
+  } catch (error) {
+    // Preservar información del status HTTP en el error
+    if (error.message && error.message.includes('Error HTTP:')) {
+      const statusMatch = error.message.match(/Error HTTP: (\d+)/);
+      if (statusMatch) {
+        const status = parseInt(statusMatch[1]);
+        const enhancedError = new Error(error.message);
+        enhancedError.status = status;
+        enhancedError.response = { status };
+        throw enhancedError;
+      }
+    }
+    throw error;
+  }
+};
+
+/**
+ * Envía los datos de OAuth al backend para registro
  * @param {Object} oauthData - Datos de OAuth {
  *   provider: 'microsoft' | 'google',
  *   provider_id: string,
@@ -112,12 +147,12 @@ export const passwordResetConfirm = async (data) => {
  *   name: string,
  *   paternal_lastname: string,
  *   maternal_lastname: string,
+ *   username: string,
  *   role_id: number
  * }
  * @returns {Promise} Respuesta del servidor con token y datos del usuario
  */
-export const oauthLogin = async (oauthData) => {
-  // Validar que todos los campos requeridos estén presentes
+export const oauthRegister = async (oauthData) => {
   const requiredFields = ['provider', 'provider_id', 'email', 'role_id'];
   const missingFields = requiredFields.filter(field => !oauthData[field] && oauthData[field] !== 0);
   
@@ -163,5 +198,6 @@ export default {
   passwordResetRequest,
   passwordResetConfirm,
   oauthLogin,
+  oauthRegister,
   getUserRole,
 };

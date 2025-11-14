@@ -309,10 +309,9 @@
 
 /* Google Button */
 .googleButton {
-  flex: 0 0 auto;
-  width: 3.75rem;
-  height: 3.25rem;
-  padding: 0;
+  flex: 1;
+  width: 100%;
+  padding: 0.875rem 1rem;
   border: 1px solid #d1d5db;
   border-radius: 0.75rem;
   font-weight: 600;
@@ -325,28 +324,6 @@
   justify-content: center;
   position: relative;
   overflow: hidden;
-  animation: buttonSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
-  transform: translateY(10px) scale(0.9);
-}
-
-.googleButton:nth-child(1) {
-  animation-delay: 0.55s;
-}
-
-.googleButton:nth-child(2) {
-  animation-delay: 0.6s;
-}
-
-.googleButton:nth-child(3) {
-  animation-delay: 0.65s;
-}
-
-@keyframes buttonSlideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .googleButton::before {
@@ -384,171 +361,20 @@
 }
 
 .googleIcon {
-  width: 1.375rem;
-  height: 1.375rem;
+  width: 1.25rem;
+  height: 1.25rem;
   position: relative;
   z-index: 1;
   transition: transform 0.3s;
-  animation: iconFadeIn 0.4s ease-out 0.7s forwards;
-  opacity: 0;
-}
-
-@keyframes iconFadeIn {
-  to {
-    opacity: 1;
-  }
 }
 
 .googleButton:hover:not(:disabled) .googleIcon {
   transform: scale(1.1) rotate(5deg);
 }
 
-/* GitHub Button */
-.githubButton {
-  flex: 0 0 auto;
-  width: 3.75rem;
-  height: 3.25rem;
-  padding: 0;
-  border: 1px solid #d1d5db;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  color: #374151;
-  background-color: white;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  animation: buttonSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
-  transform: translateY(10px) scale(0.9);
-}
-
-.githubButton::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(36, 41, 47, 0.1);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.githubButton:hover:not(:disabled)::before {
-  width: 300px;
-  height: 300px;
-}
-
-.githubButton:hover:not(:disabled) {
-  background-color: #f8f9fa;
-  border-color: #24292e;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(36, 41, 47, 0.15);
-}
-
-.githubButton:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.githubButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.githubIcon {
-  width: 1.375rem;
-  height: 1.375rem;
-  position: relative;
-  z-index: 1;
-  transition: transform 0.3s;
-  color: #24292e;
-  animation: iconFadeIn 0.4s ease-out 0.75s forwards;
-  opacity: 0;
-}
-
-.githubButton:hover:not(:disabled) .githubIcon {
-  transform: scale(1.1) rotate(-5deg);
-}
-
-/* Facebook Button */
-.facebookButton {
-  flex: 0 0 auto;
-  width: 3.75rem;
-  height: 3.25rem;
-  padding: 0;
-  border: 1px solid #d1d5db;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  color: #374151;
-  background-color: white;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  animation: buttonSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
-  transform: translateY(10px) scale(0.9);
-}
-
-.facebookButton::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(24, 119, 242, 0.1);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.facebookButton:hover:not(:disabled)::before {
-  width: 300px;
-  height: 300px;
-}
-
-.facebookButton:hover:not(:disabled) {
-  background-color: #f8f9fa;
-  border-color: #1877f2;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.15);
-}
-
-.facebookButton:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.facebookButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.facebookIcon {
-  width: 1.375rem;
-  height: 1.375rem;
-  position: relative;
-  z-index: 1;
-  transition: transform 0.3s;
-  color: #1877f2;
-  animation: iconFadeIn 0.4s ease-out 0.8s forwards;
-  opacity: 0;
-}
-
-.facebookButton:hover:not(:disabled) .facebookIcon {
-  transform: scale(1.1) rotate(5deg);
-}
-
 /* Microsoft Button */
 .microsoftButton {
+  flex: 1;
   width: 100%;
   padding: 0.875rem 1rem;
   border: 1px solid #d1d5db;
@@ -561,7 +387,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
   position: relative;
   overflow: hidden;
 }
