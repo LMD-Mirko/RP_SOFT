@@ -8,6 +8,7 @@ import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
+import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
 
 /**
  * Router del Módulo
@@ -65,7 +66,7 @@ export function ModuleRouter() {
         />
         <Route
           path="practicante/mi-asistencia"
-          element={<div><h2>Mi Asistencia</h2></div>}
+          element={<ControlAsistencia />}
         />
         <Route
           path="practicante/mi-horario"
