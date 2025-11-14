@@ -1,0 +1,8 @@
+.weekList {
+  gap:40px;
+}
+
+.state{
+  display:flex ;
+  gap: 16px;
+}
