@@ -9,7 +9,7 @@ import { Dashboard } from '../modules/Dashboard'
 import { Auditoria } from '../modules/auditoria'
 import { Configuracion } from '../modules/configuracion'
 import { RevisionDocumentos } from '../modules/RevisionDocumentos'
-import { UsuarioConvenio } from '../modules/usuario/convenio/pages/convenio'
+import { UsuarioConvenio, CargaDocumentos, ResultadoValidacion, ConvenioActivo } from '../modules/usuario/convenio/pages'
 import { UsuarioConstancias } from '../modules/usuario/constancias/pages/constancias'
 
 /**
@@ -39,6 +39,18 @@ export function ModuleRouter() {
         <Route
           path="usuario/convenio"
           element={<UsuarioConvenio />}
+        />
+        <Route
+          path="usuario/convenio/carga-documentos"
+          element={<CargaDocumentos />}
+        />
+        <Route
+          path="usuario/convenio/resultado-validacion"
+          element={<ResultadoValidacion />}
+        />
+        <Route
+          path="usuario/convenio/activo"
+          element={<ConvenioActivo />}
         />
         <Route
           path="usuario/constancias"

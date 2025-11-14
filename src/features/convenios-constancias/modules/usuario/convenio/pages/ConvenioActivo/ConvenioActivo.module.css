@@ -1,0 +1,23 @@
+.container { padding: 40px 48px; background: #f9fafb; min-height: 100vh; }
+.header { margin-bottom: 24px; }
+.title { font-size: 32px; font-weight: 700; color: #111827; }
+.subtitle { font-size: 18px; color: #6b7280; }
+
+.card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; animation: fadeInUp .3s ease both; }
+.cardTitle { font-size: 22px; font-weight: 700; color: #111827; }
+.cardSubtitle { color: #6b7280; margin-bottom: 16px; }
+
+.statsGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+.stat { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 18px; }
+.statLabel { color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
+.statValue { font-size: 22px; font-weight: 700; color: #111827; margin-top: 6px; }
+
+.documentsCard { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
+.docsTitle { font-size: 16px; font-weight: 700; color: #111827; }
+.docsSubtitle { font-size: 14px; color: #6b7280; margin-bottom: 10px; }
+.fileList { list-style: none; margin: 0; padding: 0; border: 1px solid #e5e7eb; border-radius: 8px; }
+.fileItem { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; }
+.fileItem:last-child { border-bottom: none; }
+.actions { display: flex; justify-content: center; gap: 12px; margin-top: 14px; }
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
