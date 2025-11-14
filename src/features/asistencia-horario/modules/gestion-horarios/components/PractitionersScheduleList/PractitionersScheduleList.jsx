@@ -32,8 +32,23 @@ const practitioners = [
     name: 'Luis Rodríguez',
     server: 'Recuperacion',
     schedules: [{ day: 'Viernes', time: '08:00-14:00', type: 'full' }]
+  },
+  {
+    id: 6,
+    name: 'José Sánchez',
+    server: 'Rpsoft',
+    schedules: [{ day: 'Lunes', time: '12:00-14:00', type: 'partial' }]
+  },
+  {
+    id: 7,
+    name: 'Lorena Torres',
+    server: 'Rpsoft',
+    schedules: [{ day: 'Lunes', time: '14:00-16:00', type: 'partial' }]
   }
 ]
+
+const PAGE1_SIZE = 5;
+const PAGE2_SIZE = 2;
 
 export function PractitionersScheduleList() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -42,10 +57,21 @@ export function PractitionersScheduleList() {
   const [practitionersData, setPractitionersData] = useState(practitioners)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [practitionerToDelete, setPractitionerToDelete] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredPractitioners = practitionersData.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  let cardsToShow;
+  if (currentPage === 1) {
+    cardsToShow = filteredPractitioners.slice(0, PAGE1_SIZE);
+    while (cardsToShow.length < PAGE1_SIZE) cardsToShow.push(null);
+  } else {
+    cardsToShow = filteredPractitioners.slice(PAGE1_SIZE);
+    while (cardsToShow.length < PAGE2_SIZE) cardsToShow.push(null);
+  }
+  const totalPages = filteredPractitioners.length > PAGE1_SIZE ? 2 : 1;
 
   const [enabledDays, setEnabledDays] = useState({})
   const [scheduleData, setScheduleData] = useState({})
@@ -150,53 +176,75 @@ export function PractitionersScheduleList() {
       </div>
 
       <div className={styles.practitionersList}>
-        {filteredPractitioners.map((practitioner) => (
-          <div key={practitioner.id} className={styles.practitionerCard}>
-            <div className={styles.cardContent}>
-              <div className={styles.cardLeft}>
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.practitionerName}>{practitioner.name}</h3>
-                  <span className={styles.serverBadge}>{practitioner.server}</span>
-                </div>
+        {cardsToShow.map((practitioner, idx) =>
+          practitioner ? (
+            <div key={practitioner.id} className={styles.practitionerCard}>
+              <div className={styles.cardContent}>
+                <div className={styles.cardLeft}>
+                  <div className={styles.cardHeader}>
+                    <h3 className={styles.practitionerName}>{practitioner.name}</h3>
+                    <span className={styles.serverBadge}>{practitioner.server}</span>
+                  </div>
 
-                <div className={styles.schedulesWrapper}>
-                  <Calendar className={styles.scheduleIcon} size={12} />
-                  <div className={styles.schedules}>
-                    {practitioner.schedules.map((schedule, idx) => (
-                      <div key={idx} className={styles.scheduleItem}>
-                        <span className={styles.scheduleDay}>{schedule.day}</span>
-                        <span
-                          className={`${styles.scheduleTimeBadge} ${
-                            schedule.type === 'full'
-                              ? styles.scheduleTimeBadgeFull
-                              : styles.scheduleTimeBadgePartial
-                          }`}
-                        >
-                          {schedule.time}
-                        </span>
-                        <span className={styles.scheduleType}>
-                          {schedule.type === 'full' ? 'Completa' : 'Parcial'}
-                        </span>
-                      </div>
-                    ))}
+                  <div className={styles.schedulesWrapper}>
+                    <Calendar className={styles.scheduleIcon} size={12} />
+                    <div className={styles.schedules}>
+                      {practitioner.schedules.map((schedule, idx) => (
+                        <div key={idx} className={styles.scheduleItem}>
+                          <span className={styles.scheduleDay}>{schedule.day}</span>
+                          <span
+                            className={`${styles.scheduleTimeBadge} ${
+                              schedule.type === 'full'
+                                ? styles.scheduleTimeBadgeFull
+                                : styles.scheduleTimeBadgePartial
+                            }`}
+                          >
+                            {schedule.time}
+                          </span>
+                          <span className={styles.scheduleType}>
+                            {schedule.type === 'full' ? 'Completa' : 'Parcial'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className={styles.cardActions}>
-                <button className={styles.iconButton} onClick={() => handleEdit(practitioner)}>
-                  <Edit size={16} />
-                </button>
-                <button
-                  className={`${styles.iconButton} ${styles.iconButtonDelete}`}
-                  onClick={() => handleDeleteClick(practitioner)}
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div className={styles.cardActions}>
+                  <button className={styles.iconButton} onClick={() => handleEdit(practitioner)}>
+                    <Edit size={16} />
+                  </button>
+                  <button
+                    className={`${styles.iconButton} ${styles.iconButtonDelete}`}
+                    onClick={() => handleDeleteClick(practitioner)}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div key={`empty-${idx}`} className={styles.emptyCard}></div>
+          )
+        )}
+      </div>
+      {/* Botones de paginación */}
+      <div className={styles.paginationContainer}>
+        <button
+          className={styles.paginationBtn}
+          onClick={() => setCurrentPage(p => Math.max(1, p-1))}
+          disabled={currentPage === 1}
+        >
+          {'<'}
+        </button>
+        <span className={styles.paginationText}>Página {currentPage} de {totalPages}</span>
+        <button
+          className={styles.paginationBtn}
+          onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))}
+          disabled={currentPage === totalPages}
+        >
+          {'>'}
+        </button>
       </div>
 
       {/* Modal de Edición */}

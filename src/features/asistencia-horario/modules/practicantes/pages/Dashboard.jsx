@@ -118,6 +118,34 @@ const mockPracticantes = [
     infracciones: 1,
     avatar: 'DR',
     color: '#3b82f6'
+  },
+  {
+    id: 9,
+    nombre: 'Valentina Morales',
+    email: 'valentina.morales@rpsoft.com',
+    equipo: 'Rpsoft • Team Gamma',
+    servidor: 'rpsoft',
+    estado: 'activo',
+    cohorte: 'Cohorte 2024-A',
+    score: 780,
+    asistencia: '97%',
+    infracciones: 0,
+    avatar: 'VM',
+    color: '#3b82f6'
+  },
+  {
+    id: 10,
+    nombre: 'Roberto Fernández',
+    email: 'roberto.fernandez@rpsoft.com',
+    equipo: 'Innovacion • Team Alpha',
+    servidor: 'innovacion',
+    estado: 'riesgo',
+    cohorte: 'Cohorte 2024-B',
+    score: 420,
+    asistencia: '86%',
+    infracciones: 2,
+    avatar: 'RF',
+    color: '#3b82f6'
   }
 ]
 
