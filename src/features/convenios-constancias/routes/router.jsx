@@ -9,6 +9,8 @@ import { Dashboard } from '../modules/Dashboard'
 import { Auditoria } from '../modules/auditoria'
 import { Configuracion } from '../modules/configuracion'
 import { RevisionDocumentos } from '../modules/RevisionDocumentos'
+import { UsuarioConvenio } from '../modules/usuario/convenio/pages/convenio'
+import { UsuarioConstancias } from '../modules/usuario/constancias/pages/constancias'
 
 /**
  * Router del Módulo
@@ -33,6 +35,14 @@ export function ModuleRouter() {
         <Route
           path="configuracion"
           element={<Configuracion />}
+        />
+        <Route
+          path="usuario/convenio"
+          element={<UsuarioConvenio />}
+        />
+        <Route
+          path="usuario/constancias"
+          element={<UsuarioConstancias />}
         />
       </Route>
     </Routes>
