@@ -56,6 +56,10 @@
   box-sizing: border-box;
 }
 
+/* ========================================= */
+/*                MENU ITEMS                 */
+/* ========================================= */
+
 .menuItem {
   width: calc(100% - 1rem);
   padding: 0.625rem 1rem;
@@ -73,6 +77,7 @@
   text-align: left;
 }
 
+/* Notas no se pinta cuando estás en Nota 360 / Técnica */
 .menuItem:not(.active) {
   color: black;
 }
@@ -107,6 +112,10 @@
   flex: 1;
 }
 
+/* ========================================= */
+/*               SWITCH BUTTON               */
+/* ========================================= */
+
 .viewSwitcher {
   padding: 0.5rem 1rem;
   margin-bottom: 1rem;
@@ -137,4 +146,42 @@
 
 .switchButton:active {
   transform: translateY(0);
+}
+
+/* ========================================= */
+/*                 SUB MENÚ                  */
+/* ========================================= */
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px; /* mejor centrado */
+  padding-right: 8px;
+  padding-top: 4px;
+  gap: 4px;
+}
+
+.submenuItem {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: #333;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: all 0.2s ease;
+}
+
+/* ⭐ Sub-item activo igual que “Evaluación 360°” */
+.submenuItem.active {
+  background: black;
+  color: white;
+  font-weight: 600;
+}
+
+/* Hover similar */
+.submenuItem:hover:not(.active) {
+  background: #f2f2f2;
 }

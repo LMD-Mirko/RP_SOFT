@@ -9,6 +9,7 @@ import { EventosEvaluacionPage } from '../modules/eventos-evaluacion/pages'
 import { Evaluacion360Page } from '../modules/evaluacion-360/pages'
 import { EvaluacionTecnicaPage } from '../modules/evaluacion-tecnica/pages'
 import { Evaluacion360UsuarioPage } from '../modules/evaluacion-360-usuario/pages'
+import { Nota360UsuarioPage } from '../modules/nota-360-usuario/pages'
 
 /**
  * Router del Módulo
@@ -38,6 +39,10 @@ export function ModuleRouter() {
         <Route
           path="usuario/evaluacion-360"
           element={<Evaluacion360UsuarioPage />}
+        />
+        <Route
+          path="usuario/nota-360"
+          element={<Nota360UsuarioPage />}
         />
       </Route>
     </Routes>
