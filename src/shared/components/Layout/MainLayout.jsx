@@ -1,9 +1,12 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { Sidebar } from '@shared/components/Layout/Sidebar'
 import { Header } from '@shared/components/Layout/Header'
+import { ChatPanel } from '@shared/components/ChatPanel'
+import { useChatPanel } from '@shared/context/ChatPanelContext'
 
 export function MainLayout() {
   const location = useLocation()
+  const { isOpen: isChatOpen } = useChatPanel()
   const isModuleRoute = location.pathname !== '/' && 
     !location.pathname.startsWith('/configuracion') &&
     (location.pathname.startsWith('/seleccion-practicantes') ||
@@ -11,8 +14,6 @@ export function MainLayout() {
      location.pathname.startsWith('/gestion-tareas') ||
      location.pathname.startsWith('/asistencia-horario') ||
      location.pathname.startsWith('/evaluacion-360') ||
-     location.pathname.startsWith('/dataset-transcripcion') ||
-     location.pathname.startsWith('/agente-integrador') ||
      location.pathname.startsWith('/convenios-constancias'))
 
   // En módulos: el Layout del módulo incluye Header + Sidebar
@@ -31,9 +32,13 @@ export function MainLayout() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-y-auto">
-          <Outlet />
-        </main>
+        {isChatOpen ? (
+          <ChatPanel />
+        ) : (
+          <main className="flex-1 overflow-y-auto">
+            <Outlet />
+          </main>
+        )}
       </div>
     </div>
   )
