@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
-import { Menu, Search } from 'lucide-react'
+import { Menu, Search, MoreVertical, Edit, Trash2 } from 'lucide-react'
 import styles from './ChatSidebar.module.css'
 
 export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
-  const recentItems = [
+  const initialItems = [
     'Busqueda de un seleccionado...',
     'Busqueda de una reunion...',
     'Registro de una tarea...',
@@ -19,8 +19,15 @@ export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
     'Cuando falta Luiz Fernandez...'
   ]
 
+  const [recentItems, setRecentItems] = useState(initialItems)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [openMenuIndex, setOpenMenuIndex] = useState(null)
+  const [editingIndex, setEditingIndex] = useState(null)
+  const [editingValue, setEditingValue] = useState('')
+  const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 })
+  const menuRef = useRef(null)
+  const buttonRefs = useRef({})
   const searchInputRef = useRef(null)
 
   useEffect(() => {
@@ -34,10 +41,92 @@ export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
   }, [searchOpen])
 
   useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenuIndex(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [menuRef])
+
+  useEffect(() => {
     if (isCollapsed) {
       setSearchOpen(false)
     }
   }, [isCollapsed])
+
+  useEffect(() => {
+    if (openMenuIndex !== null) {
+      const updateMenuPosition = () => {
+        const button = buttonRefs.current[openMenuIndex]
+        if (button) {
+          const rect = button.getBoundingClientRect()
+          setMenuPosition({
+            top: rect.top + rect.height / 2,
+            right: window.innerWidth - rect.left + 8
+          })
+        }
+      }
+
+      updateMenuPosition()
+      window.addEventListener('scroll', updateMenuPosition, true)
+      window.addEventListener('resize', updateMenuPosition)
+
+      return () => {
+        window.removeEventListener('scroll', updateMenuPosition, true)
+        window.removeEventListener('resize', updateMenuPosition)
+      }
+    }
+  }, [openMenuIndex])
+
+  const handleMoreClick = (event, index) => {
+    event.stopPropagation()
+    if (openMenuIndex === index) {
+      setOpenMenuIndex(null)
+    } else {
+      const button = buttonRefs.current[index]
+      if (button) {
+        const rect = button.getBoundingClientRect()
+        setMenuPosition({
+          top: rect.top + rect.height / 2,
+          right: window.innerWidth - rect.left + 8
+        })
+      }
+      setOpenMenuIndex(index)
+    }
+  }
+
+  const handleDelete = (event, index) => {
+    event.stopPropagation()
+    setRecentItems(prev => prev.filter((_, i) => i !== index))
+    setOpenMenuIndex(null)
+  }
+
+  const handleRename = (event, index) => {
+    event.stopPropagation()
+    setEditingIndex(index)
+    setEditingValue(recentItems[index])
+    setOpenMenuIndex(null)
+  }
+
+  const handleRenameChange = (event) => {
+    setEditingValue(event.target.value)
+  }
+
+  const handleRenameSubmit = (event, index) => {
+    event.preventDefault()
+    if (editingValue.trim() !== '') {
+      setRecentItems(prev => prev.map((item, i) => (i === index ? editingValue : item)))
+    }
+    setEditingIndex(null)
+  }
+
+  const handleRenameBlur = () => {
+    setEditingIndex(null)
+  }
 
   const filteredItems = recentItems.filter((item) =>
     item.toLowerCase().includes(searchTerm.trim().toLowerCase())
@@ -96,15 +185,59 @@ export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
                   <div 
                     key={i} 
                     className={styles.recentItem}
-                    onClick={() => onSelectChat?.(item)}
+                    onClick={() => editingIndex !== i && onSelectChat?.(item)}
                   >
-                    {item}
+                    {editingIndex !== i && (
+                      <div className={styles.moreContainer}>
+                        <button 
+                          ref={(el) => { buttonRefs.current[i] = el }}
+                          className={styles.moreButton}
+                          onClick={(e) => handleMoreClick(e, i)}
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+                      </div>
+                    )}
+                    {editingIndex === i ? (
+                      <form onSubmit={(e) => handleRenameSubmit(e, i)} className={styles.renameForm}>
+                        <input
+                          type="text"
+                          value={editingValue}
+                          onChange={handleRenameChange}
+                          onBlur={handleRenameBlur}
+                          autoFocus
+                          className={styles.renameInput}
+                        />
+                      </form>
+                    ) : (
+                      <span className={styles.recentItemText}>{item}</span>
+                    )}
                   </div>
                 ))
               ) : (
                 <div className={styles.emptyState}>Sin coincidencias</div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+      {openMenuIndex !== null && (
+        <div 
+          ref={menuRef} 
+          className={styles.contextMenu}
+          style={{
+            top: `${menuPosition.top}px`,
+            right: `${menuPosition.right}px`,
+            transform: 'translateY(-50%)'
+          }}
+        >
+          <div className={styles.contextMenuItem} onClick={(e) => handleRename(e, openMenuIndex)}>
+            <Edit size={14} className={styles.menuIcon} />
+            <span>Cambiar nombre</span>
+          </div>
+          <div className={`${styles.contextMenuItem} ${styles.deleteOption}`} onClick={(e) => handleDelete(e, openMenuIndex)}>
+            <Trash2 size={14} className={styles.menuIcon} />
+            <span>Eliminar</span>
           </div>
         </div>
       )}
