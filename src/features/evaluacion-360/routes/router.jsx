@@ -8,6 +8,7 @@ import { Layout } from '../components/Layout'
 import { EventosEvaluacionPage } from '../modules/eventos-evaluacion/pages'
 import { Evaluacion360Page } from '../modules/evaluacion-360/pages'
 import { EvaluacionTecnicaPage } from '../modules/evaluacion-tecnica/pages'
+import { Evaluacion360UsuarioPage } from '../modules/evaluacion-360-usuario/pages'
 
 /**
  * Router del Módulo
@@ -19,7 +20,7 @@ export function ModuleRouter() {
       <Route element={<Layout />}>
         <Route index element={<EventosEvaluacionPage />} />
         
-        {/* Rutas de Evaluaciones */}
+        {/* Rutas de Admin */}
         <Route
           path="eventos-evaluacion"
           element={<EventosEvaluacionPage />}
@@ -31,6 +32,12 @@ export function ModuleRouter() {
         <Route
           path="evaluacion-tecnica"
           element={<EvaluacionTecnicaPage />}
+        />
+        
+        {/* Rutas de Usuario */}
+        <Route
+          path="usuario/evaluacion-360"
+          element={<Evaluacion360UsuarioPage />}
         />
       </Route>
     </Routes>

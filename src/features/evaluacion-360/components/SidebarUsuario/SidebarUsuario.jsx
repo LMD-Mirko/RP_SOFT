@@ -1,42 +1,31 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  Calendar,
-  Target,
-  User,
-  ChevronDown,
-  ChevronRight,
-} from 'lucide-react'
+import { Target, FileText, ChevronDown, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
-import styles from './Sidebar.module.css'
+import styles from './SidebarUsuario.module.css'
 import { SidebarHeader } from '@shared/components/Layout/Sidebar/SidebarHeader/index.js'
 import { SidebarFooter } from '@shared/components/Layout/Sidebar/SidebarFooter/index.js'
-import { SidebarBackButton } from './SidebarBackButton'
+import { SidebarBackButton } from '../Sidebar/SidebarBackButton'
 
 const menuItems = [
   {
     title: 'EVALUACIONES',
     items: [
       {
-        icon: Calendar,
-        label: 'Eventos de Evaluación',
-        path: '/evaluacion-360/eventos-evaluacion',
-      },
-      {
         icon: Target,
         label: 'Evaluación 360°',
-        path: '/evaluacion-360/evaluacion-360',
+        path: '/evaluacion-360/usuario/evaluacion-360',
       },
       {
-        icon: User,
-        label: 'Evaluación Técnica',
-        path: '/evaluacion-360/evaluacion-tecnica',
+        icon: FileText,
+        label: 'Notas',
+        path: '/evaluacion-360/usuario/notas',
       },
     ],
   },
 ]
 
-export function Sidebar() {
+export function SidebarUsuario() {
   const location = useLocation()
   const navigate = useNavigate()
   const [expandedSections, setExpandedSections] = useState({
@@ -51,13 +40,6 @@ export function Sidebar() {
   }
 
   const isActive = (path) => {
-    // Para la ruta index: debe ser exactamente la ruta o eventos-evaluacion
-    if (path === '/evaluacion-360/eventos-evaluacion') {
-      return location.pathname === '/evaluacion-360' || 
-             location.pathname === '/evaluacion-360/' || 
-             location.pathname === '/evaluacion-360/eventos-evaluacion'
-    }
-    // Para otras rutas: debe empezar con la ruta y tener algo más o ser exactamente igual
     return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
@@ -67,14 +49,14 @@ export function Sidebar() {
       <SidebarBackButton />
 
       <nav className={styles.nav}>
-        {/* Botón para cambiar a vista de usuario */}
+        {/* Botón para cambiar a vista de admin */}
         <div className={styles.viewSwitcher}>
           <button
-            onClick={() => navigate('/evaluacion-360/usuario/evaluacion-360')}
+            onClick={() => navigate('/evaluacion-360/eventos-evaluacion')}
             className={styles.switchButton}
           >
-            <User size={16} />
-            <span>Vista de Usuario</span>
+            <Target size={16} />
+            <span>Vista de Admin</span>
           </button>
         </div>
 

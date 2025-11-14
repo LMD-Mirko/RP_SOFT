@@ -11,18 +11,18 @@ export function EvaluacionModal({ practicante, onClose }) {
 
   const preguntas = {
     1: [
-      "¿Con qué frecuencia esta persona llega a tiempo a las reuniones o daily?",
-      "Cuando falta, ¿avisa con anticipación o justifica su ausencia?",
-      "¿Interacciona con el equipo por Discord o los canales de trabajo durante la semana?",
-      "¿Se percibe disponible o comprometido con el progreso del grupo?",
-      "¿Ayuda a compartir conocimiento cuando un compañero lo necesita?"
-    ],
-    2: [
       "¿Participa de forma activa y respetuosa durante las reuniones del equipo?",
       "¿Explica sus ideas y avances de manera comprensible para todos?",
       "¿Usa el micrófono para aportar, no solo para cumplir presencia?",
       "¿Se comunica si detecta retrasos o bloqueos en su trabajo?",
       "¿Se mantiene conectado y participando activamente durante las horas de trabajo remoto?"
+    ],
+    2: [
+      "¿Con qué frecuencia esta persona llega a tiempo a las reuniones o daily?",
+      "Cuando falta, ¿avisa con anticipación o justifica su ausencia?",
+      "¿Interacciona con el equipo por Discord o los canales de trabajo durante la semana?",
+      "¿Se percibe disponible o comprometido con el progreso del grupo?",
+      "¿Ayuda a compartir conocimiento cuando un compañero lo necesita?"
     ]
   }
 
