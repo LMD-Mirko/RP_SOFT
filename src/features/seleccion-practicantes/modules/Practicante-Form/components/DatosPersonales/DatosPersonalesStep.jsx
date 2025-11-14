@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Input } from '@shared/components/Input'
 import { Button } from '@shared/components/Button'
+import { CascadeSelect } from '@shared/components/CascadeSelect'
+import { DocumentTypeSelect } from '@shared/components/DocumentTypeSelect'
 import { User, Mail, Phone, CreditCard, Calendar, MapPin, Home } from 'lucide-react'
 import styles from './DatosPersonalesStep.module.css'
 
@@ -16,6 +18,7 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
     nombres: data.nombres || '',
     apellidos: data.apellidos || '',
     telefono: data.telefono || '',
+    tipoDocumento: data.tipoDocumento || '',
     dni: data.dni || '',
     fechaNacimiento: data.fechaNacimiento || '',
     distrito: data.distrito || '',
@@ -48,10 +51,11 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
     if (!formData.apellidos.trim()) newErrors.apellidos = 'Requerido'
     if (!formData.telefono.trim()) newErrors.telefono = 'Requerido'
     else if (formData.telefono.length !== 9) newErrors.telefono = 'Teléfono debe tener 9 dígitos'
+    if (!formData.tipoDocumento) newErrors.tipoDocumento = 'Requerido'
     if (!formData.dni.trim()) newErrors.dni = 'Requerido'
     else if (formData.dni.length !== 8) newErrors.dni = 'DNI debe tener 8 dígitos'
     if (!formData.fechaNacimiento) newErrors.fechaNacimiento = 'Requerido'
-    if (!formData.distrito.trim()) newErrors.distrito = 'Requerido'
+    if (!formData.distrito) newErrors.distrito = 'Requerido'
     if (!formData.direccion.trim()) newErrors.direccion = 'Requerido'
 
     setErrors(newErrors)
@@ -119,8 +123,21 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
               required
             />
 
+            <DocumentTypeSelect
+              label="Tipo de Documento"
+              id="tipoDocumento"
+              name="tipoDocumento"
+              value={formData.tipoDocumento}
+              onChange={handleChange}
+              placeholder="Seleccione tipo de documento"
+              error={errors.tipoDocumento}
+              required
+            />
+          </div>
+
+          <div className={styles.formRow}>
             <Input
-              label="DNI"
+              label="Número de Documento"
               id="dni"
               name="dni"
               type="number"
@@ -134,9 +151,7 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
               style={numericInputStyle}
               required
             />
-          </div>
 
-          <div className={styles.formRow}>
             <div className={styles.formGroup}>
               <label htmlFor="fechaNacimiento" className={styles.label}>
                 Fecha de Nacimiento *
@@ -154,16 +169,16 @@ export function DatosPersonalesStep({ data, onNext, isFirstStep }) {
                 <span className={styles.errorText}>{errors.fechaNacimiento}</span>
               )}
             </div>
+          </div>
 
-            <Input
-              label="Distrito"
+          <div className={styles.formRow}>
+            <CascadeSelect
+              label="Ubicación"
               id="distrito"
               name="distrito"
               value={formData.distrito}
               onChange={handleChange}
-              placeholder="Ingrese su distrito"
-              icon={MapPin}
-              iconPosition="left"
+              placeholder="Seleccione Región > Provincia > Distrito"
               error={errors.distrito}
               required
             />
