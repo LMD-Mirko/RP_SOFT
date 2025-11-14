@@ -1,89 +1,93 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard,
-  Users,
-  UserCheck,
-  Mic,
-  ClipboardList,
-  ClockCheck,
-  Target,
-  Database,
   Bot,
-  FileCheck,
-  Settings,
+  Clock,
+  Users,
+  Calendar,
+  BarChart2,
+  AlertCircle,
+  ClipboardList,
+  UserCheck,
+  CalendarDays,
   ChevronDown,
   ChevronRight,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
-import { SidebarHeader } from './SidebarHeader/index.js'
-import { SidebarFooter } from './SidebarFooter/index.js'
+import { SidebarHeader } from '@shared/components/Layout/Sidebar/SidebarHeader/index.js'
+import { SidebarFooter } from '@shared/components/Layout/Sidebar/SidebarFooter/index.js'
+import { SidebarBackButton } from './SidebarBackButton'
 
 const menuItems = [
   {
-    title: 'PRINCIPAL',
+    title: 'MONITOREO',
     items: [
       {
-        icon: LayoutDashboard,
-        label: 'Dashboard',
-        path: '/',
+        icon: Bot,
+        label: 'Bot & Integración',
+        path: '/asistencia-horario/bot-integracion',
+        badge: 'Activo',
       },
     ],
   },
   {
-    title: 'GESTIÓN DE MODULOS',
+    title: 'ASISTENCIA',
     items: [
       {
-        icon: Users,
-        label: 'Selección Practicantes',
-        path: '/seleccion-practicantes',
+        icon: Clock,
+        label: 'Puntualidad',
+        path: '/asistencia-horario/puntualidad',
       },
-
       {
-        icon: Mic,
-        label: 'Transcripción Reuniones',
-        path: '/transcripcion-reuniones',
+        icon: Users,
+        label: 'Practicantes',
+        path: '/asistencia-horario/practicantes',
+      },
+      {
+        icon: Calendar,
+        label: 'Gestion de horarios',
+        path: '/asistencia-horario/gestion-horarios',
+      },
+    ],
+  },
+  {
+    title: 'MÓDULOS',
+    items: [
+      {
+        icon: BarChart2,
+        label: 'Reportes',
+        path: '/asistencia-horario/reportes',
+      },
+      {
+        icon: AlertCircle,
+        label: 'Reforzamiento',
+        path: '/asistencia-horario/reforzamiento',
       },
       {
         icon: ClipboardList,
-        label: 'Gestión Tareas',
-        path: '/gestion-tareas',
-      },
-      {
-        icon: ClockCheck,
-        label: 'Asistencia & Horario',
-        path: '/asistencia-horario',
-      },
-      {
-        icon: Target,
-        label: 'Evaluación 360',
-        path: '/evaluacion-360',
-      },
-      {
-        icon: Database,
-        label: 'Dataset Transcripción',
-        path: '/dataset-transcripcion',
-      },
-      {
-        icon: Bot,
-        label: 'Agente Integrador',
-        path: '/agente-integrador',
-      },
-      {
-        icon: FileCheck,
-        label: 'Convenios Constancias',
-        path: '/convenios-constancias',
+        label: 'Historial de Practicantes',
+        path: '/asistencia-horario/historial-practicantes',
       },
     ],
   },
   {
-    title: 'CUENTA',
+    title: 'PRACTICANTE',
     items: [
       {
-        icon: Settings,
-        label: 'Configuración',
-        path: '/configuracion',
+        icon: Clock,
+        label: 'Inicio',
+        path: '/asistencia-horario/practicante/inicio',
+      },
+      {
+        icon: UserCheck,
+        label: 'Mi Asistencia',
+        path: '/asistencia-horario/practicante/mi-asistencia',
+      },
+      {
+        icon: CalendarDays,
+        label: 'Mi Horario',
+        path: '/asistencia-horario/practicante/mi-horario',
       },
     ],
   },
@@ -93,9 +97,10 @@ export function Sidebar() {
   const location = useLocation()
   const navigate = useNavigate()
   const [expandedSections, setExpandedSections] = useState({
-    PRINCIPAL: true,
-    'GESTIÓN DE MODULOS': true,
-    CUENTA: true,
+    MONITOREO: true,
+    ASISTENCIA: true,
+    MÓDULOS: true,
+    PRACTICANTE: true,
   })
 
   const toggleSection = (title) => {
@@ -106,15 +111,18 @@ export function Sidebar() {
   }
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname === ''
+    // Para dashboard: debe ser exactamente la ruta
+    if (path === '/asistencia-horario') {
+      return location.pathname === '/asistencia-horario' || location.pathname === '/asistencia-horario/'
     }
-    return location.pathname.startsWith(path) && location.pathname !== '/'
+    // Para otras rutas: debe empezar con la ruta y tener algo más o ser exactamente igual
+    return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
   return (
     <div className={styles.sidebar}>
       <SidebarHeader />
+      <SidebarBackButton />
 
       <nav className={styles.nav}>
         {menuItems.map((section) => (
@@ -145,6 +153,9 @@ export function Sidebar() {
                     >
                       <Icon size={20} className={styles.menuIcon} />
                       <span className={styles.menuLabel}>{item.label}</span>
+                      {item.badge && (
+                        <span className={styles.badge}>{item.badge}</span>
+                      )}
                     </button>
                   )
                 })}
@@ -158,3 +169,4 @@ export function Sidebar() {
     </div>
   )
 }
+

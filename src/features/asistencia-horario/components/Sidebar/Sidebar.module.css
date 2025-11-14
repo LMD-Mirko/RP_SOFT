@@ -72,10 +72,11 @@
   font-family: 'Be Vietnam Pro', sans-serif;
   box-sizing: border-box;
   text-align: left;
+  position: relative;
 }
 
 .menuItem:not(.active) {
-  color: black;
+  color: #374151;
 }
 
 .menuItem:not(.active):hover {
@@ -83,7 +84,7 @@
 }
 
 .menuItem.active {
-  background-color: black;
+  background-color: #000000;
   color: white;
 }
 
@@ -92,7 +93,7 @@
 }
 
 .menuItem:not(.active) .menuIcon {
-  color: black;
+  color: #374151;
 }
 
 .menuIcon {
@@ -107,3 +108,16 @@
   text-overflow: ellipsis;
   flex: 1;
 }
+
+.badge {
+  background-color: #10b981;
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
