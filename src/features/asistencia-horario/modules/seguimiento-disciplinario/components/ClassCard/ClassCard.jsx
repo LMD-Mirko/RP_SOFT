@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './classCard.module.css'
+import styles from './ClassCard.module.css'
 
 export default function ClassCard({ titulo, instructor, duracion }) {
   return (

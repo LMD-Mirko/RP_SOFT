@@ -87,6 +87,16 @@ export async function apiRequest(endpoint, options = {}) {
     }
 
     // Error de red u otro error
+    // En desarrollo, no loguear errores de conexión si el backend no está disponible
+    const isConnectionError = error.message?.includes('Failed to fetch') || 
+                              error.message?.includes('ERR_CONNECTION_REFUSED') ||
+                              error.message?.includes('NetworkError')
+    
+    if (isConnectionError && import.meta.env.DEV) {
+      // En desarrollo, solo loguear en modo verbose
+      // El código que llama a la API ya maneja estos errores
+    }
+
     throw new ApiError(
       error.message || 'Error de conexión con el servidor',
       0,

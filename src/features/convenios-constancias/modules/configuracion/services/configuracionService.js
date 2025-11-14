@@ -153,7 +153,14 @@ export async function loadConfiguracion() {
     // Merge con valores por defecto para asegurar que todas las propiedades existan
     return mergeConfig(defaultConfig, data)
   } catch (error) {
-    console.error('Error al cargar configuración:', error)
+    // Solo loguear errores que no sean de conexión (backend no disponible)
+    const isConnectionError = error.status === 0 || 
+                              error.message?.includes('Failed to fetch') ||
+                              error.message?.includes('ERR_CONNECTION_REFUSED')
+    
+    if (!isConnectionError) {
+      console.error('Error al cargar configuración:', error)
+    }
     // Si hay error, retornar valores por defecto
     return defaultConfig
   }
