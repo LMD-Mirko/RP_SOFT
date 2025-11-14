@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
-import { Plus, Mic, Send, FileText, FileSpreadsheet, QrCode } from 'lucide-react'
+import { Plus, Mic, Send, FileText, FileSpreadsheet } from 'lucide-react'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
 import { ChatSidebar } from '../ChatSidebar/ChatSidebar'
-import { QRGeneratorModal } from '../QRGeneratorModal/QRGeneratorModal'
 import styles from './ChatPanel.module.css'
 
 export function ChatPanel() {
@@ -13,7 +12,6 @@ export function ChatPanel() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
   const [menuPosition, setMenuPosition] = useState('top')
-  const [showQRModal, setShowQRModal] = useState(false)
   const [placeholderIndex, setPlaceholderIndex] = useState(0)
   const [isRecording, setIsRecording] = useState(false)
 
@@ -161,11 +159,6 @@ export function ChatPanel() {
     setShowMenu(false)
   }
 
-  const handleOpenQRGenerator = () => {
-    setShowQRModal(true)
-    setShowMenu(false)
-  }
-
   const handleMicClick = () => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       alert('Tu navegador no soporta reconocimiento de voz. Prueba con Chrome o Edge.')
@@ -303,14 +296,6 @@ export function ChatPanel() {
               <FileSpreadsheet size={20} className={styles.menuIcon} />
               <span>Subir archivo XLSX</span>
             </div>
-
-            <div
-              onClick={handleOpenQRGenerator}
-              className={styles.menuOption}
-            >
-              <QrCode size={20} className={styles.menuIcon} />
-              <span>Generar QR</span>
-            </div>
           </div>
         )}
 
@@ -400,10 +385,6 @@ export function ChatPanel() {
         isCollapsed={isSidebarCollapsed}
         onToggle={toggleSidebar}
         onSelectChat={handleSelectChat}
-      />
-      <QRGeneratorModal 
-        isOpen={showQRModal}
-        onClose={() => setShowQRModal(false)}
       />
     </div>
   )

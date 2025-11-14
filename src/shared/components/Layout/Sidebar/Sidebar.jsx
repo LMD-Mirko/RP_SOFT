@@ -19,6 +19,7 @@ import styles from './Sidebar.module.css'
 import { SidebarHeader } from './SidebarHeader/index.js'
 import { SidebarFooter } from './SidebarFooter/index.js'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
+import { QRGeneratorModal } from '@shared/components/ChatPanel/QRGeneratorModal/QRGeneratorModal'
 
 const menuItems = [
   {
@@ -97,6 +98,7 @@ export function Sidebar() {
   const location = useLocation()
   const navigate = useNavigate()
   const { toggleChat, isOpen: isChatOpen } = useChatPanel()
+  const [showQRModal, setShowQRModal] = useState(false)
   const [expandedSections, setExpandedSections] = useState({
     PRINCIPAL: true,
     'GESTIÓN DE MODULOS': true,
@@ -118,6 +120,11 @@ export function Sidebar() {
     }
     
     if (path === '/agente-integrador') {
+      return false
+    }
+    
+    // Generador QR no debe marcarse como activo (solo abre un modal)
+    if (path === '/generador-qr') {
       return false
     }
     
@@ -153,6 +160,7 @@ export function Sidebar() {
                   const Icon = item.icon
                   const active = isActive(item.path)
                   const isAgenteIntegrador = item.path === '/agente-integrador'
+                  const isGeneradorQR = item.path === '/generador-qr'
 
                   return (
                     <button
@@ -160,6 +168,8 @@ export function Sidebar() {
                       onClick={() => {
                         if (isAgenteIntegrador) {
                           toggleChat()
+                        } else if (isGeneradorQR) {
+                          setShowQRModal(true)
                         } else {
                           navigate(item.path)
                         }
@@ -178,6 +188,11 @@ export function Sidebar() {
       </nav>
 
       <SidebarFooter />
+
+      <QRGeneratorModal 
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+      />
     </div>
   )
 }
