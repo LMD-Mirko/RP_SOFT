@@ -10,7 +10,8 @@ import { Dashboard as PracticantesDashboard } from '../modules/practicantes/page
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
 import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages/DisciplinaryTrackingView'
 //import { Botintegrative } from '../modules/bot_integracion/pages/botintegrative'//
-import { Reports } from '../modules/reportes/pages/Reports' 
+import { Reports } from '../modules/reportes/pages/Reports'
+import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
 
 /**
  * Router del Módulo
@@ -68,7 +69,7 @@ export function ModuleRouter() {
         />
         <Route
           path="practicante/mi-asistencia"
-          element={<div><h2>Mi Asistencia</h2></div>}
+          element={<ControlAsistencia />}
         />
         <Route
           path="practicante/mi-horario"
