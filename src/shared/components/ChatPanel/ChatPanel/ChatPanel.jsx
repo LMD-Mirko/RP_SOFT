@@ -121,6 +121,12 @@ export function ChatPanel() {
       event.preventDefault()
       handleSend()
     }
+    
+    if (event.key === 'Tab' && !input.trim()) {
+      event.preventDefault()
+      const currentPlaceholder = placeholders[placeholderIndex]
+      setInput(currentPlaceholder)
+    }
   }
 
   const handleTxtUpload = (event) => {
