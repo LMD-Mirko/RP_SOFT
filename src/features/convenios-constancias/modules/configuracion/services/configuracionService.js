@@ -156,7 +156,7 @@ export async function loadConfiguracion() {
 }
 
 /**
- * Guarda la configuración en el backend
+ * Guarda la configuración en el almacenamiento local
  */
 export async function saveConfiguracion(config) {
   writeStorage(mergeConfig(defaultConfig, config))
