@@ -1,9 +1,10 @@
 /**
- * Servicio para gestionar las configuraciones del módulo de convenios-constancias
- * Utiliza API del backend para persistencia
+ * Servicio local para gestionar las configuraciones del módulo de convenios-constancias
  */
 
-import api from '@shared/services/api'
+const LOCAL_STORAGE_KEY = 'cc_config'
+function readStorage() { try { const raw = localStorage.getItem(LOCAL_STORAGE_KEY); return raw ? JSON.parse(raw) : null } catch { return null } }
+function writeStorage(data) { try { localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data)); return true } catch { return false } }
 
 // Valores por defecto
 const defaultConfig = {
@@ -145,64 +146,39 @@ Equipo RP SOFT`,
 }
 
 /**
- * Carga la configuración desde el backend
+ * Carga la configuración desde el almacenamiento local
  */
 export async function loadConfiguracion() {
-  try {
-    const data = await api.get('/configuracion')
-    // Merge con valores por defecto para asegurar que todas las propiedades existan
-    return mergeConfig(defaultConfig, data)
-  } catch (error) {
-    // Solo loguear errores que no sean de conexión (backend no disponible)
-    const isConnectionError = error.status === 0 || 
-                              error.message?.includes('Failed to fetch') ||
-                              error.message?.includes('ERR_CONNECTION_REFUSED')
-    
-    if (!isConnectionError) {
-      console.error('Error al cargar configuración:', error)
-    }
-    // Si hay error, retornar valores por defecto
-    return defaultConfig
-  }
+  const stored = readStorage()
+  if (stored) return mergeConfig(defaultConfig, stored)
+  writeStorage(defaultConfig)
+  return defaultConfig
 }
 
 /**
  * Guarda la configuración en el backend
  */
 export async function saveConfiguracion(config) {
-  try {
-    await api.put('/configuracion', config)
-    return true
-  } catch (error) {
-    console.error('Error al guardar configuración:', error)
-    throw error
-  }
+  writeStorage(mergeConfig(defaultConfig, config))
+  return true
 }
 
 /**
  * Guarda una sección específica de la configuración
  */
 export async function saveConfiguracionSection(section, data) {
-  try {
-    await api.patch(`/configuracion/${section}`, data)
-    return true
-  } catch (error) {
-    console.error(`Error al guardar sección ${section}:`, error)
-    throw error
-  }
+  const current = readStorage() || defaultConfig
+  const updated = { ...current, [section]: data }
+  writeStorage(updated)
+  return true
 }
 
 /**
  * Obtiene una sección específica de la configuración
  */
 export async function getConfiguracionSection(section) {
-  try {
-    const data = await api.get(`/configuracion/${section}`)
-    return data || null
-  } catch (error) {
-    console.error(`Error al obtener sección ${section}:`, error)
-    return null
-  }
+  const current = readStorage() || defaultConfig
+  return current?.[section] || null
 }
 
 /**
@@ -235,13 +211,8 @@ function mergeConfig(defaultConfig, userConfig) {
  * Resetea la configuración a los valores por defecto
  */
 export async function resetConfiguracion() {
-  try {
-    await api.post('/configuracion/reset', defaultConfig)
-    return true
-  } catch (error) {
-    console.error('Error al resetear configuración:', error)
-    throw error
-  }
+  writeStorage(defaultConfig)
+  return true
 }
 
 /**
@@ -327,52 +298,24 @@ export function optimizeImage(file, maxWidth = 2000, maxHeight = 2000, quality =
  * Con validación y optimización opcional
  */
 export async function saveImageAsBase64(file, options = {}) {
-  try {
-    // Validar archivo
-    const validation = validateImageFile(file)
-    if (!validation.valid) {
-      throw new Error(validation.error)
-    }
-    
-    // Crear FormData para enviar el archivo
-    const formData = new FormData()
-    
-    // Si se solicita optimización, optimizar primero
-    if (options.optimize !== false) {
-      try {
-        const optimizedBase64 = await optimizeImage(
-          file,
-          options.maxWidth || 2000,
-          options.maxHeight || 2000,
-          options.quality || 0.8
-        )
-        
-        // Convertir base64 a Blob para enviarlo
-        const response = await fetch(optimizedBase64)
-        const blob = await response.blob()
-        formData.append('image', blob, file.name)
-      } catch (error) {
-        // Si falla la optimización, enviar archivo original
-        console.warn('Error al optimizar imagen, enviando original:', error)
-        formData.append('image', file)
-      }
-    } else {
-      // Enviar sin optimizar
-      formData.append('image', file)
-    }
-    
-    // Subir imagen al backend
-    const result = await api.post('/configuracion/upload-image', formData, {
-      headers: {}, // No establecer Content-Type, FormData lo hace automáticamente
-    })
-    
-    // El backend puede devolver una URL o base64
-    // Si devuelve URL, usarla; si devuelve base64, usarlo directamente
-    return result.url || result.base64 || result.preview || result
-  } catch (error) {
-    console.error('Error al subir imagen:', error)
-    throw error
+  const validation = validateImageFile(file)
+  if (!validation.valid) {
+    throw new Error(validation.error)
   }
+  if (options.optimize !== false) {
+    return await optimizeImage(
+      file,
+      options.maxWidth || 2000,
+      options.maxHeight || 2000,
+      options.quality || 0.8
+    )
+  }
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
 }
 
 /**

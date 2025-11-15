@@ -1,2 +1,1 @@
-export { default as AuditoriaPage } from '../Auditoria'
-
+export { default as AuditoriaPage } from './Auditoria.jsx'

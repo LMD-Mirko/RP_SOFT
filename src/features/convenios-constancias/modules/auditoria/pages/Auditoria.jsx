@@ -3,8 +3,8 @@ import { Search, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { Input } from '@shared/components/Input'
 import { Select } from '@shared/components/Select'
 import { Table } from '@shared/components/UI/Table'
-import { mockAuditoria, tiposDocumento, tiposAccion } from '../../data/mockAuditoria'
-import styles from './Auditoria.module.css'
+import { mockAuditoria, tiposDocumento, tiposAccion } from '../../../data/mockAuditoria'
+import styles from '../styles/Auditoria.module.css'
 
 export default function Auditoria() {
   const [searchTerm, setSearchTerm] = useState('')
