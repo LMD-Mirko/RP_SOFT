@@ -11,6 +11,7 @@ import { Dashboard } from '../pages/Dashboard'
 import { ConvocatoriasPage } from '../modules/convocatorias/pages'
 import { PostulantesPage } from '../modules/postulantes/pages'
 import { CVsPage } from '../modules/cv/pages'
+import { CVsAdminPage } from '../modules/cvs-admin/pages'
 import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
 import { HistorialPage } from '../modules/historial/pages'
@@ -50,6 +51,14 @@ export function ModuleRouter() {
         <Route
           path="cvs"
           element={<CVsPage />}
+        />
+        <Route
+          path="cvs-admin"
+          element={
+            <RequireRole requireAdmin={true}>
+              <CVsAdminPage />
+            </RequireRole>
+          }
         />
         
         {/* Rutas de Gestión */}

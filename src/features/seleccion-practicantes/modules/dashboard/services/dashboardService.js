@@ -59,6 +59,19 @@ export const getPostulanteProgress = async (postulantId) => {
 };
 
 /**
+ * Obtiene estadísticas de usuarios (Solo Admin)
+ * @returns {Promise} Estadísticas de usuarios
+ */
+export const getUsersStats = async () => {
+  try {
+    return await get('dashboard/users/stats/');
+  } catch (error) {
+    console.error('Error al obtener estadísticas de usuarios:', error);
+    throw error;
+  }
+};
+
+/**
  * Obtiene actividad de usuarios (Solo Admin)
  * @param {Object} params - Parámetros de consulta (page, page_size, user_id, action)
  * @returns {Promise} Lista de actividades
@@ -77,6 +90,23 @@ export const getUsersActivity = async (params = {}) => {
     return await get(endpoint);
   } catch (error) {
     console.error('Error al obtener actividad de usuarios:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene estadísticas de progreso promedio (Solo Admin)
+ * @param {number|null} jobPostingId - ID de la convocatoria (opcional)
+ * @returns {Promise} Estadísticas de progreso promedio
+ */
+export const getAverageProgress = async (jobPostingId = null) => {
+  try {
+    const endpoint = jobPostingId 
+      ? `dashboard/postulants/average-progress/?job_posting_id=${jobPostingId}`
+      : 'dashboard/postulants/average-progress/';
+    return await get(endpoint);
+  } catch (error) {
+    console.error('Error al obtener estadísticas de progreso promedio:', error);
     throw error;
   }
 };

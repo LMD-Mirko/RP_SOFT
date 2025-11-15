@@ -1,0 +1,2 @@
+export { PostulantsStatusChart } from './PostulantsStatusChart'
+

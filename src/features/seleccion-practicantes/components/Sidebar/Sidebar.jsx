@@ -97,6 +97,12 @@ const menuItems = [
         path: '/seleccion-practicantes/tipos-documento',
         adminOnly: true, // Solo visible para administradores
       },
+      {
+        icon: Download,
+        label: 'Gestión de CVs',
+        path: '/seleccion-practicantes/cvs-admin',
+        adminOnly: true, // Solo visible para administradores
+      },
     ],
   },
 
