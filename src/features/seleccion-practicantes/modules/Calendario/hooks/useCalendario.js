@@ -2,37 +2,61 @@
  * Hook para gestionar calendario y reuniones
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useToast } from '@shared/components/Toast';
+import { requestGuard } from '@shared/utils/requestGuard';
 import * as calendarioService from '../services';
 
 export const useCalendario = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [reuniones, setReuniones] = useState([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    page_size: 20,
+    total: 0,
+    total_pages: 0,
+    has_next: false,
+    has_previous: false,
+  });
   const [error, setError] = useState(null);
+  const isLoadingRef = useRef(false);
 
   /**
    * Cargar reuniones
    */
   const loadReuniones = async (params = {}) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await calendarioService.getReuniones(params);
-      setReuniones(response.results || []);
-      return response;
-    } catch (err) {
-      const errorMessage = err.response?.data?.error || err.message || 'Error al cargar reuniones';
-      setError(errorMessage);
-      // Solo mostrar error si no es 404 (endpoint no existe aún)
-      if (err.response?.status !== 404) {
-        toast.error(errorMessage);
+    if (isLoadingRef.current) return;
+
+    return requestGuard('calendario_reuniones', async () => {
+      isLoadingRef.current = true;
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await calendarioService.getReuniones(params);
+        setReuniones(response.results || []);
+        setPagination(response.pagination || {
+          page: 1,
+          page_size: 20,
+          total: 0,
+          total_pages: 0,
+          has_next: false,
+          has_previous: false,
+        });
+        return response;
+      } catch (err) {
+        const errorMessage = err.response?.data?.error || err.message || 'Error al cargar reuniones';
+        setError(errorMessage);
+        // Solo mostrar error si no es 404 (endpoint no existe aún)
+        if (err.response?.status !== 404) {
+          toast.error(errorMessage);
+        }
+        return { results: [], pagination: { total: 0 } };
+      } finally {
+        setLoading(false);
+        isLoadingRef.current = false;
       }
-      return { results: [], total: 0 };
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   /**
@@ -97,14 +121,52 @@ export const useCalendario = () => {
     }
   };
 
+  /**
+   * Obtener mis reuniones (usuario autenticado)
+   */
+  const getMyMeetings = async (params = {}) => {
+    if (isLoadingRef.current) return;
+
+    return requestGuard('calendario_my_meetings', async () => {
+      isLoadingRef.current = true;
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await calendarioService.getMyMeetings(params);
+        setReuniones(response.results || []);
+        setPagination(response.pagination || {
+          page: 1,
+          page_size: 20,
+          total: 0,
+          total_pages: 0,
+          has_next: false,
+          has_previous: false,
+        });
+        return response;
+      } catch (err) {
+        const errorMessage = err.response?.data?.error || err.message || 'Error al cargar mis reuniones';
+        setError(errorMessage);
+        if (err.response?.status !== 404) {
+          toast.error(errorMessage);
+        }
+        return { results: [], pagination: { total: 0 } };
+      } finally {
+        setLoading(false);
+        isLoadingRef.current = false;
+      }
+    });
+  };
+
   return {
     loading,
     reuniones,
+    pagination,
     error,
     loadReuniones,
     createReunion,
     updateReunion,
     deleteReunion,
+    getMyMeetings,
   };
 };
 

@@ -1,14 +1,13 @@
 /**
  * Servicio para gestionar calendario y reuniones
- * NOTA: Los endpoints aún no están documentados en el backend
- * Esta es una estructura básica que se puede conectar cuando el backend esté listo
+ * Basado en MEETINGS_API.md
  */
 
-import { get, post, put, patch, del } from '../../../services/methods';
+import { get, post, patch, del } from '../../../services/methods';
 
 /**
- * Lista todas las reuniones programadas
- * @param {Object} params - Parámetros de consulta (page, page_size, fecha_inicio, fecha_fin)
+ * Lista todas las reuniones programadas (Solo Admin)
+ * @param {Object} params - Parámetros de consulta (page, page_size, start_date, end_date, user_id)
  * @returns {Promise} Lista de reuniones
  */
 export const getReuniones = async (params = {}) => {
@@ -16,8 +15,9 @@ export const getReuniones = async (params = {}) => {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page);
     if (params.page_size) queryParams.append('page_size', params.page_size);
-    if (params.fecha_inicio) queryParams.append('fecha_inicio', params.fecha_inicio);
-    if (params.fecha_fin) queryParams.append('fecha_fin', params.fecha_fin);
+    if (params.start_date) queryParams.append('start_date', params.start_date);
+    if (params.end_date) queryParams.append('end_date', params.end_date);
+    if (params.user_id) queryParams.append('user_id', params.user_id);
 
     const queryString = queryParams.toString();
     const endpoint = queryString ? `meetings/?${queryString}` : 'meetings/';
@@ -58,14 +58,14 @@ export const createReunion = async (data) => {
 };
 
 /**
- * Actualiza una reunión
+ * Actualiza una reunión (Solo Admin)
  * @param {string|number} id - ID de la reunión
  * @param {Object} data - Datos a actualizar
  * @returns {Promise} Reunión actualizada
  */
 export const updateReunion = async (id, data) => {
   try {
-    return await patch(`meetings/${id}/`, data);
+    return await patch(`meetings/${id}/update/`, data);
   } catch (error) {
     console.error('Error al actualizar reunión:', error);
     throw error;
@@ -73,15 +73,39 @@ export const updateReunion = async (id, data) => {
 };
 
 /**
- * Elimina una reunión
+ * Elimina una reunión (Solo Admin)
  * @param {string|number} id - ID de la reunión
  * @returns {Promise} Resultado de la operación
  */
 export const deleteReunion = async (id) => {
   try {
-    return await del(`meetings/${id}/`);
+    return await del(`meetings/${id}/delete/`);
   } catch (error) {
     console.error('Error al eliminar reunión:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene las reuniones del usuario autenticado
+ * @param {Object} params - Parámetros de consulta (page, page_size, start_date, end_date, upcoming)
+ * @returns {Promise} Lista de reuniones del usuario
+ */
+export const getMyMeetings = async (params = {}) => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page);
+    if (params.page_size) queryParams.append('page_size', params.page_size);
+    if (params.start_date) queryParams.append('start_date', params.start_date);
+    if (params.end_date) queryParams.append('end_date', params.end_date);
+    if (params.upcoming !== undefined) queryParams.append('upcoming', params.upcoming);
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `meetings/my-meetings/?${queryString}` : 'meetings/my-meetings/';
+    
+    return await get(endpoint);
+  } catch (error) {
+    console.error('Error al obtener mis reuniones:', error);
     throw error;
   }
 };
