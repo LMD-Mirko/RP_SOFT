@@ -179,6 +179,7 @@ export function Router() {
             }
           />
 
+
           <Route path="/configuracion" element={<Configuracion />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

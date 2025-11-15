@@ -13,7 +13,16 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, './src/assets'),
     },
   },
+  optimizeDeps: {
+    include: ['recharts', 'compute-scroll-into-view', 'scroll-into-view-if-needed'],
+    exclude: [],
+  },
   server: {
+    port: 5173,
+    strictPort: true,
+    fs: {
+      strict: false,
+    },
     proxy: {
       // Proxy para todas las peticiones a la API
       // Redirige /api/* a http://localhost:8000/api/* para evitar CORS

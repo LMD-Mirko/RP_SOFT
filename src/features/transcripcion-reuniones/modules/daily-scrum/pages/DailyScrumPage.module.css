@@ -1,0 +1,111 @@
+.wrapper {
+  padding: 24px;
+  display: grid;
+  gap: 20px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+
+.section {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* Layout principal: gráfico izquierda, tarjetas derecha */
+.weeklyLayout {
+  display: grid;
+  grid-template-columns: 4fr 1fr; /* más espacio para el gráfico */
+  gap: 16px;
+  align-items: start;
+}
+
+.chartBox {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.chartTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 6px;
+}
+
+.tab {
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+}
+
+.tab:hover {
+  background: #eef2ff;
+}
+
+.tabActive {
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  animation: fadeInUp 0.5s ease both;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.cardNumber {
+  font-size: 32px;
+  font-weight: 800;
+}
+
+/* Animaciones sutiles */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chartFadeIn {
+  animation: fadeInUp 0.5s ease both;
+}

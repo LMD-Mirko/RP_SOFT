@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../components/Header";
-import Chat from "../components/Chat";
+import Chat from "@shared/components/ChatPanel";
 import ChatHistoryPanel from "../components/ChatHistoryPanel";
 import Sidebar from "../components/Sidebar";
 import "../styles/chat.css";

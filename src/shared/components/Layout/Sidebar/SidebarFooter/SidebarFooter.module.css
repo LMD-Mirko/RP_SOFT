@@ -38,12 +38,17 @@
   color: white;
   font-weight: 600;
   font-size: 0.875rem;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 .userDetails {
   flex: 1;
   min-width: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
 }
 
 .userName {
@@ -53,6 +58,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .userEmail {
@@ -61,6 +70,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .userRole {
@@ -69,6 +82,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .logoutButton {
@@ -100,5 +117,7 @@
 .logoutText {
   font-size: 0.875rem;
   font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
 }
 

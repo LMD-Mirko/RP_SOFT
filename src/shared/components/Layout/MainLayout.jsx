@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { Sidebar } from '@shared/components/Layout/Sidebar'
 import { Header } from '@shared/components/Layout/Header'
-import { ChatPanel } from '@shared/components/ChatPanel/ChatPanel'
+import { ChatPanel } from '@shared/components/ChatPanel'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
 
 export function MainLayout() {
@@ -9,6 +9,7 @@ export function MainLayout() {
   const { isOpen: isChatOpen } = useChatPanel()
   const isModuleRoute = location.pathname !== '/' && 
     !location.pathname.startsWith('/configuracion') &&
+    !location.pathname.startsWith('/directorio-practicantes') &&
     (location.pathname.startsWith('/seleccion-practicantes') ||
      location.pathname.startsWith('/transcripcion-reuniones') ||
      location.pathname.startsWith('/gestion-tareas') ||

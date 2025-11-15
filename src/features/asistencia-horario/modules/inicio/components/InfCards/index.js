@@ -1,0 +1,1 @@
+export { InfCards } from './InfCards.jsx'

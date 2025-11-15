@@ -21,7 +21,7 @@ import { RolesPage } from '../modules/roles/pages'
 import { EspecialidadesPage } from '../modules/especialidades/pages'
 import { TiposDocumentoPage } from '../modules/tipos-documento/pages'
 import { RequireRole } from './RequireRole'
-
+import { TranscripcionesPage } from '@features/transcripcion-reuniones'
 
 /**
  * Router del Módulo
@@ -96,6 +96,11 @@ export function ModuleRouter() {
               <TiposDocumentoPage />
             </RequireRole>
           }
+        />
+        {/* Transcripción: enlaza a la vista del módulo transcripcion-reuniones */}
+        <Route
+          path="transcripciones"
+          element={<TranscripcionesPage />}
         />
         
         {/* Rutas de Cuenta */}

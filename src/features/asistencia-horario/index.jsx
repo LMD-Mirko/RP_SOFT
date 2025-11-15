@@ -1,14 +1,6 @@
-import { Routes, Route } from 'react-router-dom'
-
-function DashboardAsistenciaHorario() {
-  return <div className="text-lg font-semibold">Dashboard Asistencia & Horario</div>
-}
+import { ModuleRouter } from './routes'
 
 export function AsistenciaHorarioIndex() {
-  return (
-    <Routes>
-      <Route index element={<DashboardAsistenciaHorario />} />
-    </Routes>
-  )
+  return <ModuleRouter />
 }
 
