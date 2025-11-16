@@ -1,0 +1,2 @@
+export { TiposDocumentoPage } from './TiposDocumentoPage'
+

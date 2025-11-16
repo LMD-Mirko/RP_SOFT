@@ -5,7 +5,12 @@
 
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { Dashboard } from '../pages/Dashboard'
+import { Dashboard } from '../modules/Dashboard'
+import { Auditoria } from '../modules/auditoria'
+import { Configuracion } from '../modules/configuracion'
+import { RevisionDocumentos } from '../modules/RevisionDocumentos'
+import { UsuarioConvenio, CargaDocumentos, ResultadoValidacion, ConvenioActivo } from '../modules/usuario/convenio/pages'
+import { UsuarioConstancias } from '../modules/usuario/constancias/pages/constancias'
 
 /**
  * Router del Módulo
@@ -21,15 +26,35 @@ export function ModuleRouter() {
         {/* Rutas de Convenios y Constancias */}
         <Route
           path="revision-documentos"
-          element={<div><h2>Revisión de Documentos</h2></div>}
+          element={<RevisionDocumentos />}
         />
         <Route
           path="auditoria"
-          element={<div><h2>Auditoría</h2></div>}
+          element={<Auditoria />}
         />
         <Route
           path="configuracion"
-          element={<div><h2>Configuración</h2></div>}
+          element={<Configuracion />}
+        />
+        <Route
+          path="usuario/convenio"
+          element={<UsuarioConvenio />}
+        />
+        <Route
+          path="usuario/convenio/carga-documentos"
+          element={<CargaDocumentos />}
+        />
+        <Route
+          path="usuario/convenio/resultado-validacion"
+          element={<ResultadoValidacion />}
+        />
+        <Route
+          path="usuario/convenio/activo"
+          element={<ConvenioActivo />}
+        />
+        <Route
+          path="usuario/constancias"
+          element={<UsuarioConstancias />}
         />
       </Route>
     </Routes>

@@ -1,0 +1,1 @@
+export { RevisionDocumentosRouter } from './router'

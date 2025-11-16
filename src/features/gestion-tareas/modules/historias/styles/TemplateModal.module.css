@@ -1,0 +1,151 @@
+/* ========================= */
+/* OVERLAY + MODAL BASE      */
+/* ========================= */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+/* ========================= */
+/* HEADER                    */
+/* ========================= */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(229,231,235,0.8);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 9999px;
+  transition: background 0.15s;
+}
+
+.closeBtn:hover {
+  background: #f3f4f6;
+}
+
+/* ========================= */
+/* CONTENT                   */
+/* ========================= */
+
+.content {
+  padding: 1.5rem;
+}
+
+/* ========================= */
+/* VIEW MODE (DETALLES)     */
+/* ========================= */
+
+/* Grid bien alineado */
+.viewGrid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+/* Dos columnas — izquierda fija, derecha flexible */
+.row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: start;
+  gap: 1rem;
+}
+
+.label {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.value {
+  color: #111827;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ========================= */
+/* EDIT MODE (FORM)         */
+/* ========================= */
+
+.form {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Inputs con más espacio interno */
+.form input,
+.form textarea,
+.form select {
+  padding: 0.65rem 0.9rem !important;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Selects con icono alineado */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+.selectWrap {
+  position: relative;
+  padding-left: 2.2rem;
+}
+
+.selectIcon {
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+/* ========================= */
+/* FOOTER BUTTONS            */
+/* ========================= */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.iconLeft {
+  margin-right: 0.5rem;
+}
