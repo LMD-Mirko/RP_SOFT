@@ -9,6 +9,7 @@ import { Dashboard } from '../pages/Dashboard'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
 import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
+import HistorialPracticantes from '../modules/historial-practicantes/pages/HistorialPracticantes'
 
 /**
  * Router del Módulo
@@ -56,7 +57,7 @@ export function ModuleRouter() {
         />
         <Route
           path="historial-practicantes"
-          element={<div><h2>Historial de Practicantes</h2></div>}
+          element={<HistorialPracticantes />}
         />
         
         {/* Rutas de Practicante */}
