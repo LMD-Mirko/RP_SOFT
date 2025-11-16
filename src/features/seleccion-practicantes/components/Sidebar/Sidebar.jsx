@@ -10,6 +10,9 @@ import {
   Settings,
   ChevronDown,
   ChevronRight,
+  MessageSquare,
+  Users,
+  Download,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
@@ -68,6 +71,9 @@ const menuItems = [
       },
     ],
   },
+
+  // Se elimina la sección de Transcripción aquí; vive en su propio módulo
+
   {
     title: 'CUENTA',
     items: [
@@ -87,6 +93,7 @@ export function Sidebar() {
     PRINCIPAL: true,
     RECLUTAMIENTO: true,
     GESTIÓN: true,
+    TRANSCRIPCIÓN: true,
     CUENTA: true,
   })
 
@@ -98,11 +105,12 @@ export function Sidebar() {
   }
 
   const isActive = (path) => {
-    // Para dashboard: debe ser exactamente la ruta
     if (path === '/seleccion-practicantes') {
-      return location.pathname === '/seleccion-practicantes' || location.pathname === '/seleccion-practicantes/'
+      return (
+        location.pathname === '/seleccion-practicantes' ||
+        location.pathname === '/seleccion-practicantes/'
+      )
     }
-    // Para otras rutas: debe empezar con la ruta y tener algo más o ser exactamente igual
     return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 

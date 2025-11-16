@@ -12,6 +12,8 @@ export function Modal({
   showCloseButton = true,
   closeOnOverlayClick = true,
   className,
+  centered = false,
+  rounded = true,
 }) {
   useEffect(() => {
     if (isOpen) {
@@ -45,10 +47,12 @@ export function Modal({
   }
 
   const isCompact = !title && !showCloseButton
+  const useTopAlignment = isCompact && !centered
+  const isFullscreen = size === 'fullscreen'
 
   return (
-    <div className={clsx(styles.overlay, isCompact && styles.overlayTop)} onClick={handleOverlayClick}>
-      <div className={clsx(styles.modal, styles[size], isCompact && styles.modalTop, className)}>
+    <div className={clsx(styles.overlay, useTopAlignment && styles.overlayTop, isFullscreen && styles.overlayNoPadding)} onClick={handleOverlayClick}>
+      <div className={clsx(styles.modal, styles[size], useTopAlignment && styles.modalTop, !rounded && styles.square, className)}>
         {/* Header */}
         {(title || showCloseButton) && (
           <div className={styles.header}>

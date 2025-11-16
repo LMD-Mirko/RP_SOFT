@@ -28,17 +28,11 @@ const Evaluacion360Index = lazy(() =>
   import('@features/evaluacion-360').then((m) => ({ default: m.Evaluacion360Index }))
 )
 
-const DatasetTranscripcionIndex = lazy(() =>
-  import('@features/dataset-transcripcion').then((m) => ({ default: m.DatasetTranscripcionIndex }))
-)
-
-const AgenteIntegradorIndex = lazy(() =>
-  import('@features/agente-integrador').then((m) => ({ default: m.AgenteIntegradorIndex }))
-)
-
 const ConveniosConstanciasIndex = lazy(() =>
   import('@features/convenios-constancias').then((m) => ({ default: m.ConveniosConstanciasIndex }))
 )
+
+
 
 // Placeholders
 const Dashboard = () => null
@@ -97,22 +91,6 @@ export function Router() {
             }
           />
           <Route
-            path="/dataset-transcripcion/*"
-            element={
-              <Suspense fallback={null}>
-                <DatasetTranscripcionIndex />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/agente-integrador/*"
-            element={
-              <Suspense fallback={null}>
-                <AgenteIntegradorIndex />
-              </Suspense>
-            }
-          />
-          <Route
             path="/convenios-constancias/*"
             element={
               <Suspense fallback={null}>
@@ -120,6 +98,7 @@ export function Router() {
               </Suspense>
             }
           />
+
 
           <Route path="/configuracion" element={<Configuracion />} />
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,3 +1,5 @@
+// src/features/seleccion-practicantes/routes/router.jsx
+
 /**
  * Router del Módulo Selección Practicantes
  * Define todas las rutas internas del módulo.
@@ -12,6 +14,9 @@ import { CVsPage } from '../modules/cv/pages'
 import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
 import { HistorialPage } from '../modules/historial/pages'
+import { PostulacionPage } from '../modules/Practicante-Form/pages'
+import { LoginPage, RegisterPage } from '../modules/auth/pages'
+import { TranscripcionesPage } from '@features/transcripcion-reuniones'
 
 /**
  * Router del Módulo
@@ -21,6 +26,12 @@ import { HistorialPage } from '../modules/historial/pages'
 export function ModuleRouter() {
   return (
     <Routes>
+      {/* Rutas públicas de autenticación (sin Layout) */}
+      <Route path="auth/login" element={<LoginPage />} />
+      <Route path="auth/register" element={<RegisterPage />} />
+      <Route path="postulacion" element={<PostulacionPage />} />
+      
+      {/* Rutas con Layout (requieren autenticación) */}
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
         
@@ -50,6 +61,11 @@ export function ModuleRouter() {
         <Route
           path="historial"
           element={<HistorialPage />}
+        />
+        {/* Transcripción: enlaza a la vista del módulo transcripcion-reuniones */}
+        <Route
+          path="transcripciones"
+          element={<TranscripcionesPage />}
         />
         
         {/* Rutas de Cuenta */}

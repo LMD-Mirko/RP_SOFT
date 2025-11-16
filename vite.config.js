@@ -13,4 +13,13 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, './src/assets'),
     },
   },
+  optimizeDeps: {
+    include: ['recharts', 'compute-scroll-into-view', 'scroll-into-view-if-needed'],
+    exclude: [],
+  },
+  server: {
+    fs: {
+      strict: false,
+    },
+  },
 })

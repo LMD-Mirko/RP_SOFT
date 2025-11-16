@@ -3,21 +3,24 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Users,
+  UserCheck,
   Mic,
   ClipboardList,
   ClockCheck,
   Target,
-  Database,
   Bot,
   FileCheck,
   Settings,
   ChevronDown,
   ChevronRight,
+  QrCode,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
 import { SidebarHeader } from './SidebarHeader/index.js'
 import { SidebarFooter } from './SidebarFooter/index.js'
+import { useChatPanel } from '@shared/context/ChatPanelContext'
+import { QRGeneratorModal } from '@shared/components/ChatPanel/QRGeneratorModal/QRGeneratorModal'
 
 const menuItems = [
   {
@@ -38,6 +41,7 @@ const menuItems = [
         label: 'Selección Practicantes',
         path: '/seleccion-practicantes',
       },
+
       {
         icon: Mic,
         label: 'Transcripción Reuniones',
@@ -59,11 +63,6 @@ const menuItems = [
         path: '/evaluacion-360',
       },
       {
-        icon: Database,
-        label: 'Dataset Transcripción',
-        path: '/dataset-transcripcion',
-      },
-      {
         icon: Bot,
         label: 'Agente Integrador',
         path: '/agente-integrador',
@@ -72,6 +71,16 @@ const menuItems = [
         icon: FileCheck,
         label: 'Convenios Constancias',
         path: '/convenios-constancias',
+      },
+    ],
+  },
+  {
+    title: 'HERRAMIENTAS',
+    items: [
+      {
+        icon: QrCode,
+        label: 'Generador QR',
+        path: '/generador-qr',
       },
     ],
   },
@@ -90,9 +99,12 @@ const menuItems = [
 export function Sidebar() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { toggleChat, isOpen: isChatOpen } = useChatPanel()
+  const [showQRModal, setShowQRModal] = useState(false)
   const [expandedSections, setExpandedSections] = useState({
     PRINCIPAL: true,
     'GESTIÓN DE MODULOS': true,
+    HERRAMIENTAS: true,
     CUENTA: true,
   })
 
@@ -104,9 +116,24 @@ export function Sidebar() {
   }
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname === ''
+    // Si el chat está abierto, solo Agente Integrador debe estar activo
+    if (isChatOpen) {
+      return path === '/agente-integrador'
     }
+    
+    if (path === '/agente-integrador') {
+      return false
+    }
+    
+    // Generador QR no debe marcarse como activo (solo abre un modal)
+    if (path === '/generador-qr') {
+      return false
+    }
+    
+    if (path === '/') {
+      return (location.pathname === '/' || location.pathname === '') && !isChatOpen
+    }
+    
     return location.pathname.startsWith(path) && location.pathname !== '/'
   }
 
@@ -134,11 +161,21 @@ export function Sidebar() {
                 {section.items.map((item) => {
                   const Icon = item.icon
                   const active = isActive(item.path)
+                  const isAgenteIntegrador = item.path === '/agente-integrador'
+                  const isGeneradorQR = item.path === '/generador-qr'
 
                   return (
                     <button
                       key={item.path}
-                      onClick={() => navigate(item.path)}
+                      onClick={() => {
+                        if (isAgenteIntegrador) {
+                          toggleChat()
+                        } else if (isGeneradorQR) {
+                          setShowQRModal(true)
+                        } else {
+                          navigate(item.path)
+                        }
+                      }}
                       className={clsx(styles.menuItem, active && styles.active)}
                     >
                       <Icon size={20} className={styles.menuIcon} />
@@ -153,6 +190,11 @@ export function Sidebar() {
       </nav>
 
       <SidebarFooter />
+
+      <QRGeneratorModal 
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+      />
     </div>
   )
 }
