@@ -59,3 +59,22 @@ export const getDistritos = async (provinceId) => {
   }
 };
 
+/**
+ * Obtiene un distrito por ID con información de sus padres
+ * @param {number} districtId - ID del distrito
+ * @returns {Promise<Object>} Distrito con información de provincia y región
+ */
+export const getDistrictById = async (districtId) => {
+  if (!districtId) {
+    return null;
+  }
+  
+  try {
+    const response = await get(`districts/${districtId}/`);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener distrito:', error);
+    throw error;
+  }
+};
+

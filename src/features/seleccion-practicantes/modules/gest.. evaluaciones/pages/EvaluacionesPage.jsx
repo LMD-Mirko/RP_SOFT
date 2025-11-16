@@ -1,89 +1,74 @@
-import { useState, useEffect } from 'react'
-import { Search, Award, Eye, Trash2 } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { Search, Award, Trash2 } from 'lucide-react'
 import { Pagination } from 'antd'
 import { Table } from '@shared/components/UI/Table'
-import { Select } from '@shared/components/Select'
-import { Button } from '@shared/components/Button'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { useEvaluaciones } from '../hooks/useEvaluaciones'
-import { usePostulantes } from '../../postulantes/hooks/usePostulantes'
 import { useToast } from '@shared/components/Toast'
+import { Skeleton } from '../../../shared/components/Skeleton'
 import styles from './EvaluacionesPage.module.css'
 
-const mapAttemptFromAPI = (apiData) => {
+const mapEvaluacionFromAPI = (apiData) => {
   return {
     id: apiData.id,
-    postulante: apiData.postulant?.name 
-      ? `${apiData.postulant.name} ${apiData.postulant.paternal_lastname || ''} ${apiData.postulant.maternal_lastname || ''}`.trim()
-      : apiData.postulant?.email || 'N/A',
-    postulanteId: apiData.postulant?.id,
-    evaluation: apiData.evaluation?.title || 'N/A',
-    evaluationId: apiData.evaluation_id,
-    puntaje: apiData.score,
-    estado: apiData.status === 'completed' ? 'completada' : apiData.status === 'in_progress' ? 'en_progreso' : 'pendiente',
-    startedAt: apiData.started_at,
-    completedAt: apiData.completed_at,
+    title: apiData.title || 'N/A',
+    description: apiData.description || '',
+    jobPosting: apiData.job_posting?.title || apiData.job_posting_id || 'N/A',
+    jobPostingId: apiData.job_posting_id,
+    createdAt: apiData.created_at,
+    updatedAt: apiData.updated_at,
     _apiData: apiData,
   }
 }
 
 export function EvaluacionesPage() {
-  const { evaluaciones: apiAttempts, loading, pagination, loadEvaluaciones, deleteEvaluacion } = useEvaluaciones()
-  const { postulantes, loadPostulantes } = usePostulantes()
+  const { evaluaciones: apiEvaluaciones, loading, pagination, loadEvaluaciones, deleteEvaluacion } = useEvaluaciones()
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedAttempt, setSelectedAttempt] = useState(null)
-  const [searchDebounce, setSearchDebounce] = useState(null)
+  const [selectedEvaluacion, setSelectedEvaluacion] = useState(null)
   const toast = useToast()
 
-  const loadAttemptsWithFilters = (page = 1, page_size = pageSize) => {
-    const params = { page, page_size }
-    if (statusFilter) params.status = statusFilter
-    if (searchTerm.trim()) params.search = searchTerm.trim()
-    loadEvaluaciones(params)
-  }
-
   useEffect(() => {
-    loadAttemptsWithFilters(1, pageSize)
-    loadPostulantes(1)
+    loadEvaluaciones()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    if (searchDebounce) clearTimeout(searchDebounce)
-    const timeout = setTimeout(() => {
-      loadAttemptsWithFilters(1, pageSize)
-    }, searchTerm ? 500 : 0)
-    setSearchDebounce(timeout)
-    return () => { if (timeout) clearTimeout(timeout) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, statusFilter])
-
-  useEffect(() => {
-    loadAttemptsWithFilters(1, pageSize)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageSize])
-
-  useEffect(() => {
-    if (pagination.page_size && pagination.page_size !== pageSize) {
-      setPageSize(pagination.page_size)
+  // Filtrar y paginar en el frontend
+  const filteredEvaluaciones = useMemo(() => {
+    let filtered = apiEvaluaciones.map(mapEvaluacionFromAPI)
+    
+    // Filtrar por búsqueda
+    if (searchTerm.trim()) {
+      const search = searchTerm.toLowerCase()
+      filtered = filtered.filter(evaluacion => 
+        evaluacion.title.toLowerCase().includes(search) ||
+        evaluacion.description.toLowerCase().includes(search) ||
+        evaluacion.jobPosting.toString().toLowerCase().includes(search)
+      )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page_size])
+    
+    return filtered
+  }, [apiEvaluaciones, searchTerm])
 
-  const handleDelete = (attempt) => {
-    setSelectedAttempt(attempt)
+  // Paginación en el frontend
+  const paginatedEvaluaciones = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    const end = start + pageSize
+    return filteredEvaluaciones.slice(start, end)
+  }, [filteredEvaluaciones, currentPage, pageSize])
+
+  const handleDelete = (evaluacion) => {
+    setSelectedEvaluacion(evaluacion)
     setIsDeleteModalOpen(true)
   }
 
   const handleConfirmDelete = async () => {
-    if (selectedAttempt) {
-      await deleteEvaluacion(selectedAttempt.id)
+    if (selectedEvaluacion) {
+      await deleteEvaluacion(selectedEvaluacion.id)
       setIsDeleteModalOpen(false)
-      setSelectedAttempt(null)
-      loadAttemptsWithFilters(pagination.page, pagination.page_size)
+      setSelectedEvaluacion(null)
     }
   }
 
@@ -99,37 +84,20 @@ export function EvaluacionesPage() {
     })
   }
 
-  const getEstadoBadge = (estado) => {
-    if (estado === 'completada') {
-      return <span className={styles.badgeCompleted}>Completado</span>
-    }
-    if (estado === 'en_progreso') {
-      return <span className={styles.badgeInProgress}>En Progreso</span>
-    }
-    return <span className={styles.badgePending}>Pendiente</span>
-  }
-
   const handlePageChange = (page, size) => {
-    const newPageSize = size || pageSize
+    setCurrentPage(page)
     if (size && size !== pageSize) {
-      setPageSize(newPageSize)
+      setPageSize(size)
+      setCurrentPage(1) // Resetear a la primera página cuando cambia el tamaño
     }
-    loadAttemptsWithFilters(page, newPageSize)
   }
-
-  const attempts = apiAttempts.map(mapAttemptFromAPI)
-
-  const postulantesOptions = postulantes.map(p => ({
-    value: p.id?.toString() || '',
-    label: `${p.name || ''} ${p.paternal_lastname || ''} ${p.maternal_lastname || ''}`.trim() || p.email || 'N/A'
-  }))
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Evaluaciones</h1>
-          <p className={styles.subtitle}>Gestiona los intentos de evaluación de los postulantes</p>
+          <p className={styles.subtitle}>Gestiona las evaluaciones del sistema</p>
         </div>
       </div>
 
@@ -138,23 +106,13 @@ export function EvaluacionesPage() {
           <Search size={20} className={styles.searchIcon} />
           <input
             type="text"
-            placeholder="Buscar por postulante o evaluación..."
+            placeholder="Buscar por título, descripción o convocatoria..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setCurrentPage(1) // Resetear a la primera página al buscar
+            }}
             className={styles.searchInput}
-          />
-        </div>
-        <div className={styles.filtersRow}>
-          <Select
-            label="Estado"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            options={[
-              { value: '', label: 'Todos los estados' },
-              { value: 'completed', label: 'Completado' },
-              { value: 'in_progress', label: 'En Progreso' },
-              { value: 'pending', label: 'Pendiente' },
-            ]}
           />
         </div>
       </div>
@@ -164,49 +122,47 @@ export function EvaluacionesPage() {
           <Table>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell>Postulante</Table.HeaderCell>
-                <Table.HeaderCell>Evaluación</Table.HeaderCell>
-                <Table.HeaderCell align="center">Puntaje</Table.HeaderCell>
-                <Table.HeaderCell align="center">Estado</Table.HeaderCell>
-                <Table.HeaderCell align="center">Fecha Inicio</Table.HeaderCell>
-                <Table.HeaderCell align="center">Fecha Fin</Table.HeaderCell>
+                <Table.HeaderCell>Título</Table.HeaderCell>
+                <Table.HeaderCell>Descripción</Table.HeaderCell>
+                <Table.HeaderCell>Convocatoria</Table.HeaderCell>
+                <Table.HeaderCell align="center">Fecha Creación</Table.HeaderCell>
                 <Table.HeaderCell align="center" width="120px">Acciones</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
               {loading ? (
-                <Table.Empty colSpan={7}>
-                  Cargando evaluaciones...
-                </Table.Empty>
-              ) : attempts.length > 0 ? (
-                attempts.map((attempt) => (
-                  <Table.Row key={attempt.id}>
+                <>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Table.Row key={i}>
+                      <Table.Cell><Skeleton variant="text" width="70%" height={16} /></Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="50%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={32} height={32} /></Table.Cell>
+                    </Table.Row>
+                  ))}
+                </>
+              ) : paginatedEvaluaciones.length > 0 ? (
+                paginatedEvaluaciones.map((evaluacion) => (
+                  <Table.Row key={evaluacion.id}>
                     <Table.Cell>
-                      <span className={styles.postulanteNombre}>{attempt.postulante}</span>
+                      <span className={styles.evaluationTitle}>{evaluacion.title}</span>
                     </Table.Cell>
                     <Table.Cell>
-                      <span className={styles.evaluationName}>{attempt.evaluation}</span>
+                      <span className={styles.evaluationDescription}>
+                        {evaluacion.description || '-'}
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className={styles.jobPosting}>{evaluacion.jobPosting}</span>
                     </Table.Cell>
                     <Table.Cell align="center">
-                      {attempt.puntaje !== null && attempt.puntaje !== undefined ? (
-                        <span className={styles.puntaje}>{attempt.puntaje.toFixed(1)}</span>
-                      ) : (
-                        <span className={styles.puntajeEmpty}>-</span>
-                      )}
-                    </Table.Cell>
-                    <Table.Cell align="center">
-                      {getEstadoBadge(attempt.estado)}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span className={styles.fecha}>{formatDate(attempt.startedAt)}</span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span className={styles.fecha}>{formatDate(attempt.completedAt)}</span>
+                      <span className={styles.fecha}>{formatDate(evaluacion.createdAt)}</span>
                     </Table.Cell>
                     <Table.Cell align="center">
                       <div className={styles.actions}>
                         <button
-                          onClick={() => handleDelete(attempt)}
+                          onClick={() => handleDelete(evaluacion)}
                           className={styles.actionButtonDelete}
                           title="Eliminar"
                         >
@@ -217,8 +173,8 @@ export function EvaluacionesPage() {
                   </Table.Row>
                 ))
               ) : (
-                <Table.Empty colSpan={7} icon={Award}>
-                  {searchTerm || statusFilter
+                <Table.Empty colSpan={5} icon={Award}>
+                  {searchTerm
                     ? 'No se encontraron evaluaciones con ese criterio de búsqueda'
                     : 'No hay evaluaciones registradas'}
                 </Table.Empty>
@@ -227,15 +183,15 @@ export function EvaluacionesPage() {
           </Table>
         </div>
 
-        {!loading && pagination.total > 0 && (
+        {!loading && filteredEvaluaciones.length > 0 && (
           <div className={styles.pagination}>
             <Pagination
-              current={pagination.page || 1}
-              total={pagination.total || 0}
-              pageSize={pagination.page_size || 20}
+              current={currentPage}
+              total={filteredEvaluaciones.length}
+              pageSize={pageSize}
               pageSizeOptions={['10', '20', '30', '50', '100']}
               showSizeChanger={true}
-              showQuickJumper={pagination.total > 50}
+              showQuickJumper={filteredEvaluaciones.length > 50}
               showTotal={(total, range) => {
                 if (total === 0) return 'Sin evaluaciones'
                 return `${range[0]}-${range[1]} de ${total} evaluaciones`
@@ -252,13 +208,13 @@ export function EvaluacionesPage() {
         isOpen={isDeleteModalOpen}
         onClose={() => {
           setIsDeleteModalOpen(false)
-          setSelectedAttempt(null)
+          setSelectedEvaluacion(null)
         }}
         onConfirm={handleConfirmDelete}
         title="Eliminar Evaluación"
         message={
-          selectedAttempt
-            ? `¿Estás seguro de que deseas eliminar el intento de evaluación de "${selectedAttempt.postulante}"? Esta acción no se puede deshacer.`
+          selectedEvaluacion
+            ? `¿Estás seguro de que deseas eliminar la evaluación "${selectedEvaluacion.title}"? Esta acción no se puede deshacer.`
             : '¿Estás seguro de que deseas eliminar esta evaluación?'
         }
         confirmText="Eliminar"

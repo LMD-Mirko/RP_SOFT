@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Cascader } from 'antd';
-import { getRegiones, getProvincias, getDistritos } from './ubicacionService';
+import { getRegiones, getProvincias, getDistritos, getDistrictById } from './ubicacionService';
 import clsx from 'clsx';
 import styles from './CascadeSelect.module.css';
 
@@ -12,8 +12,11 @@ export function CascadeSelect({
   label,
   error,
   helperText,
-  value,
-  selectedData,
+  value, // Puede ser district_id (number) o null
+  selectedData, // { region: {id, name}, provincia: {id, name}, distrito: {id, name} }
+  regionId, // ID de región (opcional, para preseleccionar)
+  provinceId, // ID de provincia (opcional, para preseleccionar)
+  districtId, // ID de distrito (opcional, para preseleccionar)
   onChange,
   placeholder = 'Seleccione ubicación...',
   className,
@@ -82,7 +85,7 @@ export function CascadeSelect({
         
         setOptions(formattedOptions);
 
-        // Si hay selectedData, construir el valor del cascader y cargar la ruta completa
+        // Prioridad 1: Si hay selectedData completo, usarlo
         if (selectedData?.region?.id && selectedData?.provincia?.id && selectedData?.distrito?.id) {
           const pathValue = [
             selectedData.region.id,
@@ -90,13 +93,26 @@ export function CascadeSelect({
             selectedData.distrito.id
           ];
           setCascaderValue(pathValue);
-          
-          // Cargar la ruta completa para que se muestre correctamente
           await loadFullPath(formattedOptions, pathValue);
-        } else if (value && typeof value === 'number') {
-          // Si solo hay un ID de distrito, intentar cargar la ruta completa
-          // Esto requiere una llamada adicional a la API para obtener el distrito y sus padres
-          // Por ahora, solo establecemos el valor si tenemos selectedData
+        }
+        // Prioridad 2: Si hay IDs individuales (regionId, provinceId, districtId)
+        else if (regionId && provinceId && districtId) {
+          const pathValue = [regionId, provinceId, districtId];
+          setCascaderValue(pathValue);
+          await loadFullPath(formattedOptions, pathValue);
+        }
+        // Prioridad 3: Si solo hay value (district_id), cargar el distrito y obtener sus padres
+        else if (value && typeof value === 'number') {
+          try {
+            const district = await getDistrictById(value);
+            if (district && district.province_id && district.region_id) {
+              const pathValue = [district.region_id, district.province_id, value];
+              setCascaderValue(pathValue);
+              await loadFullPath(formattedOptions, pathValue);
+            }
+          } catch (error) {
+            console.error('Error al cargar distrito por ID:', error);
+          }
         }
       } catch (error) {
         console.error('Error al cargar regiones:', error);
@@ -107,7 +123,7 @@ export function CascadeSelect({
     };
 
     loadRegiones();
-  }, [value, selectedData, loadFullPath]);
+  }, [value, selectedData, regionId, provinceId, districtId, loadFullPath]);
 
   // Función para cargar datos hijos dinámicamente
   const loadData = useCallback(async (selectedOptions) => {
@@ -159,22 +175,27 @@ export function CascadeSelect({
     
     // Si se selecciona un distrito (3 niveles), emitir el evento onChange
     if (value && value.length === 3) {
+      const regionId = value[0];
+      const provinceId = value[1];
       const distritoId = value[2];
       const event = {
         target: {
           name: name,
-          value: distritoId,
+          value: distritoId, // Mantener compatibilidad con código existente
+          regionId: regionId,
+          provinceId: provinceId,
+          districtId: distritoId,
           selectedData: {
             distrito: {
               id: distritoId,
               name: selectedOptions[2]?.label
             },
             provincia: {
-              id: value[1],
+              id: provinceId,
               name: selectedOptions[1]?.label
             },
             region: {
-              id: value[0],
+              id: regionId,
               name: selectedOptions[0]?.label
             }
           }
@@ -188,7 +209,10 @@ export function CascadeSelect({
       const event = {
         target: {
           name: name,
-          value: null
+          value: null,
+          regionId: null,
+          provinceId: null,
+          districtId: null
         }
       };
       onChange?.(event);

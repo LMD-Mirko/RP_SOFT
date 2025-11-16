@@ -125,14 +125,42 @@ export const updateMyProfile = async (data) => {
 
 /**
  * Cambia la contraseña del usuario autenticado
- * @param {Object} data - { old_password, new_password }
+ * @param {Object} data - { current_password, new_password }
  * @returns {Promise} Resultado de la operación
  */
 export const changePassword = async (data) => {
   try {
-    return await post('users/me/password/', data);
+    return await patch('users/me/password/', data);
   } catch (error) {
     console.error('Error al cambiar contraseña:', error);
+    throw error;
+  }
+};
+
+/**
+ * Solicita cambio de email
+ * @param {string} newEmail - Nuevo email
+ * @returns {Promise} Resultado de la operación
+ */
+export const requestChangeEmail = async (newEmail) => {
+  try {
+    return await post('users/me/change-email/request/', { new_email: newEmail });
+  } catch (error) {
+    console.error('Error al solicitar cambio de email:', error);
+    throw error;
+  }
+};
+
+/**
+ * Confirma cambio de email con código de verificación
+ * @param {string} code - Código de verificación
+ * @returns {Promise} Resultado de la operación
+ */
+export const confirmChangeEmail = async (code) => {
+  try {
+    return await post('users/me/change-email/confirm/', { code });
+  } catch (error) {
+    console.error('Error al confirmar cambio de email:', error);
     throw error;
   }
 };

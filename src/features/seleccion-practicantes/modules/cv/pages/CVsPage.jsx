@@ -3,6 +3,7 @@ import { DocumentList } from '../components/DocumentList'
 import { DocumentActions } from '../components/DocumentActions'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { useFiles } from '../hook/useFiles'
+import { SkeletonList } from '../../../shared/components/Skeleton'
 import styles from './CVsPage.module.css'
 
 /**
@@ -125,9 +126,7 @@ export function CVsPage() {
         {/* Panel de Documentos (Izquierda) */}
         <div className={styles.documentsPanel}>
           {loading ? (
-            <div className={styles.loading}>
-              <p>Cargando documentos...</p>
-            </div>
+            <SkeletonList items={5} />
           ) : (
             <DocumentList
               documents={filteredDocuments}

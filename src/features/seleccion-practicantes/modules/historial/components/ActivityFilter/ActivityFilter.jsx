@@ -7,6 +7,10 @@ const filterOptions = [
   { value: 'cambio', label: 'Cambios' },
   { value: 'evaluacion', label: 'Evaluaciones' },
   { value: 'rechazo', label: 'Rechazos' },
+  { value: 'aceptacion', label: 'Aceptaciones' },
+  { value: 'eliminacion', label: 'Eliminaciones' },
+  { value: 'login', label: 'Inicios de sesión' },
+  { value: 'logout', label: 'Cierres de sesión' },
 ]
 
 export function ActivityFilter({ value, onChange }) {

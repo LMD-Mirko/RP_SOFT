@@ -1,36 +1,39 @@
 import { useState, useEffect } from 'react'
-import { User, Mail, Lock, Save, Camera, Shield, CheckCircle, AlertCircle, Eye, EyeOff, Calendar, MapPin, Phone, CreditCard, Globe, Info } from 'lucide-react'
+import { User, Mail, Lock, Save, Camera, Shield, CheckCircle, AlertCircle, Eye, EyeOff, Calendar, MapPin, Phone, CreditCard, Globe, Info, HelpCircle } from 'lucide-react'
 import { Input } from '@shared/components/Input'
 import { Button } from '@shared/components/Button'
+import { Select } from '@shared/components/Select'
+import { DocumentTypeSelect } from '@shared/components/DocumentTypeSelect'
+import { CascadeSelect } from '@shared/components/CascadeSelect'
 import { useProfile } from '../hooks/useProfile'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { PhotoUploadModal } from '../components/PhotoUploadModal'
+import { ChangePasswordModal } from '../components/ChangePasswordModal'
+import { ChangeEmailModal } from '../components/ChangeEmailModal'
+import { Skeleton } from '../../../shared/components/Skeleton'
 import styles from './PerfilPage.module.css'
 
 export function PerfilPage() {
-  const { profile, loading, loadProfile, updateProfile, changePassword, uploadPhoto, profileImageUrl } = useProfile()
+  const { profile, loading, loadProfile, updateProfile, changePassword, requestChangeEmail, confirmChangeEmail, uploadPhoto, profileImageUrl } = useProfile()
   const [formData, setFormData] = useState({
     name: '',
     paternal_lastname: '',
     maternal_lastname: '',
-    email: '',
     username: '',
-  })
-  const [passwordData, setPasswordData] = useState({
-    old_password: '',
-    new_password: '',
-    confirm_password: '',
+    document_type_id: null,
+    document_number: '',
+    sex: 'M',
+    phone: '',
+    country_id: 429, // Perú por defecto
+    region_id: null,
+    province_id: null,
+    district_id: null,
   })
   const [errors, setErrors] = useState({})
-  const [passwordErrors, setPasswordErrors] = useState({})
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
-  const [showPasswords, setShowPasswords] = useState({
-    old: false,
-    new: false,
-    confirm: false,
-  })
 
   useEffect(() => {
     loadProfile()
@@ -42,8 +45,15 @@ export function PerfilPage() {
         name: profile.name || '',
         paternal_lastname: profile.paternal_lastname || '',
         maternal_lastname: profile.maternal_lastname || '',
-        email: profile.email || '',
         username: profile.username || '',
+        document_type_id: profile.document_type_id || null,
+        document_number: profile.document_number || '',
+        sex: profile.sex || 'M',
+        phone: profile.phone || '',
+        country_id: profile.country_id || 429, // Perú por defecto
+        region_id: profile.region_id || null,
+        province_id: profile.province_id || null,
+        district_id: profile.district_id || null,
       })
     }
   }, [profile])
@@ -56,42 +66,31 @@ export function PerfilPage() {
     }
   }
 
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target
-    setPasswordData(prev => ({ ...prev, [name]: value }))
-    if (passwordErrors[name]) {
-      setPasswordErrors(prev => ({ ...prev, [name]: '' }))
+  // Manejar cambio de ubicación (CascadeSelect)
+  const handleLocationChange = (e) => {
+    const { regionId, provinceId, districtId } = e.target
+    setFormData(prev => ({
+      ...prev,
+      region_id: regionId,
+      province_id: provinceId,
+      district_id: districtId,
+    }))
+    if (errors.district_id) {
+      setErrors(prev => ({ ...prev, district_id: '' }))
     }
-  }
-
-  const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }))
   }
 
   const validateProfile = () => {
     const newErrors = {}
     if (!formData.name.trim()) newErrors.name = 'El nombre es requerido'
     if (!formData.paternal_lastname.trim()) newErrors.paternal_lastname = 'El apellido paterno es requerido'
-    if (!formData.email.trim()) newErrors.email = 'El email es requerido'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Email inválido'
+    if (formData.document_type_id && !formData.document_number.trim()) {
+      newErrors.document_number = 'El número de documento es requerido'
+    }
+    if (formData.document_number && !formData.document_type_id) {
+      newErrors.document_type_id = 'El tipo de documento es requerido'
     }
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const validatePassword = () => {
-    const newErrors = {}
-    if (!passwordData.old_password) newErrors.old_password = 'La contraseña actual es requerida'
-    if (!passwordData.new_password) newErrors.new_password = 'La nueva contraseña es requerida'
-    else if (passwordData.new_password.length < 8) {
-      newErrors.new_password = 'La contraseña debe tener al menos 8 caracteres'
-    }
-    if (!passwordData.confirm_password) newErrors.confirm_password = 'Confirma la nueva contraseña'
-    else if (passwordData.new_password !== passwordData.confirm_password) {
-      newErrors.confirm_password = 'Las contraseñas no coinciden'
-    }
-    setPasswordErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
@@ -100,28 +99,23 @@ export function PerfilPage() {
     if (!validateProfile()) return
 
     try {
-      await updateProfile({
+      const updateData = {
         name: formData.name,
         paternal_lastname: formData.paternal_lastname,
         maternal_lastname: formData.maternal_lastname,
-        email: formData.email,
-      })
-    } catch (error) {
-      // El error ya se maneja en el hook
-    }
-  }
+      }
 
-  const handleChangePassword = async () => {
-    if (!validatePassword()) return
+      // Agregar campos opcionales solo si tienen valor
+      if (formData.document_type_id) updateData.document_type_id = formData.document_type_id
+      if (formData.document_number) updateData.document_number = formData.document_number
+      if (formData.sex) updateData.sex = formData.sex
+      if (formData.phone) updateData.phone = formData.phone
+      if (formData.country_id) updateData.country_id = formData.country_id
+      if (formData.region_id) updateData.region_id = formData.region_id
+      if (formData.province_id) updateData.province_id = formData.province_id
+      if (formData.district_id) updateData.district_id = formData.district_id
 
-    try {
-      await changePassword(passwordData.old_password, passwordData.new_password)
-      setIsPasswordModalOpen(false)
-      setPasswordData({
-        old_password: '',
-        new_password: '',
-        confirm_password: '',
-      })
+      await updateProfile(updateData)
     } catch (error) {
       // El error ya se maneja en el hook
     }
@@ -139,12 +133,57 @@ export function PerfilPage() {
     }
   }
 
-  if (loading && !profile) {
+  // Mostrar skeleton mientras carga o no hay perfil
+  if (loading || !profile) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>
-          <div className={styles.loadingSpinner}></div>
-          <p>Cargando perfil...</p>
+        <div className={styles.layout}>
+          {/* Left Column - Profile Card Skeleton */}
+          <div className={styles.leftColumn}>
+            <div className={styles.profileCard}>
+              <div className={styles.profileHeader}>
+                <div className={styles.avatarWrapper}>
+                  <Skeleton variant="circular" width={120} height={120} />
+                </div>
+                <Skeleton variant="text" width="60%" height={28} style={{ marginTop: '16px' }} />
+                <Skeleton variant="text" width="40%" height={16} style={{ marginTop: '8px' }} />
+              </div>
+              <div className={styles.profileInfo}>
+                <div className={styles.infoSection}>
+                  <Skeleton variant="text" width="50%" height={20} style={{ marginBottom: '16px' }} />
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className={styles.infoItem} style={{ marginBottom: '12px' }}>
+                      <Skeleton variant="rectangular" width={18} height={18} />
+                      <div style={{ flex: 1, marginLeft: '12px' }}>
+                        <Skeleton variant="text" width="40%" height={14} />
+                        <Skeleton variant="text" width="60%" height={16} style={{ marginTop: '4px' }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Forms Skeleton */}
+          <div className={styles.rightColumn}>
+            <div className={styles.card}>
+              <Skeleton variant="text" width="40%" height={24} style={{ marginBottom: '24px' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Skeleton key={i} variant="rectangular" width="100%" height={56} />
+                ))}
+              </div>
+            </div>
+            <div className={styles.card} style={{ marginTop: '24px' }}>
+              <Skeleton variant="text" width="40%" height={24} style={{ marginBottom: '24px' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} variant="rectangular" width="100%" height={56} />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -345,6 +384,7 @@ export function PerfilPage() {
                       iconPosition="left"
                       error={errors.name}
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div className={styles.inputWrapper}>
@@ -358,6 +398,7 @@ export function PerfilPage() {
                       iconPosition="left"
                       error={errors.paternal_lastname}
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div className={styles.inputWrapper}>
@@ -370,6 +411,77 @@ export function PerfilPage() {
                       icon={User}
                       iconPosition="left"
                       error={errors.maternal_lastname}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className={styles.inputWrapper}>
+                    <DocumentTypeSelect
+                      label="Tipo de Documento"
+                      id="document_type_id"
+                      name="document_type_id"
+                      value={formData.document_type_id}
+                      onChange={handleChange}
+                      placeholder="Seleccione tipo de documento"
+                      error={errors.document_type_id}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className={styles.inputWrapper}>
+                    <Input
+                      label="Número de Documento"
+                      id="document_number"
+                      name="document_number"
+                      value={formData.document_number}
+                      onChange={handleChange}
+                      icon={CreditCard}
+                      iconPosition="left"
+                      error={errors.document_number}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className={styles.inputWrapper}>
+                    <Select
+                      label="Sexo"
+                      id="sex"
+                      name="sex"
+                      value={formData.sex}
+                      onChange={handleChange}
+                      options={[
+                        { value: 'M', label: 'Masculino' },
+                        { value: 'F', label: 'Femenino' },
+                        { value: 'O', label: 'Otro' },
+                      ]}
+                      error={errors.sex}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className={styles.inputWrapper}>
+                    <Input
+                      label="Teléfono"
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      icon={Phone}
+                      iconPosition="left"
+                      error={errors.phone}
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className={styles.inputWrapper}>
+                    <CascadeSelect
+                      label="Ubicación"
+                      id="district_id"
+                      name="district_id"
+                      value={formData.district_id}
+                      regionId={formData.region_id}
+                      provinceId={formData.province_id}
+                      districtId={formData.district_id}
+                      onChange={handleLocationChange}
+                      placeholder="Seleccione Región > Provincia > Distrito"
+                      error={errors.district_id}
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -384,13 +496,14 @@ export function PerfilPage() {
                       id="email"
                       name="email"
                       type="email"
-                      value={formData.email}
-                      onChange={handleChange}
+                      value={profile?.email || ''}
+                      disabled
                       icon={Mail}
                       iconPosition="left"
-                      error={errors.email}
-                      required
                     />
+                    <p className={styles.fieldHint}>
+                      Para cambiar tu email, usa la opción en la sección de Seguridad
+                    </p>
                   </div>
                   <div className={styles.inputWrapper}>
                     <Input
@@ -425,158 +538,100 @@ export function PerfilPage() {
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderLeft}>
                 <div className={styles.cardIcon}>
-                  <Lock size={20} />
+                  <Shield size={20} />
                 </div>
                 <div>
-                  <h2 className={styles.cardTitle}>Seguridad y Contraseña</h2>
+                  <h2 className={styles.cardTitle}>Seguridad</h2>
                   <p className={styles.cardDescription}>
-                    Cambia tu contraseña para mantener tu cuenta segura
+                    Gestiona la seguridad de tu cuenta
                   </p>
                 </div>
               </div>
             </div>
 
-            <form className={styles.form} onSubmit={(e) => { e.preventDefault(); setIsPasswordModalOpen(true); }}>
-              <div className={styles.formSection}>
-                <div className={styles.sectionHeader}>
-                  <h3 className={styles.sectionTitle}>Cambiar Contraseña</h3>
-                  <div className={styles.tooltipContainer}>
-                    <Info size={18} className={styles.tooltipIcon} />
-                    <div className={styles.tooltip}>
-                      <div className={styles.tooltipHeader}>
-                        <AlertCircle size={18} />
-                        <span>Recomendaciones de seguridad</span>
-                      </div>
-                      <ul className={styles.tooltipList}>
-                        <li>Usa al menos 8 caracteres</li>
-                        <li>Combina letras, números y símbolos</li>
-                        <li>No uses información personal</li>
-                        <li>Cambia tu contraseña regularmente</li>
-                      </ul>
-                    </div>
+            <div className={styles.securitySections}>
+              {/* Cambio de Contraseña */}
+              <div className={styles.securitySection}>
+                <div className={styles.securitySectionHeader}>
+                  <div className={styles.securitySectionIcon}>
+                    <Lock size={20} />
                   </div>
-                </div>
-              </div>
-
-              <div className={styles.formSection}>
-                <div className={styles.formGrid}>
-                  <div className={styles.inputWrapper}>
-                    <div className={styles.passwordInputWrapper}>
-                      <Input
-                        label="Contraseña Actual"
-                        id="old_password"
-                        name="old_password"
-                        type={showPasswords.old ? 'text' : 'password'}
-                        value={passwordData.old_password}
-                        onChange={handlePasswordChange}
-                        icon={Lock}
-                        iconPosition="left"
-                        error={passwordErrors.old_password}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className={styles.passwordToggle}
-                        onClick={() => togglePasswordVisibility('old')}
-                        tabIndex={-1}
-                      >
-                        {showPasswords.old ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className={styles.inputWrapper}>
-                    <div className={styles.passwordInputWrapper}>
-                      <Input
-                        label="Nueva Contraseña"
-                        id="new_password"
-                        name="new_password"
-                        type={showPasswords.new ? 'text' : 'password'}
-                        value={passwordData.new_password}
-                        onChange={handlePasswordChange}
-                        icon={Lock}
-                        iconPosition="left"
-                        error={passwordErrors.new_password}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className={styles.passwordToggle}
-                        onClick={() => togglePasswordVisibility('new')}
-                        tabIndex={-1}
-                      >
-                        {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                    {passwordData.new_password && (
-                      <div className={styles.passwordStrength}>
-                        <div className={styles.strengthBar}>
-                          <div
-                            className={`${styles.strengthFill} ${
-                              passwordData.new_password.length < 8
-                                ? styles.weak
-                                : passwordData.new_password.length < 12
-                                ? styles.medium
-                                : styles.strong
-                            }`}
-                            style={{
-                              width: `${Math.min((passwordData.new_password.length / 16) * 100, 100)}%`,
-                            }}
-                          ></div>
+                  <div className={styles.securitySectionContent}>
+                    <div className={styles.securitySectionTitleRow}>
+                      <h3 className={styles.securitySectionTitle}>Cambiar Contraseña</h3>
+                      {profile?.provider && profile.provider !== 'email' && (
+                        <div className={styles.tooltipWrapper}>
+                          <HelpCircle size={18} className={styles.tooltipIcon} />
+                          <div className={styles.tooltip}>
+                            <div className={styles.tooltipHeader}>
+                              <AlertCircle size={16} />
+                              <span>Cambio de contraseña no disponible</span>
+                            </div>
+                            <p className={styles.tooltipText}>
+                              Tu cuenta está asociada a un proveedor externo ({profile?.provider || 'externo'}). 
+                              No puedes cambiar tu contraseña directamente desde aquí. 
+                              Debes hacerlo desde la plataforma del proveedor.
+                            </p>
+                          </div>
                         </div>
-                        <p className={styles.strengthText}>
-                          {passwordData.new_password.length < 8
-                            ? 'Débil'
-                            : passwordData.new_password.length < 12
-                            ? 'Media'
-                            : 'Fuerte'}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  <div className={styles.inputWrapper}>
-                    <div className={styles.passwordInputWrapper}>
-                      <Input
-                        label="Confirmar Nueva Contraseña"
-                        id="confirm_password"
-                        name="confirm_password"
-                        type={showPasswords.confirm ? 'text' : 'password'}
-                        value={passwordData.confirm_password}
-                        onChange={handlePasswordChange}
-                        icon={Lock}
-                        iconPosition="left"
-                        error={passwordErrors.confirm_password}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className={styles.passwordToggle}
-                        onClick={() => togglePasswordVisibility('confirm')}
-                        tabIndex={-1}
-                      >
-                        {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
+                      )}
                     </div>
-                    {passwordData.confirm_password && passwordData.new_password === passwordData.confirm_password && (
-                      <div className={styles.passwordMatch}>
-                        <CheckCircle size={16} />
-                        <span>Las contraseñas coinciden</span>
-                      </div>
-                    )}
+                    <p className={styles.securitySectionDescription}>
+                      Actualiza tu contraseña para mantener tu cuenta segura
+                    </p>
                   </div>
                 </div>
-              </div>
-
-              <div className={styles.formActions}>
                 <Button
-                  type="submit"
                   variant="primary"
-                  disabled={loading}
+                  onClick={() => setIsPasswordModalOpen(true)}
+                  disabled={loading || (profile?.provider && profile.provider !== 'email')}
                   icon={Lock}
                 >
-                  {loading ? 'Cambiando...' : 'Cambiar Contraseña'}
+                  Cambiar Contraseña
                 </Button>
               </div>
-            </form>
+
+              {/* Cambio de Email */}
+              <div className={styles.securitySection}>
+                <div className={styles.securitySectionHeader}>
+                  <div className={styles.securitySectionIcon}>
+                    <Mail size={20} />
+                  </div>
+                  <div className={styles.securitySectionContent}>
+                    <div className={styles.securitySectionTitleRow}>
+                      <h3 className={styles.securitySectionTitle}>Cambiar Email</h3>
+                      {profile?.provider && profile.provider !== 'email' && (
+                        <div className={styles.tooltipWrapper}>
+                          <HelpCircle size={18} className={styles.tooltipIcon} />
+                          <div className={styles.tooltip}>
+                            <div className={styles.tooltipHeader}>
+                              <AlertCircle size={16} />
+                              <span>Cambio de email no disponible</span>
+                            </div>
+                            <p className={styles.tooltipText}>
+                              Tu cuenta está asociada a un proveedor externo ({profile?.provider || 'externo'}). 
+                              No puedes cambiar tu email directamente desde aquí. 
+                              Debes hacerlo desde la plataforma del proveedor.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <p className={styles.securitySectionDescription}>
+                      Actualiza tu dirección de correo electrónico
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="primary"
+                  onClick={() => setIsEmailModalOpen(true)}
+                  disabled={loading || (profile?.provider && profile.provider !== 'email')}
+                  icon={Mail}
+                >
+                  Cambiar Email
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -590,15 +645,24 @@ export function PerfilPage() {
         uploading={uploadingPhoto}
       />
 
-      <ConfirmModal
+      <ChangePasswordModal
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
-        onConfirm={handleChangePassword}
-        title="Confirmar Cambio de Contraseña"
-        message="¿Estás seguro de que deseas cambiar tu contraseña? Deberás iniciar sesión nuevamente."
-        confirmText="Cambiar Contraseña"
-        cancelText="Cancelar"
-        type="warning"
+        onChangePassword={changePassword}
+        loading={loading}
+        canChangePassword={!profile?.provider || profile.provider === 'email'}
+        provider={profile?.provider}
+      />
+
+      <ChangeEmailModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        onRequestChange={requestChangeEmail}
+        onConfirmChange={confirmChangeEmail}
+        loading={loading}
+        canChangeEmail={!profile?.provider || profile.provider === 'email'}
+        provider={profile?.provider}
+        currentEmail={profile?.email}
       />
     </div>
   )

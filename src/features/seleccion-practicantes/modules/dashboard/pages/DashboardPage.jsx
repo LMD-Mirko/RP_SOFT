@@ -9,6 +9,7 @@ import { ProgressBySpecialtyChart } from '../components/ProgressBySpecialtyChart
 import { ProgressByConvocatoriaChart } from '../components/ProgressByConvocatoriaChart'
 import { useDashboard } from '../hooks/useDashboard'
 import { useEffect, useState } from 'react'
+import { SkeletonStatsCard, SkeletonChart, SkeletonList } from '../../../shared/components/Skeleton'
 import styles from './DashboardPage.module.css'
 
 export function DashboardPage() {
@@ -149,13 +150,16 @@ export function DashboardPage() {
       </header>
 
       {/* Stats Cards */}
-      {loading ? (
-        <div className={styles.loading}>
-          <p>Cargando estadísticas...</p>
-        </div>
-      ) : (
-        <div className={styles.statsGrid}>
-          {statsData.map((stat, index) => (
+      <div className={styles.statsGrid}>
+        {loading ? (
+          <>
+            <SkeletonStatsCard index={0} />
+            <SkeletonStatsCard index={1} />
+            <SkeletonStatsCard index={2} />
+            <SkeletonStatsCard index={3} />
+          </>
+        ) : (
+          statsData.map((stat, index) => (
             <StatsCard
               key={index}
               index={index}
@@ -166,24 +170,36 @@ export function DashboardPage() {
               iconColor={stat.iconColor}
               detailColor={stat.detailColor}
             />
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
 
       {/* Main Content Grid */}
       <div className={styles.mainGrid}>
         {/* Left Column */}
         <div className={styles.leftColumn}>
           <div className={styles.chartCard}>
-            <PostulantsStatusChart data={stats?.postulants_by_status || []} />
+            {loading ? (
+              <SkeletonChart height={300} />
+            ) : (
+              <PostulantsStatusChart data={stats?.postulants_by_status || []} />
+            )}
           </div>
           
           {/* Progreso por Convocatoria - Gráfico de Línea */}
           <div className={styles.chartCard}>
-            <ProgressByConvocatoriaChart data={averageProgress?.by_convocatoria || []} />
+            {loading ? (
+              <SkeletonChart height={300} />
+            ) : (
+              <ProgressByConvocatoriaChart data={averageProgress?.by_convocatoria || []} />
+            )}
           </div>
 
-          {usersStats?.new_users_this_week && usersStats.new_users_this_week.length > 0 && (
+          {loading ? (
+            <div className={styles.listCard}>
+              <SkeletonList items={3} />
+            </div>
+          ) : usersStats?.new_users_this_week && usersStats.new_users_this_week.length > 0 && (
             <div className={styles.listCard}>
               <NewUsersList 
                 users={usersStats.new_users_this_week} 
@@ -196,24 +212,40 @@ export function DashboardPage() {
 
           {/* Actividad Reciente - Movido a la izquierda */}
           <div className={styles.listCard}>
-            <RecentActivity activities={activities} loading={loadingActivities} />
+            {loadingActivities ? (
+              <SkeletonList items={5} />
+            ) : (
+              <RecentActivity activities={activities} loading={loadingActivities} />
+            )}
           </div>
         </div>
 
         {/* Right Column */}
         <div className={styles.rightColumn}>
           <div className={styles.chartCard}>
-            <ConvocatoriasStatusChart data={stats?.convocatorias_by_status || []} />
+            {loading ? (
+              <SkeletonChart height={300} />
+            ) : (
+              <ConvocatoriasStatusChart data={stats?.convocatorias_by_status || []} />
+            )}
           </div>
 
           {/* Distribución de Progreso - Gráfico de Dona */}
           <div className={styles.chartCard}>
-            <ProgressDistributionChart data={averageProgress?.progress_distribution || {}} />
+            {loading ? (
+              <SkeletonChart height={300} />
+            ) : (
+              <ProgressDistributionChart data={averageProgress?.progress_distribution || {}} />
+            )}
           </div>
 
           {/* Progreso por Especialidad - Gráfico Combinado (Barras + Línea) */}
           <div className={styles.chartCard}>
-            <ProgressBySpecialtyChart data={averageProgress?.by_specialty || []} />
+            {loading ? (
+              <SkeletonChart height={300} />
+            ) : (
+              <ProgressBySpecialtyChart data={averageProgress?.by_specialty || []} />
+            )}
           </div>
         </div>
       </div>

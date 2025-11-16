@@ -174,6 +174,50 @@ httpClient.interceptors.response.use(
   }
 );
 
+/**
+ * Traduce mensajes de error comunes del inglés al español
+ * @param {string} message - Mensaje de error original
+ * @param {number} status - Código de estado HTTP
+ * @returns {string} Mensaje traducido
+ */
+const translateErrorMessage = (message, status) => {
+  if (!message) return message;
+  
+  const lowerMessage = message.toLowerCase();
+  
+  // Traducir mensajes de permisos (403)
+  if (status === 403) {
+    if (lowerMessage.includes('you do not have permission') || 
+        lowerMessage.includes('permission denied') ||
+        lowerMessage.includes('forbidden')) {
+      return 'No tienes permisos para realizar esta acción';
+    }
+    if (lowerMessage.includes('access denied')) {
+      return 'Acceso denegado';
+    }
+  }
+  
+  // Traducir otros mensajes comunes
+  if (lowerMessage.includes('not found') || lowerMessage.includes('does not exist')) {
+    return 'Recurso no encontrado';
+  }
+  
+  if (lowerMessage.includes('unauthorized') || lowerMessage.includes('authentication')) {
+    return 'No estás autenticado. Por favor, inicia sesión';
+  }
+  
+  if (lowerMessage.includes('bad request') || lowerMessage.includes('invalid')) {
+    return 'Solicitud inválida';
+  }
+  
+  if (lowerMessage.includes('server error') || lowerMessage.includes('internal error')) {
+    return 'Error del servidor. Por favor, intenta más tarde';
+  }
+  
+  // Si no hay traducción específica, devolver el mensaje original
+  return message;
+};
+
 const normalizeEndpoint = (endpoint) => {
   if (!endpoint) return '/';
   
@@ -210,16 +254,20 @@ const executeRequest = async (method, endpoint, data, options = {}) => {
     if (error.response) {
       // Preservar el código de error si existe
       const errorCode = error.response.data?.code;
-      const message =
+      const status = error.response.status;
+      const rawMessage =
         error.response.data?.message ||
         error.response.data?.detail ||
-        `Error HTTP: ${error.response.status}`;
+        `Error HTTP: ${status}`;
       
-      const customError = new Error(message);
+      // Traducir el mensaje de error al español
+      const translatedMessage = translateErrorMessage(rawMessage, status);
+      
+      const customError = new Error(translatedMessage);
       if (errorCode) {
         customError.code = errorCode;
       }
-      customError.status = error.response.status;
+      customError.status = status;
       customError.response = error.response;
       throw customError;
     }

@@ -155,45 +155,57 @@ export default function RegisterAdminPage() {
         )
       }
 
-      // Obtener el rol del usuario y redirigir
-      try {
-        const roleData = await getUserRole()
-        if (roleData) {
-          // Actualizar datos del usuario con información del rol
-          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}')
-          localStorage.setItem(
-            'rpsoft_user',
-            JSON.stringify({
+      // Redirigir según role_id y postulant_status del usuario
+      // Los datos ya vienen en response.user según la nueva API
+      if (response.user) {
+        const userData = {
+          ...response.user,
+          loginTime: new Date().toISOString(),
+        }
+        localStorage.setItem('rpsoft_user', JSON.stringify(userData))
+        
+        const userName = response.user?.name || nameParts.firstName.trim()
+        toast.success(`¡Cuenta de administrador creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
+        
+        // Redirigir según el rol
+        setTimeout(() => {
+          redirectByRole(response.user, navigate)
+        }, 1000)
+      } else {
+        // Fallback: intentar obtener datos del rol si no vienen en response.user
+        try {
+          const roleData = await getUserRole()
+          if (roleData) {
+            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}')
+            const updatedUserData = {
               ...userData,
               ...roleData,
               loginTime: new Date().toISOString(),
-            })
-          )
-          
-          const userName = response.user?.name || nameParts.firstName.trim()
-          toast.success(`¡Cuenta de administrador creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
-          
-          // Redirigir según el rol
-          setTimeout(() => {
-            redirectByRole(roleData, navigate)
-          }, 1000)
-        } else {
-          // Si no hay datos de rol, redirigir a dashboard por defecto
-          const userName = response.user?.name || nameParts.firstName.trim()
+            }
+            localStorage.setItem('rpsoft_user', JSON.stringify(updatedUserData))
+            
+            const userName = nameParts.firstName.trim()
+            toast.success(`¡Cuenta de administrador creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
+            
+            setTimeout(() => {
+              redirectByRole(updatedUserData, navigate)
+            }, 1000)
+          } else {
+            const userName = nameParts.firstName.trim()
+            toast.success(`¡Cuenta de administrador creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
+            
+            setTimeout(() => {
+              navigate('/dashboard')
+            }, 1000)
+          }
+        } catch (roleError) {
+          const userName = nameParts.firstName.trim()
           toast.success(`¡Cuenta de administrador creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
           
           setTimeout(() => {
             navigate('/dashboard')
           }, 1000)
         }
-      } catch (roleError) {
-        // Si falla obtener el rol, redirigir a dashboard por defecto
-        const userName = response.user?.name || nameParts.firstName.trim()
-        toast.success(`¡Cuenta de administrador creada exitosamente! Bienvenido, ${userName}`, 4000, '¡Registro exitoso!')
-        
-        setTimeout(() => {
-          navigate('/dashboard')
-        }, 1000)
       }
 
       // Limpiar datos temporales

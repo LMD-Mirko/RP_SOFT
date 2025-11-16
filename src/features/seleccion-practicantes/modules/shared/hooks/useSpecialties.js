@@ -9,7 +9,7 @@ import * as specialtyService from '../services/specialtyService';
 
 export const useSpecialties = () => {
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Iniciar en true para mostrar skeleton
   const [specialties, setSpecialties] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,

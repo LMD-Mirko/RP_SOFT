@@ -9,7 +9,7 @@ import * as documentTypeService from '../services/documentTypeService';
 
 export const useDocumentTypes = () => {
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Iniciar en true para mostrar skeleton
   const [documentTypes, setDocumentTypes] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,

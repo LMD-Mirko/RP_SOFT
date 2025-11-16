@@ -9,7 +9,7 @@ import * as calendarioService from '../services';
 
 export const useCalendario = () => {
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Iniciar en true para mostrar skeleton
   const [reuniones, setReuniones] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,

@@ -78,47 +78,60 @@ export default function OAuthCallbackPage() {
           )
         }
 
-        // Obtener el rol del usuario y redirigir
-        try {
-          const roleData = await getUserRole()
-          if (roleData) {
-            // Actualizar datos del usuario con información del rol
-            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}')
-            localStorage.setItem(
-              'rpsoft_user',
-              JSON.stringify({
+        // Redirigir según role_id y postulant_status del usuario
+        // Los datos ya vienen en response.user según la nueva API
+        if (response.user) {
+          const userData = {
+            ...response.user,
+            loginTime: new Date().toISOString(),
+          }
+          localStorage.setItem('rpsoft_user', JSON.stringify(userData))
+          
+          setStatus('success')
+          const userName = response.user?.name || microsoftData.name || microsoftData.email
+          toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
+
+          setTimeout(() => {
+            redirectByRole(response.user, navigate)
+          }, 1000)
+        } else {
+          // Fallback: intentar obtener datos del rol si no vienen en response.user
+          try {
+            const roleData = await getUserRole()
+            if (roleData) {
+              const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}')
+              const updatedUserData = {
                 ...userData,
                 ...roleData,
                 loginTime: new Date().toISOString(),
-              }),
-            )
-            
+              }
+              localStorage.setItem('rpsoft_user', JSON.stringify(updatedUserData))
+              
+              setStatus('success')
+              const userName = microsoftData.name || microsoftData.email
+              toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
+              
+              setTimeout(() => {
+                redirectByRole(updatedUserData, navigate)
+              }, 1000)
+            } else {
+              setStatus('success')
+              const userName = microsoftData.name || microsoftData.email
+              toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
+              
+              setTimeout(() => {
+                navigate('/dashboard')
+              }, 1000)
+            }
+          } catch (roleError) {
             setStatus('success')
-            const userName = response.user?.name || microsoftData.name || microsoftData.email
-            toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
-
-            setTimeout(() => {
-              redirectByRole(roleData, navigate)
-            }, 1000)
-          } else {
-            // Si no hay datos de rol, redirigir a dashboard por defecto
-            setStatus('success')
-            const userName = response.user?.name || microsoftData.name || microsoftData.email
+            const userName = microsoftData.name || microsoftData.email
             toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
             
             setTimeout(() => {
               navigate('/dashboard')
             }, 1000)
           }
-        } catch (roleError) {
-          // Si falla obtener el rol, redirigir a dashboard por defecto
-          setStatus('success')
-          const userName = response.user?.name || microsoftData.name || microsoftData.email
-          toast.success(`¡Bienvenido, ${userName}! Autenticación exitosa`, 3000, 'Autenticación exitosa')
-          
-          setTimeout(() => {
-            navigate('/dashboard')
-          }, 1000)
         }
 
         localStorage.removeItem('rpsoft_selection_data')

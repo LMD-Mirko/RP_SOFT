@@ -10,7 +10,7 @@ import * as perfilService from '../services/perfilService';
 export const useProfile = () => {
   const toast = useToast();
   const { updateProfileImage, profileImageUrl: contextImageUrl, loadProfileImage: loadImageFromContext } = useUserProfile();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Iniciar en true para mostrar skeleton
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
 
@@ -53,8 +53,9 @@ export const useProfile = () => {
     setLoading(true);
     setError(null);
     try {
-      const updated = await perfilService.updateMyProfile(data);
-      setProfile(updated);
+      await perfilService.updateMyProfile(data);
+      // Recargar el perfil completo para obtener todos los campos actualizados
+      const updated = await loadProfile();
       toast.success('Perfil actualizado exitosamente');
       return updated;
     } catch (err) {
@@ -70,17 +71,59 @@ export const useProfile = () => {
   /**
    * Cambiar contraseña
    */
-  const changePassword = async (oldPassword, newPassword) => {
+  const changePassword = async (currentPassword, newPassword) => {
     setLoading(true);
     setError(null);
     try {
       await perfilService.changePassword({
-        old_password: oldPassword,
+        current_password: currentPassword,
         new_password: newPassword,
       });
       toast.success('Contraseña actualizada exitosamente');
     } catch (err) {
       const errorMessage = err.response?.data?.error || err.message || 'Error al cambiar contraseña';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Solicitar cambio de email
+   */
+  const requestChangeEmail = async (newEmail) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await perfilService.requestChangeEmail(newEmail);
+      toast.success(result.message || 'Código de verificación enviado a tu email actual');
+      return result;
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || err.message || 'Error al solicitar cambio de email';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Confirmar cambio de email
+   */
+  const confirmChangeEmail = async (code) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await perfilService.confirmChangeEmail(code);
+      toast.success(result.message || 'Email actualizado exitosamente');
+      // Recargar perfil para obtener el nuevo email
+      await loadProfile();
+      return result;
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || err.message || 'Error al confirmar cambio de email';
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -166,6 +209,8 @@ export const useProfile = () => {
     loadProfile,
     updateProfile,
     changePassword,
+    requestChangeEmail,
+    confirmChangeEmail,
     getRole,
     uploadPhoto,
   };

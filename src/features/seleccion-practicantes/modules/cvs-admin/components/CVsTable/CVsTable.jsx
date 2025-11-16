@@ -1,5 +1,6 @@
 import { FileText, Download, Eye, Calendar, User, Briefcase, CheckCircle2, Clock } from 'lucide-react'
 import { EmptyState } from '@shared/components/EmptyState'
+import { Skeleton } from '../../../../shared/components/Skeleton'
 import styles from './CVsTable.module.css'
 
 /**
@@ -41,13 +42,65 @@ export function CVsTable({
   if (loading) {
     return (
       <div className={styles.container}>
-        <EmptyState
-          iconPreset="document"
-          colorPreset="blue"
-          title="Cargando CVs..."
-          description="Por favor espera mientras cargamos la información"
-          className={styles.emptyState}
-        />
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Convocatoria</th>
+                <th>Archivo</th>
+                <th>Tamaño</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} className={styles.row}>
+                  <td>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <Skeleton variant="circular" width={16} height={16} />
+                      <div style={{ flex: 1 }}>
+                        <Skeleton variant="text" width="70%" height={14} />
+                        <Skeleton variant="text" width="50%" height={12} style={{ marginTop: '4px' }} />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <Skeleton variant="rectangular" width={16} height={16} />
+                      <div style={{ flex: 1 }}>
+                        <Skeleton variant="text" width="80%" height={14} />
+                        <Skeleton variant="text" width="60%" height={12} style={{ marginTop: '4px' }} />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <Skeleton variant="rectangular" width={16} height={16} />
+                      <Skeleton variant="text" width="60%" height={14} />
+                    </div>
+                  </td>
+                  <td><Skeleton variant="text" width="50px" height={14} /></td>
+                  <td><Skeleton variant="rectangular" width={100} height={24} /></td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <Skeleton variant="rectangular" width={14} height={14} />
+                      <Skeleton variant="text" width="80px" height={14} />
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <Skeleton variant="rectangular" width={32} height={32} />
+                      <Skeleton variant="rectangular" width={32} height={32} />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     )
   }

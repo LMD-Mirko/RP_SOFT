@@ -23,6 +23,8 @@
     "dotenv": "^17.2.3",
     "exceljs": "^4.4.0",
     "express": "^5.1.0",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.552.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.1.1",

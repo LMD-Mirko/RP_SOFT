@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Search, Eye, CheckCircle, XCircle } from 'lucide-react'
+import { Search, Eye, CheckCircle, XCircle, Download, FileSpreadsheet } from 'lucide-react'
 import { Pagination } from 'antd'
 import { Table } from '@shared/components/UI/Table'
+import { Select } from '@shared/components/Select'
 import { PostulanteDetailModal } from '../components/PostulanteDetailModal'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { usePostulantes } from '../hooks/usePostulantes'
+import { generatePostulantePDF } from '../services/postulantePDFService'
+import { generatePostulantesExcel } from '../services/postulanteExcelService'
+import { getPostulantes } from '../services/postulanteService'
+import { useToast } from '@shared/components/Toast'
+import { Skeleton } from '../../../shared/components/Skeleton'
 import styles from './PostulantesPage.module.css'
 
 /**
@@ -14,12 +20,24 @@ import styles from './PostulantesPage.module.css'
 const mapPostulanteFromAPI = (apiData) => {
   const personalData = apiData.personal_data || {}
   
-  // Mapear estado basado en accepted y process_status
+  // Mapear estado basado en user_postulant_status (prioritario)
+  // 1 = No aplicado, 2 = En proceso, 3 = Aceptado, 4 = Rechazado
   let estado = 'Pendiente'
-  if (apiData.accepted === true) {
+  if (apiData.user_postulant_status === 3) {
     estado = 'Aceptado'
-  } else if (apiData.accepted === false && apiData.process_status === 'rejected') {
+  } else if (apiData.user_postulant_status === 4) {
     estado = 'Rechazado'
+  } else if (apiData.user_postulant_status === 2) {
+    estado = 'En proceso'
+  } else if (apiData.user_postulant_status === 1) {
+    estado = 'No aplicado'
+  } else {
+    // Fallback a la lógica anterior si user_postulant_status no está disponible
+    if (apiData.accepted === true || apiData.process_status === 'Accepted') {
+      estado = 'Aceptado'
+    } else if (apiData.accepted === false && (apiData.process_status === 'Rejected' || apiData.process_status === 'rejected')) {
+      estado = 'Rechazado'
+    }
   }
 
   return {
@@ -42,6 +60,7 @@ const mapPostulanteFromAPI = (apiData) => {
     processStatus: apiData.process_status || '',
     estado: estado,
     accepted: apiData.accepted,
+    userPostulantStatus: apiData.user_postulant_status, // 1=No aplicado, 2=En proceso, 3=Aceptado, 4=Rechazado
     fecha: apiData.registration_date || apiData.created_at || new Date().toISOString(),
     lastUpdate: apiData.last_update_date || apiData.updated_at || '',
     // Ubicación
@@ -58,6 +77,7 @@ const mapPostulanteFromAPI = (apiData) => {
     isActive: apiData.user_is_active,
     accountStatus: apiData.user_account_status || '',
     isEmailVerified: apiData.user_is_email_verified || false,
+    userRoleId: apiData.user_role_id,
     // Datos originales de la API
     _apiData: apiData,
   }
@@ -66,6 +86,7 @@ const mapPostulanteFromAPI = (apiData) => {
 export function PostulantesPage() {
   const [searchParams] = useSearchParams()
   const convocatoriaId = searchParams.get('convocatoria')
+  const toast = useToast()
   
   const filters = {}
   if (convocatoriaId) {
@@ -80,10 +101,32 @@ export function PostulantesPage() {
   const [postulanteToView, setPostulanteToView] = useState(null)
   const [postulanteToAction, setPostulanteToAction] = useState(null)
   const [actionType, setActionType] = useState(null) // 'aceptar' | 'rechazar'
+  const [isActionLoading, setIsActionLoading] = useState(false)
   const [searchDebounce, setSearchDebounce] = useState(null)
+  const [downloadingPDF, setDownloadingPDF] = useState(false)
+  const [downloadingExcel, setDownloadingExcel] = useState(false)
+  const [statusFilter, setStatusFilter] = useState('all') // 'all', 'accepted', 'rejected', 'pending'
 
   // Mapear postulantes de la API
-  const postulantes = apiPostulantes.map(mapPostulanteFromAPI)
+  const allPostulantes = apiPostulantes.map(mapPostulanteFromAPI)
+
+  // Filtrar postulantes según el estado seleccionado
+  const postulantes = allPostulantes.filter(postulante => {
+    if (statusFilter === 'all') return true
+    if (statusFilter === 'accepted') {
+      // Aceptado: user_postulant_status === 3
+      return postulante.userPostulantStatus === 3
+    }
+    if (statusFilter === 'rejected') {
+      // Rechazado: user_postulant_status === 4
+      return postulante.userPostulantStatus === 4
+    }
+    if (statusFilter === 'pending') {
+      // Pendiente: user_postulant_status === 1 (No aplicado) o 2 (En proceso)
+      return postulante.userPostulantStatus === 1 || postulante.userPostulantStatus === 2
+    }
+    return true
+  })
 
   const loadPostulantesWithFilters = (page = 1, page_size = pageSize) => {
     const params = { page, page_size, ...filters }
@@ -137,22 +180,100 @@ export function PostulantesPage() {
     setIsConfirmModalOpen(true)
   }
 
+  const handleDownloadPDF = async (postulante) => {
+    try {
+      setDownloadingPDF(true)
+      await generatePostulantePDF(postulante)
+      toast.success('PDF generado exitosamente')
+    } catch (error) {
+      console.error('Error al generar PDF:', error)
+      toast.error('Error al generar el PDF. Por favor, intente nuevamente.')
+    } finally {
+      setDownloadingPDF(false)
+    }
+  }
+
+  const handleDownloadExcel = async () => {
+    try {
+      setDownloadingExcel(true)
+      toast.info('Cargando postulantes...')
+
+      // Construir parámetros según el filtro
+      const params = { ...filters }
+      params.page_size = 1000 // Un número grande para obtener todos
+
+      // Cargar todos los postulantes (sin paginación efectiva)
+      let allPostulantesData = []
+      let currentPage = 1
+      let hasMore = true
+
+      while (hasMore) {
+        const response = await getPostulantes({ ...params, page: currentPage, page_size: 100 })
+        const results = response.results || []
+        allPostulantesData = [...allPostulantesData, ...results]
+        
+        // Verificar si hay más páginas
+        const total = response.pagination?.total || response.total || 0
+        hasMore = allPostulantesData.length < total && results.length === 100
+        currentPage++
+      }
+
+      // Mapear postulantes
+      const mappedPostulantes = allPostulantesData.map(mapPostulanteFromAPI)
+
+      // Filtrar según el estado seleccionado (el mismo que se usa en la tabla)
+      let filteredPostulantes = mappedPostulantes
+      if (statusFilter === 'accepted') {
+        // Aceptado: user_postulant_status === 3
+        filteredPostulantes = mappedPostulantes.filter(p => p.userPostulantStatus === 3)
+      } else if (statusFilter === 'rejected') {
+        // Rechazado: user_postulant_status === 4
+        filteredPostulantes = mappedPostulantes.filter(p => p.userPostulantStatus === 4)
+      } else if (statusFilter === 'pending') {
+        // Pendiente: user_postulant_status === 1 (No aplicado) o 2 (En proceso)
+        filteredPostulantes = mappedPostulantes.filter(p => 
+          p.userPostulantStatus === 1 || p.userPostulantStatus === 2
+        )
+      }
+
+      if (filteredPostulantes.length === 0) {
+        toast.warning('No hay postulantes para exportar con el filtro seleccionado')
+        return
+      }
+
+      // Generar Excel con los mismos datos que se muestran en la tabla
+      await generatePostulantesExcel(filteredPostulantes, statusFilter)
+      toast.success(`Excel generado exitosamente con ${filteredPostulantes.length} postulante(s)`)
+    } catch (error) {
+      console.error('Error al generar Excel:', error)
+      toast.error('Error al generar el Excel. Por favor, intente nuevamente.')
+    } finally {
+      setDownloadingExcel(false)
+    }
+  }
+
   const confirmAction = async () => {
-    if (postulanteToAction) {
+    if (postulanteToAction && !isActionLoading) {
+      setIsActionLoading(true)
       try {
         if (actionType === 'aceptar') {
           await aceptarPostulante(postulanteToAction.id)
+          // El hook ya recarga la lista automáticamente y muestra toast de éxito
         } else if (actionType === 'rechazar') {
           await rechazarPostulante(postulanteToAction.id)
+          // El hook ya recarga la lista automáticamente y muestra toast de éxito
         }
         setPostulanteToAction(null)
         setActionType(null)
-        loadPostulantesWithFilters(pagination.page, pagination.page_size)
+        setIsConfirmModalOpen(false)
       } catch (error) {
-        // El error ya se maneja en el hook
+        // El error ya se maneja en el hook con toast
+        // No cerrar el modal si hay error para que el usuario pueda intentar nuevamente
+        console.error('Error en confirmAction:', error)
+      } finally {
+        setIsActionLoading(false)
       }
     }
-    setIsConfirmModalOpen(false)
   }
 
   const handlePageChange = (page, size) => {
@@ -167,14 +288,30 @@ export function PostulantesPage() {
     return <span className={styles.badgeEtapa}>{etapa}</span>
   }
 
-  const getEstadoBadge = (estado, accepted) => {
-    if (estado === 'Aceptado' || accepted === true) {
+  const getEstadoBadge = (estado, accepted, userPostulantStatus) => {
+    // Usar SOLO user_postulant_status como fuente de verdad
+    // 1 = No aplicado, 2 = En proceso, 3 = Aceptado, 4 = Rechazado
+    if (userPostulantStatus === 3) {
       return <span className={styles.badgeEstadoCompleted}>Aceptado</span>
     }
+    if (userPostulantStatus === 4) {
+      return <span className={styles.badgeEstadoPending}>Rechazado</span>
+    }
+    if (userPostulantStatus === 2) {
+      return <span className={styles.badgeEstadoEnProceso}>En proceso</span>
+    }
+    if (userPostulantStatus === 1) {
+      return <span className={styles.badgeEstadoNoAplicado}>No aplicado</span>
+    }
+    // Fallback solo si userPostulantStatus no está disponible
     if (estado === 'Rechazado' || accepted === false) {
       return <span className={styles.badgeEstadoPending}>Rechazado</span>
     }
-    return <span className={styles.badgeEstadoProgress}>Pendiente</span>
+    if (estado === 'Aceptado' || accepted === true) {
+      return <span className={styles.badgeEstadoCompleted}>Aceptado</span>
+    }
+    // Por defecto: Pendiente
+    return <span className={styles.badgeEstadoNoAplicado}>Pendiente</span>
   }
 
   const formatDate = (dateString) => {
@@ -199,15 +336,45 @@ export function PostulantesPage() {
 
       {/* Search */}
       <div className={styles.searchContainer}>
-        <div className={styles.searchBox}>
-          <Search size={20} className={styles.searchIcon} />
-          <input
-            type="text"
-            placeholder="Buscar por nombre o correo..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={styles.searchInput}
-          />
+        <div className={styles.searchAndDownload}>
+          <div className={styles.searchBox}>
+            <Search size={20} className={styles.searchIcon} />
+            <input
+              type="text"
+              placeholder="Buscar por nombre o correo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={styles.searchInput}
+            />
+          </div>
+          <div className={styles.downloadSection}>
+            <Select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value)
+                // Resetear a la primera página cuando cambia el filtro
+                loadPostulantesWithFilters(1, pageSize)
+              }}
+              options={[
+                { value: 'all', label: 'Todos los postulantes' },
+                { value: 'accepted', label: 'Aceptados' },
+                { value: 'rejected', label: 'Rechazados' },
+                { value: 'pending', label: 'En Proceso' }
+              ]}
+              className={styles.filterSelect}
+              fullWidth={false}
+              disabled={downloadingExcel || loading}
+            />
+            <button
+              onClick={handleDownloadExcel}
+              className={styles.downloadExcelButton}
+              disabled={downloadingExcel}
+              title="Descargar Excel"
+            >
+              <FileSpreadsheet size={18} />
+              {downloadingExcel ? 'Generando...' : 'Descargar Excel'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -222,14 +389,23 @@ export function PostulantesPage() {
                 <Table.HeaderCell align="center">Etapa</Table.HeaderCell>
                 <Table.HeaderCell align="center">Estado</Table.HeaderCell>
                 <Table.HeaderCell align="center">Fecha</Table.HeaderCell>
-                <Table.HeaderCell align="center" width="200px">Acciones</Table.HeaderCell>
+                <Table.HeaderCell align="center" width="240px">Acciones</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
               {loading ? (
-                <Table.Empty colSpan={6}>
-                  Cargando postulantes...
-                </Table.Empty>
+                <>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Table.Row key={i}>
+                      <Table.Cell><Skeleton variant="text" width="80%" height={16} /></Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="70%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={80} height={24} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={90} height={24} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={120} height={32} /></Table.Cell>
+                    </Table.Row>
+                  ))}
+                </>
               ) : postulantes.length > 0 ? (
                 postulantes.map((postulante) => (
                   <Table.Row key={postulante.id}>
@@ -243,7 +419,7 @@ export function PostulantesPage() {
                       {getEtapaBadge(postulante.etapa)}
                     </Table.Cell>
                     <Table.Cell align="center">
-                      {getEstadoBadge(postulante.estado, postulante.accepted)}
+                      {getEstadoBadge(postulante.estado, postulante.accepted, postulante.userPostulantStatus)}
                     </Table.Cell>
                     <Table.Cell align="center">
                       <span className={styles.fecha}>{formatDate(postulante.fecha)}</span>
@@ -253,23 +429,32 @@ export function PostulantesPage() {
                         <button
                           onClick={() => handleViewDetail(postulante)}
                           className={styles.actionButtonView}
-                          title="Ver Detalle"
+                          title="Ver detalles completos del postulante"
                         >
                           <Eye size={16} />
                         </button>
-                        {(postulante.estado === 'Pendiente' || postulante.accepted === null || postulante.accepted === undefined) && (
+                        <button
+                          onClick={() => handleDownloadPDF(postulante)}
+                          className={styles.actionButtonDownload}
+                          title="Descargar información del postulante en formato PDF"
+                          disabled={downloadingPDF}
+                        >
+                          <Download size={16} />
+                        </button>
+                        {/* Mostrar botones solo si user_postulant_status es 1 (No aplicado) o 2 (En proceso) */}
+                        {(postulante.userPostulantStatus === 1 || postulante.userPostulantStatus === 2) && (
                           <>
                             <button
                               onClick={() => handleAceptar(postulante)}
                               className={styles.actionButton}
-                              title="Aceptar"
+                              title="Aceptar postulante - Cambiará el estado del usuario a 'Aceptado' (user_postulant_status: 3)"
                             >
                               <CheckCircle size={16} />
                             </button>
                             <button
                               onClick={() => handleRechazar(postulante)}
                               className={styles.actionButtonDelete}
-                              title="Rechazar"
+                              title="Rechazar postulante - Cambiará el estado del usuario a 'Rechazado' (user_postulant_status: 4)"
                             >
                               <XCircle size={16} />
                             </button>
@@ -325,9 +510,11 @@ export function PostulantesPage() {
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         onClose={() => {
-          setIsConfirmModalOpen(false)
-          setPostulanteToAction(null)
-          setActionType(null)
+          if (!isActionLoading) {
+            setIsConfirmModalOpen(false)
+            setPostulanteToAction(null)
+            setActionType(null)
+          }
         }}
         onConfirm={confirmAction}
         title={actionType === 'aceptar' ? 'Aceptar Postulante' : 'Rechazar Postulante'}
@@ -339,6 +526,7 @@ export function PostulantesPage() {
         confirmText={actionType === 'aceptar' ? 'Aceptar' : 'Rechazar'}
         cancelText="Cancelar"
         type={actionType === 'aceptar' ? 'success' : 'danger'}
+        isLoading={isActionLoading}
       />
     </div>
   )

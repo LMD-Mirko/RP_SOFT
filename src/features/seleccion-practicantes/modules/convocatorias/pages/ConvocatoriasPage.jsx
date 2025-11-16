@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { ConvocatoriaCard } from '../components/ConvocatoriaCard'
 import { ConvocatoriaModal } from '../components/ConvocatoriaModal'
 import { useConvocatorias } from '../hooks/useConvocatorias'
+import { SkeletonConvocatoriaCard } from '../../../shared/components/Skeleton'
 import styles from './ConvocatoriasPage.module.css'
 
 /**
@@ -109,8 +110,10 @@ export function ConvocatoriasPage() {
       {/* Content */}
       <div className={styles.content}>
         {loading ? (
-          <div className={styles.empty}>
-            <p className={styles.emptyText}>Cargando convocatorias...</p>
+          <div className={styles.grid}>
+            <SkeletonConvocatoriaCard index={0} />
+            <SkeletonConvocatoriaCard index={1} />
+            <SkeletonConvocatoriaCard index={2} />
           </div>
         ) : convocatorias.length === 0 ? (
           <div className={styles.empty}>

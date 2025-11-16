@@ -65,23 +65,39 @@ export const usePostulantes = (filters = {}) => {
 
   const aceptarPostulante = async (id) => {
     try {
-      await postulanteService.aceptarPostulante(id);
-      await loadPostulantes(pagination.page);
-      toast.success('Postulante aceptado exitosamente');
+      setLoading(true);
+      const response = await postulanteService.aceptarPostulante(id);
+      await loadPostulantes(pagination.page, {
+        page_size: pagination.page_size,
+        ...filters,
+      });
+      const message = response?.message || 'Postulante aceptado exitosamente';
+      toast.success(message, 4000, '¡Postulante aceptado!');
     } catch (err) {
-      toast.error(err.message || 'Error al aceptar postulante');
+      const errorMessage = err.message || 'Error al aceptar postulante';
+      toast.error(errorMessage, 4000, 'Error al aceptar');
       throw err;
+    } finally {
+      setLoading(false);
     }
   };
 
   const rechazarPostulante = async (id) => {
     try {
-      await postulanteService.rechazarPostulante(id);
-      await loadPostulantes(pagination.page);
-      toast.success('Postulante rechazado exitosamente');
+      setLoading(true);
+      const response = await postulanteService.rechazarPostulante(id);
+      await loadPostulantes(pagination.page, {
+        page_size: pagination.page_size,
+        ...filters,
+      });
+      const message = response?.message || 'Postulante rechazado exitosamente';
+      toast.success(message, 4000, 'Postulante rechazado');
     } catch (err) {
-      toast.error(err.message || 'Error al rechazar postulante');
+      const errorMessage = err.message || 'Error al rechazar postulante';
+      toast.error(errorMessage, 4000, 'Error al rechazar');
       throw err;
+    } finally {
+      setLoading(false);
     }
   };
 

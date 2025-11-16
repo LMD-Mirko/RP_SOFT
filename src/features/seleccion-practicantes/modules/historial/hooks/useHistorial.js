@@ -8,7 +8,7 @@ import * as historialService from '../services';
 
 export const useHistorial = () => {
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Iniciar en true para mostrar skeleton
   const [actividades, setActividades] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -50,16 +50,20 @@ export const useHistorial = () => {
   };
 
   /**
-   * Exportar historial
+   * Limpiar historial (elimina todos los registros)
+   * ⚠️ Esta acción es irreversible
    */
-  const exportarHistorial = async (params = {}) => {
+  const limpiarHistorial = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await historialService.exportarHistorial(params);
-      return data;
+      const response = await historialService.limpiarHistorial();
+      // Recargar actividades después de limpiar
+      await loadActividades();
+      toast.success(`Historial limpiado exitosamente. ${response.deleted_count || 0} registros eliminados.`);
+      return response;
     } catch (err) {
-      const errorMessage = err.response?.data?.error || err.message || 'Error al exportar historial';
+      const errorMessage = err.response?.data?.error || err.response?.data?.detail || err.message || 'Error al limpiar historial';
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -74,7 +78,7 @@ export const useHistorial = () => {
     pagination,
     error,
     loadActividades,
-    exportarHistorial,
+    limpiarHistorial,
   };
 };
 

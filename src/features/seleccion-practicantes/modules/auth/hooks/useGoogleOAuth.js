@@ -51,54 +51,49 @@ export const useGoogleOAuth = () => {
       }
 
       if (response.user) {
-        localStorage.setItem(
-          'rpsoft_user',
-          JSON.stringify({
-            email: response.user.email || googleData.email,
-            name: response.user.name || googleData.name,
-            role: response.user.role || 'practicante',
-            loginTime: new Date().toISOString(),
-            provider: 'google',
-          })
-        );
-      }
-
-      // 4. Obtener el rol del usuario y redirigir
-      try {
-        const roleData = await getUserRole();
-        if (roleData) {
-          // Actualizar datos del usuario con información del rol
-          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
-          localStorage.setItem(
-            'rpsoft_user',
-            JSON.stringify({
+        const userData = {
+          ...response.user,
+          loginTime: new Date().toISOString(),
+        };
+        localStorage.setItem('rpsoft_user', JSON.stringify(userData));
+        
+        // Redirigir según role_id y postulant_status del usuario
+        // Los datos ya vienen en response.user según la nueva API
+        if (onSuccess) {
+          onSuccess(response);
+        } else {
+          redirectByRole(response.user, navigate);
+        }
+      } else {
+        // Fallback: intentar obtener datos del rol si no vienen en response.user
+        try {
+          const roleData = await getUserRole();
+          if (roleData) {
+            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+            const updatedUserData = {
               ...userData,
               ...roleData,
               loginTime: new Date().toISOString(),
-            })
-          );
-          
-          // 5. Navegar o ejecutar callback
-          if (onSuccess) {
-            onSuccess(response);
+            };
+            localStorage.setItem('rpsoft_user', JSON.stringify(updatedUserData));
+            if (onSuccess) {
+              onSuccess(response);
+            } else {
+              redirectByRole(updatedUserData, navigate);
+            }
           } else {
-            // Redirigir según el rol
-            redirectByRole(roleData, navigate);
+            if (onSuccess) {
+              onSuccess(response);
+            } else {
+              navigate('/dashboard');
+            }
           }
-        } else {
-          // Si no hay datos de rol, redirigir a dashboard por defecto
+        } catch (roleError) {
           if (onSuccess) {
             onSuccess(response);
           } else {
             navigate('/dashboard');
           }
-        }
-      } catch (roleError) {
-        // Si falla obtener el rol, redirigir a dashboard por defecto
-        if (onSuccess) {
-          onSuccess(response);
-        } else {
-          navigate('/dashboard');
         }
       }
 
@@ -159,48 +154,49 @@ export const useGoogleOAuth = () => {
       }
 
       if (response.user) {
-        localStorage.setItem(
-          'rpsoft_user',
-          JSON.stringify({
-            email: response.user.email || googleData.email,
-            name: response.user.name || googleData.name,
-            role: response.user.role || 'practicante',
-            loginTime: new Date().toISOString(),
-            provider: 'google',
-          })
-        );
-      }
-
-      try {
-        const roleData = await getUserRole();
-        if (roleData) {
-          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
-          localStorage.setItem(
-            'rpsoft_user',
-            JSON.stringify({
+        const userData = {
+          ...response.user,
+          loginTime: new Date().toISOString(),
+        };
+        localStorage.setItem('rpsoft_user', JSON.stringify(userData));
+        
+        // Redirigir según role_id y postulant_status del usuario
+        // Los datos ya vienen en response.user según la nueva API
+        if (onSuccess) {
+          onSuccess(response);
+        } else {
+          redirectByRole(response.user, navigate);
+        }
+      } else {
+        // Fallback: intentar obtener datos del rol si no vienen en response.user
+        try {
+          const roleData = await getUserRole();
+          if (roleData) {
+            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+            const updatedUserData = {
               ...userData,
               ...roleData,
               loginTime: new Date().toISOString(),
-            })
-          );
-          
-          if (onSuccess) {
-            onSuccess(response);
+            };
+            localStorage.setItem('rpsoft_user', JSON.stringify(updatedUserData));
+            if (onSuccess) {
+              onSuccess(response);
+            } else {
+              redirectByRole(updatedUserData, navigate);
+            }
           } else {
-            redirectByRole(roleData, navigate);
+            if (onSuccess) {
+              onSuccess(response);
+            } else {
+              navigate('/dashboard');
+            }
           }
-        } else {
+        } catch (roleError) {
           if (onSuccess) {
             onSuccess(response);
           } else {
             navigate('/dashboard');
           }
-        }
-      } catch (roleError) {
-        if (onSuccess) {
-          onSuccess(response);
-        } else {
-          navigate('/dashboard');
         }
       }
 

@@ -5,7 +5,7 @@ import * as evaluacionService from '../services/evaluacionService';
 
 export const useEvaluaciones = () => {
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Iniciar en true para mostrar skeleton
   const [evaluaciones, setEvaluaciones] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -15,32 +15,28 @@ export const useEvaluaciones = () => {
   const [error, setError] = useState(null);
   const isLoadingRef = useRef(false); // Flag para evitar peticiones concurrentes
 
-  const loadEvaluaciones = async (params = {}) => {
+  const loadEvaluaciones = async () => {
     // Si ya hay una petición en curso, no hacer nada
     if (isLoadingRef.current) {
       return;
     }
-
-    const requestParams = {
-      ...params,
-      page: params.page || pagination.page,
-      page_size: params.page_size || pagination.page_size,
-    };
     
-    const requestKey = `evaluation-attempts_${JSON.stringify(requestParams)}`;
+    const requestKey = 'evaluations';
     
     return requestGuard(requestKey, async () => {
       isLoadingRef.current = true;
       setLoading(true);
       setError(null);
       try {
-        // Cargar intentos de evaluación en lugar de evaluaciones
-        const response = await evaluacionService.getEvaluationAttempts(requestParams);
-        setEvaluaciones(response.results || []);
+        // Cargar evaluaciones (sin paginación)
+        const response = await evaluacionService.getEvaluaciones();
+        // Si la respuesta es un array, usarlo directamente
+        const evaluacionesList = Array.isArray(response) ? response : (response.results || []);
+        setEvaluaciones(evaluacionesList);
         setPagination({
-          page: response.page || 1,
-          page_size: response.page_size || 20,
-          total: response.total || 0,
+          page: 1,
+          page_size: evaluacionesList.length,
+          total: evaluacionesList.length,
         });
         return response;
       } catch (err) {
@@ -59,9 +55,11 @@ export const useEvaluaciones = () => {
     setLoading(true);
     setError(null);
     try {
-      // Eliminar intento de evaluación
-      await evaluacionService.deleteEvaluationAttempt(id);
+      // Eliminar evaluación
+      await evaluacionService.deleteEvaluacion(id);
       toast.success('Evaluación eliminada correctamente');
+      // Recargar evaluaciones después de eliminar
+      await loadEvaluaciones();
     } catch (err) {
       const errorMessage = err.response?.data?.error || err.message || 'Error al eliminar evaluación';
       setError(errorMessage);

@@ -1,6 +1,7 @@
 import { Eye, Edit, Trash2, Calendar, Clock, User, Users, Link as LinkIcon } from 'lucide-react'
 import { Table } from '@shared/components/UI/Table'
 import { EmptyState } from '@shared/components/EmptyState'
+import { Skeleton } from '../../../../shared/components/Skeleton'
 import styles from './MeetingsList.module.css'
 
 const formatDate = (dateString) => {
@@ -28,8 +29,59 @@ export function MeetingsList({
 }) {
   if (loading) {
     return (
-      <div className={styles.loading}>
-        <p>Cargando reuniones...</p>
+      <div className={styles.container}>
+        <Table>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Título</Table.HeaderCell>
+              <Table.HeaderCell>Fecha</Table.HeaderCell>
+              <Table.HeaderCell>Hora</Table.HeaderCell>
+              <Table.HeaderCell>Duración</Table.HeaderCell>
+              <Table.HeaderCell>Entrevistador</Table.HeaderCell>
+              <Table.HeaderCell>Participantes</Table.HeaderCell>
+              <Table.HeaderCell align="center">Acciones</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Table.Row key={i}>
+                <Table.Cell>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <Skeleton variant="rectangular" width={16} height={16} />
+                    <Skeleton variant="text" width="70%" height={16} />
+                  </div>
+                </Table.Cell>
+                <Table.Cell><Skeleton variant="text" width="80px" height={16} /></Table.Cell>
+                <Table.Cell>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <Skeleton variant="rectangular" width={14} height={14} />
+                    <Skeleton variant="text" width="50px" height={16} />
+                  </div>
+                </Table.Cell>
+                <Table.Cell><Skeleton variant="text" width="50px" height={16} /></Table.Cell>
+                <Table.Cell>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <Skeleton variant="rectangular" width={14} height={14} />
+                    <Skeleton variant="text" width="60%" height={16} />
+                  </div>
+                </Table.Cell>
+                <Table.Cell>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <Skeleton variant="rectangular" width={14} height={14} />
+                    <Skeleton variant="text" width="100px" height={16} />
+                  </div>
+                </Table.Cell>
+                <Table.Cell align="center">
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <Skeleton variant="rectangular" width={32} height={32} />
+                    <Skeleton variant="rectangular" width={32} height={32} />
+                    <Skeleton variant="rectangular" width={32} height={32} />
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
       </div>
     )
   }

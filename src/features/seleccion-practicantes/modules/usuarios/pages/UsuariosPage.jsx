@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Search, Plus, Edit, Trash2, User, Mail, Shield, ShieldCheck, Eye } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, User, Mail, Shield, ShieldCheck, Eye, FileSpreadsheet } from 'lucide-react'
 import { Pagination } from 'antd'
 import { Table } from '@shared/components/UI/Table'
 import { Input } from '@shared/components/Input'
@@ -9,6 +9,10 @@ import { useUsers } from '../../shared/hooks/useUsers'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { UserModal } from '../components/UserModal'
 import { UserDetailModal } from '../components/UserDetailModal'
+import { generateUsuariosExcel } from '../services/usuarioExcelService'
+import { getUsers } from '../../shared/services/userService'
+import { useToast } from '@shared/components/Toast'
+import { Skeleton } from '../../../shared/components/Skeleton'
 import styles from './UsuariosPage.module.css'
 
 /**
@@ -40,6 +44,7 @@ const mapUserFromAPI = (apiData) => {
 
 export function UsuariosPage() {
   const { users: apiUsers, loading, pagination, loadUsers, createUser, updateUser, deleteUser } = useUsers()
+  const toast = useToast()
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
@@ -50,6 +55,7 @@ export function UsuariosPage() {
   const [selectedUser, setSelectedUser] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
   const [searchDebounce, setSearchDebounce] = useState(null)
+  const [downloadingExcel, setDownloadingExcel] = useState(false)
 
   // Función para cargar usuarios con filtros
   const loadUsersWithFilters = (page = 1, page_size = pageSize) => {
@@ -214,6 +220,62 @@ export function UsuariosPage() {
     loadUsersWithFilters(page, newPageSize)
   }
 
+  const handleDownloadExcel = async () => {
+    try {
+      setDownloadingExcel(true)
+      toast.info('Cargando usuarios...')
+
+      // Construir parámetros según los filtros actuales
+      const params = {
+        page_size: 1000 // Un número grande para obtener todos
+      }
+
+      // Aplicar los mismos filtros que se usan en la tabla
+      if (searchTerm.trim()) {
+        params.search = searchTerm.trim()
+      }
+      if (roleFilter) {
+        params.role_id = roleFilter
+      }
+      if (statusFilter) {
+        params.is_active = statusFilter === 'active'
+      }
+
+      // Cargar todos los usuarios (sin paginación efectiva)
+      let allUsersData = []
+      let currentPage = 1
+      let hasMore = true
+
+      while (hasMore) {
+        const response = await getUsers({ ...params, page: currentPage, page_size: 100 })
+        const results = response.results || []
+        allUsersData = [...allUsersData, ...results]
+        
+        // Verificar si hay más páginas
+        const total = response.pagination?.total || response.total || 0
+        hasMore = allUsersData.length < total && results.length === 100
+        currentPage++
+      }
+
+      // Mapear usuarios
+      const mappedUsers = allUsersData.map(mapUserFromAPI)
+
+      if (mappedUsers.length === 0) {
+        toast.warning('No hay usuarios para exportar con los filtros seleccionados')
+        return
+      }
+
+      // Generar Excel con los mismos datos que se muestran en la tabla
+      await generateUsuariosExcel(mappedUsers)
+      toast.success(`Excel generado exitosamente con ${mappedUsers.length} usuario(s)`)
+    } catch (error) {
+      console.error('Error al generar Excel:', error)
+      toast.error('Error al generar el Excel. Por favor, intente nuevamente.')
+    } finally {
+      setDownloadingExcel(false)
+    }
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -264,6 +326,17 @@ export function UsuariosPage() {
             ]}
           />
         </div>
+        <div className={styles.downloadSection}>
+          <button
+            onClick={handleDownloadExcel}
+            className={styles.downloadExcelButton}
+            disabled={downloadingExcel || loading}
+            title="Descargar Excel"
+          >
+            <FileSpreadsheet size={18} />
+            {downloadingExcel ? 'Generando...' : 'Descargar Excel'}
+          </button>
+        </div>
       </div>
 
       {/* Table and Pagination Container */}
@@ -284,9 +357,33 @@ export function UsuariosPage() {
             </Table.Header>
             <Table.Body>
               {loading ? (
-                <Table.Empty colSpan={7}>
-                  Cargando usuarios...
-                </Table.Empty>
+                <>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Table.Row key={i}>
+                      <Table.Cell>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                          <Skeleton variant="circular" width={40} height={40} />
+                          <div style={{ flex: 1 }}>
+                            <Skeleton variant="text" width="70%" height={16} />
+                            <Skeleton variant="text" width="50%" height={14} style={{ marginTop: '4px' }} />
+                          </div>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={100} height={24} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={80} height={24} /></Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="50%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell align="center">
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </>
               ) : users.length > 0 ? (
                 users.map((user) => (
                   <Table.Row key={user.id}>

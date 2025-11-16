@@ -6,19 +6,11 @@ import { get, post, put, patch, del } from '../../../services/methods';
 
 /**
  * Lista todas las evaluaciones (Solo Admin)
- * @param {Object} params - Parámetros de consulta (page, page_size)
  * @returns {Promise} Lista de evaluaciones
  */
-export const getEvaluaciones = async (params = {}) => {
+export const getEvaluaciones = async () => {
   try {
-    const queryParams = new URLSearchParams();
-    if (params.page) queryParams.append('page', params.page);
-    if (params.page_size) queryParams.append('page_size', params.page_size);
-
-    const queryString = queryParams.toString();
-    const endpoint = queryString ? `evaluations/?${queryString}` : 'evaluations/';
-    
-    return await get(endpoint);
+    return await get('evaluations');
   } catch (error) {
     console.error('Error al obtener evaluaciones:', error);
     throw error;

@@ -8,6 +8,7 @@ import { useRoles } from '../../shared/hooks/useRoles'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { RoleModal } from '../components/RoleModal'
 import { RoleDetailModal } from '../components/RoleDetailModal'
+import { Skeleton } from '../../../shared/components/Skeleton'
 import styles from './RolesPage.module.css'
 
 export function RolesPage() {
@@ -180,9 +181,29 @@ export function RolesPage() {
             </Table.Header>
             <Table.Body>
               {loading ? (
-                <Table.Empty colSpan={6}>
-                  Cargando roles...
-                </Table.Empty>
+                <>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Table.Row key={i}>
+                      <Table.Cell>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                          <Skeleton variant="rectangular" width={20} height={20} />
+                          <Skeleton variant="text" width="60%" height={16} />
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="50%" height={16} /></Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="70%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={80} height={24} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell align="center">
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </>
               ) : roles.length > 0 ? (
                 roles.map((role) => (
                   <Table.Row key={role.id}>

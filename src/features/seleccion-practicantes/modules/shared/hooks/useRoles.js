@@ -9,7 +9,7 @@ import * as roleService from '../services/roleService';
 
 export const useRoles = () => {
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Iniciar en true para mostrar skeleton
   const [roles, setRoles] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,

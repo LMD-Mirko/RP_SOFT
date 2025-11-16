@@ -39,35 +39,35 @@ export const useAuth = () => {
 
       // Guardar datos del usuario
       if (response.user) {
-        localStorage.setItem(
-          'rpsoft_user',
-          JSON.stringify({
-            ...response.user,
-            loginTime: new Date().toISOString(),
-          })
-        );
-      }
-
-      // Obtener el rol del usuario y redirigir
-      try {
-        const roleData = await getUserRole();
-        if (roleData) {
-          // Actualizar datos del usuario con información del rol
-          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
-          localStorage.setItem(
-            'rpsoft_user',
-            JSON.stringify({
+        const userData = {
+          ...response.user,
+          loginTime: new Date().toISOString(),
+        };
+        localStorage.setItem('rpsoft_user', JSON.stringify(userData));
+        
+        // Redirigir según role_id y postulant_status del usuario
+        // Los datos ya vienen en response.user según la nueva API
+        redirectByRole(response.user, navigate);
+      } else {
+        // Fallback: intentar obtener datos del rol si no vienen en response.user
+        try {
+          const roleData = await getUserRole();
+          if (roleData) {
+            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+            const updatedUserData = {
               ...userData,
               ...roleData,
               loginTime: new Date().toISOString(),
-            })
-          );
-          // Redirigir según el rol
-          redirectByRole(roleData, navigate);
+            };
+            localStorage.setItem('rpsoft_user', JSON.stringify(updatedUserData));
+            redirectByRole(updatedUserData, navigate);
+          } else {
+            navigate('/dashboard');
+          }
+        } catch (roleError) {
+          // Si falla obtener el rol, redirigir a dashboard por defecto
+          navigate('/dashboard');
         }
-      } catch (roleError) {
-        // Si falla obtener el rol, redirigir a dashboard por defecto
-        navigate('/dashboard');
       }
 
       // Limpiar datos temporales
@@ -110,35 +110,35 @@ export const useAuth = () => {
 
       // Guardar datos del usuario
       if (response.user) {
-        localStorage.setItem(
-          'rpsoft_user',
-          JSON.stringify({
-            ...response.user,
-            loginTime: new Date().toISOString(),
-          })
-        );
-      }
-
-      // Obtener el rol del usuario y redirigir
-      try {
-        const roleData = await getUserRole();
-        if (roleData) {
-          // Actualizar datos del usuario con información del rol
-          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
-          localStorage.setItem(
-            'rpsoft_user',
-            JSON.stringify({
+        const userData = {
+          ...response.user,
+          loginTime: new Date().toISOString(),
+        };
+        localStorage.setItem('rpsoft_user', JSON.stringify(userData));
+        
+        // Redirigir según role_id y postulant_status del usuario
+        // Los datos ya vienen en response.user según la nueva API
+        redirectByRole(response.user, navigate);
+      } else {
+        // Fallback: intentar obtener datos del rol si no vienen en response.user
+        try {
+          const roleData = await getUserRole();
+          if (roleData) {
+            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+            const updatedUserData = {
               ...userData,
               ...roleData,
               loginTime: new Date().toISOString(),
-            })
-          );
-          // Redirigir según el rol
-          redirectByRole(roleData, navigate);
+            };
+            localStorage.setItem('rpsoft_user', JSON.stringify(updatedUserData));
+            redirectByRole(updatedUserData, navigate);
+          } else {
+            navigate('/dashboard');
+          }
+        } catch (roleError) {
+          // Si falla obtener el rol, redirigir a dashboard por defecto
+          navigate('/dashboard');
         }
-      } catch (roleError) {
-        // Si falla obtener el rol, redirigir a dashboard por defecto
-        navigate('/dashboard');
       }
 
       // Limpiar datos temporales

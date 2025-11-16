@@ -52,48 +52,49 @@ export const useMicrosoftOAuth = () => {
       }
 
       if (response.user) {
-        localStorage.setItem(
-          'rpsoft_user',
-          JSON.stringify({
-            email: response.user.email || microsoftData.email,
-            name: response.user.name || microsoftData.name,
-            role: response.user.role || 'practicante',
-            loginTime: new Date().toISOString(),
-            provider: 'microsoft',
-          })
-        );
-      }
-
-      try {
-        const roleData = await getUserRole();
-        if (roleData) {
-          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
-          localStorage.setItem(
-            'rpsoft_user',
-            JSON.stringify({
+        const userData = {
+          ...response.user,
+          loginTime: new Date().toISOString(),
+        };
+        localStorage.setItem('rpsoft_user', JSON.stringify(userData));
+        
+        // Redirigir según role_id y postulant_status del usuario
+        // Los datos ya vienen en response.user según la nueva API
+        if (onSuccess) {
+          onSuccess(response);
+        } else {
+          redirectByRole(response.user, navigate);
+        }
+      } else {
+        // Fallback: intentar obtener datos del rol si no vienen en response.user
+        try {
+          const roleData = await getUserRole();
+          if (roleData) {
+            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+            const updatedUserData = {
               ...userData,
               ...roleData,
               loginTime: new Date().toISOString(),
-            })
-          );
-          
-          if (onSuccess) {
-            onSuccess(response);
+            };
+            localStorage.setItem('rpsoft_user', JSON.stringify(updatedUserData));
+            if (onSuccess) {
+              onSuccess(response);
+            } else {
+              redirectByRole(updatedUserData, navigate);
+            }
           } else {
-            redirectByRole(roleData, navigate);
+            if (onSuccess) {
+              onSuccess(response);
+            } else {
+              navigate('/dashboard');
+            }
           }
-        } else {
+        } catch (roleError) {
           if (onSuccess) {
             onSuccess(response);
           } else {
             navigate('/dashboard');
           }
-        }
-      } catch (roleError) {
-        if (onSuccess) {
-          onSuccess(response);
-        } else {
-          navigate('/dashboard');
         }
       }
 
@@ -159,48 +160,49 @@ export const useMicrosoftOAuth = () => {
       }
 
       if (response.user) {
-        localStorage.setItem(
-          'rpsoft_user',
-          JSON.stringify({
-            email: response.user.email || microsoftData.email,
-            name: response.user.name || firstName,
-            role: response.user.role || 'practicante',
-            loginTime: new Date().toISOString(),
-            provider: 'microsoft',
-          })
-        );
-      }
-
-      try {
-        const roleData = await getUserRole();
-        if (roleData) {
-          const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
-          localStorage.setItem(
-            'rpsoft_user',
-            JSON.stringify({
+        const userData = {
+          ...response.user,
+          loginTime: new Date().toISOString(),
+        };
+        localStorage.setItem('rpsoft_user', JSON.stringify(userData));
+        
+        // Redirigir según role_id y postulant_status del usuario
+        // Los datos ya vienen en response.user según la nueva API
+        if (onSuccess) {
+          onSuccess(response);
+        } else {
+          redirectByRole(response.user, navigate);
+        }
+      } else {
+        // Fallback: intentar obtener datos del rol si no vienen en response.user
+        try {
+          const roleData = await getUserRole();
+          if (roleData) {
+            const userData = JSON.parse(localStorage.getItem('rpsoft_user') || '{}');
+            const updatedUserData = {
               ...userData,
               ...roleData,
               loginTime: new Date().toISOString(),
-            })
-          );
-          
-          if (onSuccess) {
-            onSuccess(response);
+            };
+            localStorage.setItem('rpsoft_user', JSON.stringify(updatedUserData));
+            if (onSuccess) {
+              onSuccess(response);
+            } else {
+              redirectByRole(updatedUserData, navigate);
+            }
           } else {
-            redirectByRole(roleData, navigate);
+            if (onSuccess) {
+              onSuccess(response);
+            } else {
+              navigate('/dashboard');
+            }
           }
-        } else {
+        } catch (roleError) {
           if (onSuccess) {
             onSuccess(response);
           } else {
             navigate('/dashboard');
           }
-        }
-      } catch (roleError) {
-        if (onSuccess) {
-          onSuccess(response);
-        } else {
-          navigate('/dashboard');
         }
       }
 

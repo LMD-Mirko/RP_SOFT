@@ -193,6 +193,10 @@
   gap: 0;
 }
 
+.infoSection:last-child {
+  margin-top: 2rem;
+}
+
 .infoTitle {
   font-size: 0.875rem;
   font-weight: 600;
@@ -249,10 +253,13 @@
 }
 
 .statusBadge {
+  display: inline-block;
   padding: 0.25rem 0.75rem;
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
+  white-space: nowrap;
+  width: fit-content;
 }
 
 .statusBadge.pending_verification {
@@ -569,6 +576,136 @@
   margin-top: 1.5rem;
 }
 
+/* Security Sections */
+.securitySections {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.securitySection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.625rem;
+  transition: all 0.2s ease;
+}
+
+.securitySection:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.securitySectionHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.securitySectionIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e40af;
+  flex-shrink: 0;
+}
+
+.securitySectionContent {
+  flex: 1;
+}
+
+.securitySectionTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.securitySectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.tooltipWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tooltipWrapper .tooltipIcon {
+  color: #6b7280;
+  cursor: help;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.tooltipWrapper:hover .tooltipIcon {
+  color: #3b82f6;
+}
+
+.tooltipWrapper .tooltip {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: 300px;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.tooltipWrapper:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.tooltipWrapper .tooltipHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+.tooltipWrapper .tooltipHeader svg {
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.tooltipWrapper .tooltipText {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.securitySectionDescription {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .layout {
@@ -623,6 +760,10 @@
 
   .formActions button {
     width: 100%;
+  }
+
+  .securitySections {
+    grid-template-columns: 1fr;
   }
 
   .securityInfo {

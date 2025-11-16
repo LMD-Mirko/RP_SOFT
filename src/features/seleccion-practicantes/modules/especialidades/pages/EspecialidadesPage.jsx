@@ -8,6 +8,7 @@ import { useSpecialties } from '../../shared/hooks/useSpecialties'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { SpecialtyModal } from '../components/SpecialtyModal'
 import { SpecialtyDetailModal } from '../components/SpecialtyDetailModal'
+import { Skeleton } from '../../../shared/components/Skeleton'
 import styles from './EspecialidadesPage.module.css'
 
 export function EspecialidadesPage() {
@@ -179,9 +180,28 @@ export function EspecialidadesPage() {
             </Table.Header>
             <Table.Body>
               {loading ? (
-                <Table.Empty colSpan={5}>
-                  Cargando especialidades...
-                </Table.Empty>
+                <>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Table.Row key={i}>
+                      <Table.Cell>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                          <Skeleton variant="rectangular" width={20} height={20} />
+                          <Skeleton variant="text" width="60%" height={16} />
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="80%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={80} height={24} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell align="center">
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                          <Skeleton variant="rectangular" width={32} height={32} />
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </>
               ) : specialties.length > 0 ? (
                 specialties.map((specialty) => (
                   <Table.Row key={specialty.id}>

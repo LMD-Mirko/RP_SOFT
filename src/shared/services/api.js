@@ -18,6 +18,50 @@ export class ApiError extends Error {
 }
 
 /**
+ * Traduce mensajes de error comunes del inglés al español
+ * @param {string} message - Mensaje de error original
+ * @param {number} status - Código de estado HTTP
+ * @returns {string} Mensaje traducido
+ */
+const translateErrorMessage = (message, status) => {
+  if (!message) return message;
+  
+  const lowerMessage = message.toLowerCase();
+  
+  // Traducir mensajes de permisos (403)
+  if (status === 403) {
+    if (lowerMessage.includes('you do not have permission') || 
+        lowerMessage.includes('permission denied') ||
+        lowerMessage.includes('forbidden')) {
+      return 'No tienes permisos para realizar esta acción';
+    }
+    if (lowerMessage.includes('access denied')) {
+      return 'Acceso denegado';
+    }
+  }
+  
+  // Traducir otros mensajes comunes
+  if (lowerMessage.includes('not found') || lowerMessage.includes('does not exist')) {
+    return 'Recurso no encontrado';
+  }
+  
+  if (lowerMessage.includes('unauthorized') || lowerMessage.includes('authentication')) {
+    return 'No estás autenticado. Por favor, inicia sesión';
+  }
+  
+  if (lowerMessage.includes('bad request') || lowerMessage.includes('invalid')) {
+    return 'Solicitud inválida';
+  }
+  
+  if (lowerMessage.includes('server error') || lowerMessage.includes('internal error')) {
+    return 'Error del servidor. Por favor, intenta más tarde';
+  }
+  
+  // Si no hay traducción específica, devolver el mensaje original
+  return message;
+};
+
+/**
  * Realiza una petición HTTP al backend
  * @param {string} endpoint - Ruta del endpoint (sin /api)
  * @param {object} options - Opciones de fetch (method, body, headers, etc.)
@@ -72,8 +116,11 @@ export async function apiRequest(endpoint, options = {}) {
 
     // Si la respuesta no es exitosa, lanzar error
     if (!response.ok) {
+      const rawMessage = data?.message || data?.detail || `Error ${response.status}: ${response.statusText}`;
+      const translatedMessage = translateErrorMessage(rawMessage, response.status);
+      
       throw new ApiError(
-        data?.message || `Error ${response.status}: ${response.statusText}`,
+        translatedMessage,
         response.status,
         data
       )
