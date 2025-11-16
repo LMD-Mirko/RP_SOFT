@@ -29,7 +29,7 @@ const menuItems = [
       {
         icon: LayoutDashboard,
         label: 'Dashboard',
-        path: '/',
+        path: '/dashboard',
       },
     ],
   },
@@ -119,6 +119,10 @@ export function Sidebar() {
     // Si el chat está abierto, solo Agente Integrador debe estar activo
     if (isChatOpen) {
       return path === '/agente-integrador'
+    }
+    
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard'
     }
     
     if (path === '/agente-integrador') {

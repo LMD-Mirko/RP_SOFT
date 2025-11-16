@@ -321,6 +321,114 @@ function Column({ column, members, onAdd, onMove, onEdit, onDelete, forceOpen = 
   )
 }
 
+function EditForm({ card, members, presetLabels, onSave, onCancel }) {
+  const [titulo, setTitulo] = useState(card.titulo || '')
+  const [puntos, setPuntos] = useState(card.puntos || 0)
+  const [owner, setOwner] = useState(card.owner || (members?.[0]?.iniciales || 'NA'))
+  const [tags, setTags] = useState(Array.isArray(card.tags) ? card.tags : [])
+  const [fecha, setFecha] = useState(card.fecha ? card.fecha.substring(0,10) : '')
+  const [checklist, setChecklist] = useState(Array.isArray(card.checklist) ? card.checklist : [])
+  const [newItem, setNewItem] = useState('')
+  const [newTag, setNewTag] = useState('')
+  const toast = useToast()
+
+  function toggleTag(tag) {
+    setTags((prev) => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]))
+  }
+  function addItem() {
+    const t = newItem.trim()
+    if (!t) return
+    setChecklist((prev) => [...prev, { id: 'i' + Date.now(), text: t, done: false }])
+    setNewItem('')
+    toast.success('Item agregado', t)
+  }
+  function toggleItem(id) {
+    setChecklist((prev) => prev.map(i => i.id === id ? { ...i, done: !i.done } : i))
+  }
+  function removeItem(id) {
+    setChecklist((prev) => prev.filter(i => i.id !== id))
+  }
+  function addTag() {
+    const t = newTag.trim()
+    if (!t) return
+    if (!tags.includes(t)) setTags(prev => [...prev, t])
+    setNewTag('')
+    toast.success('Etiqueta agregada', t)
+  }
+  function removeTag(t) {
+    setTags(prev => prev.filter(x => x !== t))
+  }
+
+  return (
+    <div className={styles.editForm}>
+      <div className={styles.editGroup}>
+        <label className={styles.editLabel}>Título</label>
+        <input className={styles.editInput} value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+      </div>
+      <div className={styles.twoCols}>
+        <div className={styles.editGroup}>
+          <label className={styles.editLabel}>Puntos</label>
+          <input type="number" min="0" className={styles.editInput} value={puntos} onChange={(e) => setPuntos(Number(e.target.value || 0))} />
+        </div>
+        <div className={styles.editGroup}>
+          <label className={styles.editLabel}>Responsable</label>
+          <select className={styles.editSelect} value={owner} onChange={(e) => setOwner(e.target.value)}>
+            {members?.map((m) => (
+              <option key={m.id} value={m.iniciales}>{m.iniciales}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className={styles.editGroup}>
+        <label className={styles.editLabel}>Etiquetas</label>
+        <div className={styles.chipRow}>
+          {presetLabels.map((t) => (
+            <button key={t} type="button" onClick={() => toggleTag(t)} className={`${styles.chip} ${tags.includes(t) ? styles.chipActive : ''}`}>{t}</button>
+          ))}
+        </div>
+        <div className={styles.tagEditorRow}>
+          <input className={styles.tagInput} value={newTag} onChange={(e) => setNewTag(e.target.value)} placeholder="Nueva etiqueta" onKeyDown={(e)=>{ if(e.key==='Enter'){ e.preventDefault(); addTag(); } }} />
+          <Button className={styles.tagAddBtn} onClick={addTag}>Añadir</Button>
+        </div>
+        {tags.length > 0 && (
+          <div className={styles.tagList}>
+            {tags.map(t => (
+              <span key={t} className={styles.tagItem}>
+                {t}
+                <button type="button" className={styles.tagRemove} aria-label={`Quitar ${t}`} onClick={() => removeTag(t)}>×</button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className={styles.editGroup}>
+        <label className={styles.editLabel}>Fecha</label>
+        <input type="date" className={styles.editInput} value={fecha} onChange={(e) => setFecha(e.target.value)} />
+      </div>
+      <div className={styles.editGroup}>
+        <label className={styles.editLabel}>Checklist</label>
+        <div className={styles.checkList}>
+          {checklist.map(i => (
+            <div key={i.id} className={styles.checkRow}>
+              <input type="checkbox" checked={!!i.done} onChange={() => toggleItem(i.id)} />
+              <span className={`${styles.checkText} ${i.done ? styles.checkTextDone : ''}`}>{i.text}</span>
+              <button className="ml-auto text-xs text-rose-600 hover:underline" onClick={() => removeItem(i.id)}>Eliminar</button>
+            </div>
+          ))}
+          <div className={styles.newItemRow}>
+            <input className={styles.editInput} style={{ flex: 1 }} value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder="Nueva tarea" />
+            <Button className="h-9 px-3" onClick={addItem}>Añadir</Button>
+          </div>
+        </div>
+      </div>
+      <div className={styles.editFooter}>
+        <Button variant="light" className="h-9 px-4" onClick={onCancel}>Cancelar</Button>
+        <Button className="h-9 px-4" onClick={() => onSave({ titulo, puntos, owner, tags, fecha, checklist })}>Guardar</Button>
+      </div>
+    </div>
+  )
+}
+
 export function SprintBoard() {
   const { loading, stats, columns, members, addCard, moveCard, moveCardWithin, updateCard, deleteCard, addColumn, renameColumn, deleteColumn, moveColumn } = useSprintBoard()
   const [openColumnId, setOpenColumnId] = useState(null)
@@ -618,114 +726,6 @@ export function SprintBoard() {
         >
           <p className="text-sm text-gray-600">{confirmDlg?.message}</p>
         </Modal>
-      </div>
-    </div>
-  )
-}
-
-function EditForm({ card, members, presetLabels, onSave, onCancel }) {
-  const [titulo, setTitulo] = useState(card.titulo || '')
-  const [puntos, setPuntos] = useState(card.puntos || 0)
-  const [owner, setOwner] = useState(card.owner || (members?.[0]?.iniciales || 'NA'))
-  const [tags, setTags] = useState(Array.isArray(card.tags) ? card.tags : [])
-  const [fecha, setFecha] = useState(card.fecha ? card.fecha.substring(0,10) : '')
-  const [checklist, setChecklist] = useState(Array.isArray(card.checklist) ? card.checklist : [])
-  const [newItem, setNewItem] = useState('')
-  const [newTag, setNewTag] = useState('')
-  const toast = useToast()
-
-  function toggleTag(tag) {
-    setTags((prev) => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]))
-  }
-  function addItem() {
-    const t = newItem.trim()
-    if (!t) return
-    setChecklist((prev) => [...prev, { id: 'i' + Date.now(), text: t, done: false }])
-    setNewItem('')
-    toast.success('Item agregado', t)
-  }
-  function toggleItem(id) {
-    setChecklist((prev) => prev.map(i => i.id === id ? { ...i, done: !i.done } : i))
-  }
-  function removeItem(id) {
-    setChecklist((prev) => prev.filter(i => i.id !== id))
-  }
-  function addTag() {
-    const t = newTag.trim()
-    if (!t) return
-    if (!tags.includes(t)) setTags(prev => [...prev, t])
-    setNewTag('')
-    toast.success('Etiqueta agregada', t)
-  }
-  function removeTag(t) {
-    setTags(prev => prev.filter(x => x !== t))
-  }
-
-  return (
-    <div className={styles.editForm}>
-      <div className={styles.editGroup}>
-        <label className={styles.editLabel}>Título</label>
-        <input className={styles.editInput} value={titulo} onChange={(e) => setTitulo(e.target.value)} />
-      </div>
-      <div className={styles.twoCols}>
-        <div className={styles.editGroup}>
-          <label className={styles.editLabel}>Puntos</label>
-          <input type="number" min="0" className={styles.editInput} value={puntos} onChange={(e) => setPuntos(Number(e.target.value || 0))} />
-        </div>
-        <div className={styles.editGroup}>
-          <label className={styles.editLabel}>Responsable</label>
-          <select className={styles.editSelect} value={owner} onChange={(e) => setOwner(e.target.value)}>
-            {members?.map((m) => (
-              <option key={m.id} value={m.iniciales}>{m.iniciales}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className={styles.editGroup}>
-        <label className={styles.editLabel}>Etiquetas</label>
-        <div className={styles.chipRow}>
-          {presetLabels.map((t) => (
-            <button key={t} type="button" onClick={() => toggleTag(t)} className={`${styles.chip} ${tags.includes(t) ? styles.chipActive : ''}`}>{t}</button>
-          ))}
-        </div>
-        <div className={styles.tagEditorRow}>
-          <input className={styles.tagInput} value={newTag} onChange={(e) => setNewTag(e.target.value)} placeholder="Nueva etiqueta" onKeyDown={(e)=>{ if(e.key==='Enter'){ e.preventDefault(); addTag(); } }} />
-          <Button className={styles.tagAddBtn} onClick={addTag}>Añadir</Button>
-        </div>
-        {tags.length > 0 && (
-          <div className={styles.tagList}>
-            {tags.map(t => (
-              <span key={t} className={styles.tagItem}>
-                {t}
-                <button type="button" className={styles.tagRemove} aria-label={`Quitar ${t}`} onClick={() => removeTag(t)}>×</button>
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-      <div className={styles.editGroup}>
-        <label className={styles.editLabel}>Fecha</label>
-        <input type="date" className={styles.editInput} value={fecha} onChange={(e) => setFecha(e.target.value)} />
-      </div>
-      <div className={styles.editGroup}>
-        <label className={styles.editLabel}>Checklist</label>
-        <div className={styles.checkList}>
-          {checklist.map(i => (
-            <div key={i.id} className={styles.checkRow}>
-              <input type="checkbox" checked={!!i.done} onChange={() => toggleItem(i.id)} />
-              <span className={`${styles.checkText} ${i.done ? styles.checkTextDone : ''}`}>{i.text}</span>
-              <button className="ml-auto text-xs text-rose-600 hover:underline" onClick={() => removeItem(i.id)}>Eliminar</button>
-            </div>
-          ))}
-          <div className={styles.newItemRow}>
-            <input className={styles.editInput} style={{ flex: 1 }} value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder="Nueva tarea" />
-            <Button className="h-9 px-3" onClick={addItem}>Añadir</Button>
-          </div>
-        </div>
-      </div>
-      <div className={styles.editFooter}>
-        <Button variant="light" className="h-9 px-4" onClick={onCancel}>Cancelar</Button>
-        <Button className="h-9 px-4" onClick={() => onSave({ titulo, puntos, owner, tags, fecha, checklist })}>Guardar</Button>
       </div>
     </div>
   )

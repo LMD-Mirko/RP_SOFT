@@ -1,13 +1,28 @@
+import { EmptyState } from '@shared/components/EmptyState'
 import styles from './RecentActivity.module.css'
 
-export function RecentActivity({ activities = [] }) {
+export function RecentActivity({ activities = [], loading = false }) {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Actividad Reciente</h2>
       
       <div className={styles.list}>
-        {activities.length === 0 ? (
-          <p className={styles.empty}>No hay actividad reciente</p>
+        {loading ? (
+          <EmptyState
+            iconPreset="activity"
+            colorPreset="turquoise"
+            title="Cargando actividades..."
+            description="Por favor espera mientras cargamos la información"
+            className={styles.emptyState}
+          />
+        ) : activities.length === 0 ? (
+          <EmptyState
+            iconPreset="activity"
+            colorPreset="turquoise"
+            title="No hay actividad reciente"
+            description="Los registros de actividad aparecerán aquí cuando haya movimientos en el sistema"
+            className={styles.emptyState}
+          />
         ) : (
           activities.map((activity, index) => (
             <div key={index} className={styles.item}>
