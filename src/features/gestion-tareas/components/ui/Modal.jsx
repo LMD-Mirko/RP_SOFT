@@ -1,16 +1,17 @@
 export function Modal({ open, onClose, title, children, footer, containerClassName = '' }) {
   if (!open) return null
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className={`relative z-10 w-[900px] h-[300px] max-w-[90vw] rounded-2xl bg-white shadow-2xl overflow-hidden ${containerClassName}`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-label={typeof title === 'string' ? title : 'Modal'}>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-200" onClick={onClose} />
+      <div className={`relative z-10 w-full max-w-2xl ${containerClassName || 'h-auto max-h-[90vh]'} rounded-2xl border border-gray-200 bg-white shadow-xl transition-all duration-200 overflow-hidden`}>
         {title && (
-          <div className="px-6 py-3 border-b flex justify-center">
-            <h3 className="text-xl font-semibold text-center">{title}</h3>
+          <div className="flex items-center justify-between px-8 pt-5 pb-3 border-b border-gray-200">
+            <h3 className="text-xl font-bold tracking-tight">{title}</h3>
+            <button className="h-8 w-8 inline-flex items-center justify-center rounded-full hover:bg-gray-100" onClick={onClose} aria-label="Cerrar">✕</button>
           </div>
         )}
-        <div className="px-6 py-4 h-[calc(300px-48px-56px)] overflow-auto">{children}</div>
-        {footer && <div className="px-6 py-3 border-t flex justify-end gap-2">{footer}</div>}
+        <div className={`px-8 py-6 ${containerClassName ? 'h-[calc(300px-48px-56px)]' : 'max-h-[70vh]'} overflow-y-auto`}>{children}</div>
+        {footer && <div className="px-8 pt-4 pb-6 border-t border-gray-200 flex justify-end gap-2">{footer}</div>}
       </div>
     </div>
   )

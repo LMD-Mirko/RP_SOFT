@@ -19,8 +19,8 @@ export function UserLayout() {
     return 'Inicio'
   })()
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-6">
-      <div className="mx-auto max-w-6xl">
+    <div className="px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6">
+      <div className="mx-auto max-w-[1600px]">
         <div className="mb-4 flex items-center gap-3">
           <button onClick={() => navigate('/gestion-tareas')} className="h-9 w-9 inline-flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-100">
             <ArrowLeft size={18} />

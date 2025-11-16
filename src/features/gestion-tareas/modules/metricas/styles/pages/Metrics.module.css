@@ -64,6 +64,23 @@
   gap: 0.5rem; /* gap-2 */
 }
 
+.select {
+  padding: 0.375rem 2rem 0.375rem 0.75rem; /* py-1.5 px-3 pr-8 */
+  border: 1px solid var(--metrics-gray-200);
+  background-color: var(--metrics-white);
+  border-radius: var(--metrics-radius-xl);
+  font-size: 0.875rem;
+  color: var(--metrics-gray-900);
+  background-position: calc(100% - 16px) calc(50% - 3px), calc(100% - 12px) calc(50% + 3px);
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--metrics-gray-400);
+}
+
 .gridStats {
   display: grid;
   grid-template-columns: 1fr;

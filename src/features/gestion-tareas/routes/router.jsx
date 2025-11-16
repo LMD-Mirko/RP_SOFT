@@ -3,20 +3,20 @@
  * Define todas las rutas internas del módulo.
  */
 
-import { Routes, Route } from 'react-router-dom'
-import { Layout } from '../components/Layout'
-import { Dashboard } from '../modules/dashboard/pages/Dashboard'
-import { Backlog } from '../modules/backlog/pages/Backlog'
-import { SprintBoard } from '../modules/sprint/pages/SprintBoard'
-import { HistoryRepo } from '../modules/historias/pages/HistoryRepo'
-import { Metrics } from '../modules/metricas/pages/Metrics'
-import { User } from '../pages/User'
-import { UserHome } from '../components/user/UserHome'
-import { UserTasks } from '../components/user/UserTasks'
-import { UserFeedback } from '../components/user/UserFeedback'
-import { UserTeams } from '../components/user/UserTeams'
-import { UserProfile } from '../components/user/UserProfile'
-import { Navigate } from 'react-router-dom'
+import { Routes, Route } from "react-router-dom";
+import { Layout } from "../components/Layout";
+import { Dashboard } from "../modules/dashboard/pages/Dashboard";
+import { Backlog } from "../modules/backlog/pages/Backlog";
+import { SprintBoard } from "../modules/sprint/pages/SprintBoard";
+import { HistoryRepo } from "../modules/historias/pages/HistoryRepo";
+import { Metrics } from "../modules/metricas/pages/Metrics";
+import { User } from "../pages/User";
+import { UserHome } from "../components/user/UserHome";
+import { UserTasks } from "../components/user/UserTasks";
+import { UserFeedback } from "../components/user/UserFeedback";
+import { UserTeams } from "../components/user/UserTeams";
+import { UserProfile } from "../components/user/UserProfile";
+import { Navigate } from "react-router-dom";
 
 /**
  * Router del Módulo
@@ -28,13 +28,13 @@ export function ModuleRouter() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
-        
+
         {/* Rutas de Gestión de Tareas */}
         <Route path="backlog" element={<Backlog />} />
         <Route path="sprint-board" element={<SprintBoard />} />
         <Route path="historias" element={<HistoryRepo />} />
         <Route path="metricas" element={<Metrics />} />
-        <Route path="usuario" element={<User />}> 
+        <Route path="usuario" element={<User />}>
           <Route index element={<Navigate to="inicio" replace />} />
           <Route path="inicio" element={<UserHome />} />
           <Route path="mis-tareas" element={<UserTasks />} />
@@ -44,6 +44,5 @@ export function ModuleRouter() {
         </Route>
       </Route>
     </Routes>
-  )
+  );
 }
-
