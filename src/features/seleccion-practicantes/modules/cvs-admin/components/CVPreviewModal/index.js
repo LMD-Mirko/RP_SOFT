@@ -1,0 +1,2 @@
+export { CVPreviewModal } from './CVPreviewModal'
+

@@ -1,15 +1,29 @@
 import { Router } from '@app/routes'
-import { GeminiProvider } from './features/agente-integrador/context/GeminiContext';
-import { ChatPanelProvider } from '@shared/context/ChatPanelContext';
+import { ToastProvider } from '@shared/components/Toast'
+import { GeminiProvider } from './features/agente-integrador/context/GeminiContext'
+import { ChatPanelProvider } from '@shared/context/ChatPanelContext'
+import { UserProfileProvider } from '@shared/context/UserProfileContext'
+import { ConfigProvider } from 'antd'
 
-function App() {
+export default function App() {
   return (
-    <GeminiProvider>
-      <ChatPanelProvider>
-        <Router />
-      </ChatPanelProvider>
-    </GeminiProvider>
-  );
+    <ConfigProvider
+      theme={{
+        token: {
+          fontFamily: "'Be Vietnam Pro', sans-serif",
+          borderRadius: 8,
+        },
+      }}
+    >
+      <ToastProvider>
+        <GeminiProvider>
+          <ChatPanelProvider>
+            <UserProfileProvider>
+              <Router />
+            </UserProfileProvider>
+          </ChatPanelProvider>
+        </GeminiProvider>
+      </ToastProvider>
+    </ConfigProvider>
+  )
 }
-
-export default App;

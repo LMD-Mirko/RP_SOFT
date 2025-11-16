@@ -1,0 +1,107 @@
+/*
+  Card Component Styles (layout > typography > colors > spacing > others)
+  - Info card with icon circle and color variants
+  - Mirrors Tailwind: rounded-2xl border border-gray-200 bg-white p-5 shadow-sm
+*/
+
+:root {
+  /* colors */
+  --metrics-white: #ffffff;
+  --metrics-gray-50: #f9fafb;
+  --metrics-gray-200: #e5e7eb;
+  --metrics-gray-500: #6b7280;
+  --metrics-gray-900: #111827;
+
+  --metrics-blue-50: #eff6ff;
+  --metrics-blue-600: #2563eb;
+  --metrics-green-50: #ecfdf5; /* close to green-50; Tailwind green-50 is #f0fdf4 */
+  --metrics-green-600: #16a34a;
+  --metrics-violet-50: #f5f3ff;
+  --metrics-violet-600: #7c3aed;
+  --metrics-orange-50: #fff7ed;
+  --metrics-orange-600: #ea580c; /* close to orange-600 */
+}
+
+/* layout */
+.card {
+  border-radius: 1rem; /* rounded-2xl */
+  border: 1px solid var(--metrics-gray-200);
+  background-color: var(--metrics-white);
+  padding: 1.25rem; /* p-5 */
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); /* shadow-sm */
+  transition: transform 300ms ease-in-out, box-shadow 300ms ease-in-out;
+  will-change: transform, box-shadow;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* gap-4 */
+}
+
+.card:hover {
+  transform: scale(1.03); /* max 105% respected */
+  box-shadow: var(--metrics-shadow-xl);
+}
+
+.card:focus-visible {
+  outline: none;
+  transform: scale(1.03);
+  box-shadow: var(--metrics-shadow-xl);
+}
+
+.iconCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem; /* w-12 */
+  height: 3rem; /* h-12 */
+  border-radius: 9999px;
+}
+
+.iconCircle svg {
+  transition: transform 300ms ease-in-out, color 300ms ease-in-out;
+}
+
+.iconCircle:hover svg,
+.iconCircle:focus-visible svg {
+  transform: rotate(10deg); /* max 15 degrees */
+}
+
+/* typography */
+.titleMuted {
+  font-size: 0.875rem; /* text-sm */
+  color: var(--metrics-gray-500);
+}
+
+.value {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  color: var(--metrics-gray-900);
+}
+
+/* colors */
+.blue {
+  color: var(--metrics-blue-600);
+  background-color: var(--metrics-blue-50);
+}
+
+.green {
+  color: var(--metrics-green-600);
+  background-color: var(--metrics-green-50);
+}
+
+.violet {
+  color: var(--metrics-violet-600);
+  background-color: var(--metrics-violet-50);
+}
+
+.orange {
+  color: var(--metrics-orange-600);
+  background-color: var(--metrics-orange-50);
+}
+
+.gray {
+  color: var(--metrics-gray-500);
+  background-color: var(--metrics-gray-50);
+}

@@ -1,3 +1,5 @@
+/* Estilos del modal de participantes */
+
 .content {
   display: flex;
   flex-direction: column;
@@ -118,11 +120,43 @@
   flex-shrink: 0;
 }
 
-.emptyState {
-  text-align: center;
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 3rem 1rem;
+  gap: 1rem;
   color: #6b7280;
-  font-size: 0.9375rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.emptyState {
+  padding: 2rem 1rem;
+}
+
+.roleBadge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.125rem 0.5rem;
+  background: #e0e7ff;
+  color: #4338ca;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .actions {

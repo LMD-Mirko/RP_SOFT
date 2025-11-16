@@ -153,6 +153,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .option:hover {
@@ -172,11 +174,15 @@
 .optionIcon {
   flex-shrink: 0;
   color: #6b7280;
+  width: 16px;
+  height: 16px;
 }
 
 .optionIconInner {
   flex-shrink: 0;
   color: #6b7280;
+  width: 16px;
+  height: 16px;
 }
 
 .optionLabel {

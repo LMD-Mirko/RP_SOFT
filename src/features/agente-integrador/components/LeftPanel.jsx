@@ -8,9 +8,11 @@ import {
   FaChartLine,
   FaQuestionCircle,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { useGemini } from "../hooks/useGemini";
 
 export default function LeftPanel() {
+  const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("Asistencia");
   const { setShowAgentIntegrator } = useGemini();
 
@@ -112,6 +114,7 @@ export default function LeftPanel() {
       />
 
       <button
+        onClick={() => navigate("/dashboard")}
         style={{
           marginTop: "20px",
           backgroundColor: "#000",
