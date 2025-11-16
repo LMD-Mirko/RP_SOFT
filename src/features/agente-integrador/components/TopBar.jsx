@@ -18,7 +18,7 @@ export default function TopBar({ title, onLogout }) {
       <h3 style={{ margin: 0 }}>{title}</h3>
       <div>
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/dashboard")}
           style={{
             marginRight: "10px",
             backgroundColor: "#0ea5a9",
