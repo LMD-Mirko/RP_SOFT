@@ -1,0 +1,81 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.plantillaCard {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+}
+
+.plantillaHeader {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.plantillaName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.plantillaForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.asuntoInput {
+  width: 100%;
+}
+
+.cuerpoTextarea {
+  width: 100%;
+}
+
+.cuerpoTextarea textarea {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.saveSection {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    gap: 1.5rem;
+  }
+
+  .plantillaCard {
+    padding: 1.5rem;
+  }
+}

@@ -1,6 +1,6 @@
 import React from 'react'
 import WeekEventRow from '../WeekEventRow/WeekEventRow'
-import styles from './weekListGroup.module.css'
+import styles from './WeekListGroup.module.css'
 
 export default function WeekListGroup({ dia, actividades }) {
   return (

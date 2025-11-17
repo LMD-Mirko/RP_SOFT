@@ -8,12 +8,13 @@ import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
-import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
-import { Reports } from '../modules/reportes/pages/Reports'
 import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages/DisciplinaryTrackingView'
-import HistorialPracticantes from '../modules/historial-practicantes/pages/HistorialPracticantes'
+//import { Botintegrative } from '../modules/bot_integracion/pages/botintegrative'//
+import { Reports } from '../modules/reportes/pages/Reports'
 import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
+import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
 import { Inicio } from '../modules/inicio/pages/nicolayus'
+import HistorialPracticantes from '../modules/historial-practicantes/pages/HistorialPracticantes'
 
 /**
  * Router del Módulo

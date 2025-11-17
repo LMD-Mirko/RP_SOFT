@@ -1,0 +1,60 @@
+/* Estilos del modal de Información */
+.container {
+  display: grid;
+  gap: 24px;
+  position: relative;
+  padding: 16px 24px; /* agrega espacio a izquierda/derecha */
+}
+
+.tag {
+  align-self: start;
+  background: #e5e7eb;
+  color: #111827;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 6px 16px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.sectionTitle {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-bottom: 2px solid #111827;
+  padding-bottom: 4px;
+  width: fit-content;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.input {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 10px;
+  height: 44px;
+  padding: 0 12px;
+  color: #6b7280;
+}
+
+.inputShort {
+  width: 240px;
+}

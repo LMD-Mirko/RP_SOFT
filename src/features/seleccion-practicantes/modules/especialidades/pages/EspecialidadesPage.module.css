@@ -1,0 +1,276 @@
+/* Copiado y adaptado de RolesPage.module.css */
+.container {
+  padding: 2rem;
+  background-color: #f9fafb;
+  min-height: 90vh;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  width: 93%;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #9ca3af;
+  margin: 0.5rem 0 0;
+}
+
+.searchAndFilters {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.1s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+  flex-wrap: nowrap;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.searchBox {
+  position: relative;
+  flex: 2;
+  min-width: 300px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.625rem;
+  font-size: 0.95rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: #111827;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.searchInput:hover {
+  border-color: #9ca3af;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filtersRow {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.tableContainer {
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.2s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.tableSection {
+  background: white;
+  border-radius: 0.75rem 0.75rem 0 0;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.specialtyCell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.specialtyIcon {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.specialtyName {
+  font-weight: 600;
+  color: #111827;
+}
+
+.description {
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.badgeEstadoCompleted {
+  display: inline-block;
+  padding: 0.375rem 0.875rem;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badgeEstadoPending {
+  display: inline-block;
+  padding: 0.375rem 0.875rem;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.fecha {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.actionButton,
+.actionButtonView,
+.actionButtonDelete {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButton {
+  color: #3b82f6;
+}
+
+.actionButton:hover {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.actionButtonView {
+  color: #10b981;
+}
+
+.actionButtonView:hover {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.actionButtonDelete {
+  color: #ef4444;
+}
+
+.actionButtonDelete:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.pagination {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 0;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-radius: 0 0 0.75rem 0.75rem;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-height: 60px;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.pagination :global(.ant-pagination) {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+    width: 100%;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .searchAndFilters {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .searchBox {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .filtersRow {
+    width: 100%;
+  }
+}
+

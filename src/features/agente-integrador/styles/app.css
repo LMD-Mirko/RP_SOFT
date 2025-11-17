@@ -1,0 +1,241 @@
+:root {
+  --bg: #f8fafc; 
+  --card: #ffffff;
+  --accent: #0ea5a9; 
+  --accent-hover: #22c55e; 
+  --muted: #475569; 
+  --text: #111827; 
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+
+.app {
+  max-width: 980px;
+  margin: 28px auto;
+  padding: 24px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #60a5fa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  margin: 0;
+  color: var(--text);
+}
+
+p.lead {
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  transition: box-shadow 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.chat {
+  height: 560px;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  scroll-behavior: smooth;
+}
+
+.msg {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.msg.user {
+  align-self: flex-end;
+  background: linear-gradient(90deg, #0ea5a9, #60a5fa);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.msg.bot {
+  align-self: flex-start;
+  background: #f1f5f9;
+  color: var(--text);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom-left-radius: 4px;
+}
+
+.msg.thinking {
+  background: rgba(14, 165, 169, 0.1);
+  border: 1px solid rgba(14, 165, 169, 0.2);
+  color: var(--accent);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  padding-top: 10px;
+  align-items: center;
+}
+
+.textin {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.textin:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(14, 165, 169, 0.2);
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+button.secondary {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--muted);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.status.connected {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status.disconnected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status.loading {
+  background: rgba(14, 165, 169, 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(14, 165, 169, 0.2);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.stat {
+  background: #f9fafb;
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.stat-value {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+footer {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.hint {
+  background: linear-gradient(90deg, #0ea5a9, #60a5fa);
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #fff;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
