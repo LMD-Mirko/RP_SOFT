@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
 import { MessageCircle, Send, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './ChatbotWidget.module.css'
 
 function generateReply(text) {
