@@ -1,0 +1,231 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  margin: 0 0 4px 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0;
+}
+
+.scoreCard {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 32px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  background: white;
+  border: 2px solid;
+}
+
+.scoreCardPassed {
+  border-color: var(--color-success, #10b981);
+  background: linear-gradient(135deg, var(--color-success-50, #ecfdf5) 0%, white 100%);
+}
+
+.scoreCardFailed {
+  border-color: var(--color-error, #ef4444);
+  background: linear-gradient(135deg, var(--color-error-50, #fef2f2) 0%, white 100%);
+}
+
+.scoreIcon {
+  flex-shrink: 0;
+}
+
+.iconPassed {
+  color: var(--color-success, #10b981);
+}
+
+.iconFailed {
+  color: var(--color-error, #ef4444);
+}
+
+.scoreContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scoreMain {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scoreLabel {
+  font-size: 14px;
+  color: var(--color-text-secondary, #6b7280);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.scoreValue {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+}
+
+.scorePercentage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.scoreStatus {
+  margin-top: 8px;
+}
+
+.statusPassed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-success, #10b981);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.statusFailed {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--color-error, #ef4444);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.passingScore {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.infoSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  padding: 24px;
+  background: white;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  margin-bottom: 32px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoLabel {
+  font-size: 14px;
+  color: var(--color-text-secondary, #6b7280);
+  font-weight: 500;
+}
+
+.infoValue {
+  font-size: 16px;
+  color: var(--color-text, #111827);
+  font-weight: 600;
+}
+
+.statusGraded {
+  color: var(--color-success, #10b981);
+}
+
+.statusSubmitted {
+  color: var(--color-warning, #f59e0b);
+}
+
+.statusExpired {
+  color: var(--color-error, #ef4444);
+}
+
+.questionsSection {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  margin: 0 0 24px 0;
+}
+
+.questionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  text-align: center;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.error h2 {
+  margin: 0;
+  color: var(--color-text, #111827);
+}
+
+.error p {
+  margin: 0;
+}
+
+.empty {
+  padding: 48px;
+  text-align: center;
+  color: var(--color-text-secondary, #6b7280);
+  background: white;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .scoreCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .infoSection {
+    grid-template-columns: 1fr;
+  }
+}
+

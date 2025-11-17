@@ -66,9 +66,14 @@
 
 .cascader :global(.ant-select-disabled .ant-select-selector) {
   background-color: #f3f4f6 !important;
-  color: #9ca3af !important;
+  color: #111827 !important;
   cursor: not-allowed !important;
-  opacity: 0.6 !important;
+  opacity: 1 !important;
+}
+
+.cascader :global(.ant-select-disabled .ant-select-selection-item) {
+  color: #111827 !important;
+  opacity: 1 !important;
 }
 
 .cascader :global(.ant-select-selection-placeholder) {

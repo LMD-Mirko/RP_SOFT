@@ -3,6 +3,7 @@ import { Sidebar } from '@shared/components/Layout/Sidebar'
 import { Header } from '@shared/components/Layout/Header'
 import { ChatPanel } from '@shared/components/ChatPanel'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
+import { UserProfileProvider } from '@shared/context/UserProfileContext'
 
 export function MainLayout() {
   const location = useLocation()
@@ -21,26 +22,30 @@ export function MainLayout() {
   // En dashboard/configuración: Header + Sidebar principal aquí
   if (isModuleRoute) {
     return (
-      <div className="h-screen bg-gray-50">
-        <Outlet />
-      </div>
+      <UserProfileProvider>
+        <div className="h-screen bg-gray-50">
+          <Outlet />
+        </div>
+      </UserProfileProvider>
     )
   }
 
   // Dashboard y configuración: Header + Sidebar principal
   return (
-    <div className="h-screen bg-gray-50 flex">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        {isChatOpen ? (
-          <ChatPanel />
-        ) : (
-          <main className="flex-1 overflow-y-auto">
-            <Outlet />
-          </main>
-        )}
+    <UserProfileProvider>
+      <div className="h-screen bg-gray-50 flex">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Header />
+          {isChatOpen ? (
+            <ChatPanel />
+          ) : (
+            <main className="flex-1 overflow-y-auto">
+              <Outlet />
+            </main>
+          )}
+        </div>
       </div>
-    </div>
+    </UserProfileProvider>
   )
 }

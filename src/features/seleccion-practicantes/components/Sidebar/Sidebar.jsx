@@ -17,6 +17,7 @@ import {
   ChevronRight,
   MessageSquare,
   Download,
+  Award,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
@@ -52,6 +53,11 @@ const menuItems = [
         icon: FileText,
         label: 'Ver CV/s',
         path: '/seleccion-practicantes/cvs',
+      },
+      {
+        icon: Award,
+        label: 'Mis Evaluaciones',
+        path: '/seleccion-practicantes/evaluaciones/mis-evaluaciones',
       },
     ],
   },
