@@ -10,7 +10,11 @@ import { Dashboard as PracticantesDashboard } from '../modules/practicantes/page
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
 import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages/DisciplinaryTrackingView'
 //import { Botintegrative } from '../modules/bot_integracion/pages/botintegrative'//
-import { Reports } from '../modules/reportes/pages/Reports' 
+import { Reports } from '../modules/reportes/pages/Reports'
+import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
+import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
+import { Inicio } from '../modules/inicio/pages/nicolayus'
+import HistorialPracticantes from '../modules/historial-practicantes/pages/HistorialPracticantes'
 
 /**
  * Router del Módulo
@@ -22,13 +26,13 @@ export function ModuleRouter() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
-        
+
         {/* Rutas de Monitoreo */}
         <Route
           path="bot-integracion"
           element={<div><h2>Bot de Integración</h2></div>}
         />
-        
+
         {/* Rutas de Asistencia */}
         <Route
           path="puntualidad"
@@ -44,9 +48,9 @@ export function ModuleRouter() {
         />
         <Route
           path="gestion-horarios"
-          element={<div><h2>Gestión de Horarios</h2></div>}
+          element={<GestionHorariosDashboard />}
         />
-        
+
         {/* Rutas de Módulos */}
         <Route
           path="reportes"
@@ -58,17 +62,17 @@ export function ModuleRouter() {
         />
         <Route
           path="historial-practicantes"
-          element={<div><h2>Historial de Practicantes</h2></div>}
+          element={<HistorialPracticantes />}
         />
-        
+
         {/* Rutas de Practicante */}
         <Route
           path="practicante/inicio"
-          element={<div><h2>Inicio - Practicante</h2></div>}
+          element={<Inicio />}
         />
         <Route
           path="practicante/mi-asistencia"
-          element={<div><h2>Mi Asistencia</h2></div>}
+          element={<ControlAsistencia />}
         />
         <Route
           path="practicante/mi-horario"

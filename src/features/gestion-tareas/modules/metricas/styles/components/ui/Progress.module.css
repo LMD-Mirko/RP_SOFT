@@ -1,0 +1,50 @@
+/*
+  Progress Component Styles (layout > typography > colors > spacing > others)
+  - Horizontal progress track with colored bar
+  - Mirrors Tailwind: h-2 w-full rounded-full bg-gray-200 + bar with transition
+*/
+
+:root {
+  /* colors */
+  --metrics-gray-200: #e5e7eb;
+  --metrics-blue-600: #2563eb;
+  --metrics-green-600: #16a34a;
+  --metrics-orange-500: #f97316;
+}
+
+/* layout */
+.track {
+  width: 100%;
+  height: 0.5rem; /* h-2 */
+  border-radius: 9999px; /* rounded-full */
+  background-color: var(--metrics-gray-200);
+}
+
+.bar {
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+/* typography */
+/* none */
+
+/* colors */
+.green {
+  background-color: var(--metrics-green-600);
+}
+
+.orange {
+  background-color: var(--metrics-orange-500);
+}
+
+.blue {
+  background-color: var(--metrics-blue-600);
+}
+
+/* spacing */
+/* none */
+
+/* others */
+.bar {
+  transition: all 500ms ease-in-out; /* transition-all duration-500 ease-in-out */
+}

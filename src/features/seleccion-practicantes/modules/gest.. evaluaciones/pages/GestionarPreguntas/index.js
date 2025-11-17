@@ -1,0 +1,2 @@
+export { GestionarPreguntasPage } from './GestionarPreguntasPage'
+

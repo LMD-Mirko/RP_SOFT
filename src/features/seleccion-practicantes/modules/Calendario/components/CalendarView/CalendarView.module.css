@@ -100,25 +100,48 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.dateCell.selected {
+/* Día actual (hoy) - Verde */
+.dateCell.today {
   background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  border-color: #86efac;
+  border-color: #10b981;
   color: #065f46;
-  box-shadow: 0 6px 20px rgba(167, 243, 208, 0.4);
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.dateCell.today:hover {
+  background: linear-gradient(135deg, #a7f3d0 0%, #86efac 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* Día seleccionado */
+.dateCell.selected {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #3b82f6;
+  color: #1e40af;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
   transform: translateY(-2px) scale(1.02);
   font-weight: 700;
 }
 
+.dateCell.selected:hover {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.45);
+}
+
+/* Días con reuniones programadas - Azul */
 .dateCell.scheduled {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  border-color: #86efac;
-  color: #065f46;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #60a5fa;
+  color: #1e40af;
 }
 
 .dateCell.scheduled_green {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  border-color: #86efac;
-  color: #065f46;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #60a5fa;
+  color: #1e40af;
 }
 
 .dateCell.scheduled_yellow {
@@ -128,14 +151,9 @@
 }
 
 .dateCell.scheduled:hover {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-}
-
-.dateCell.selected:hover {
-  background: linear-gradient(135deg, #a7f3d0 0%, #86efac 100%);
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(167, 243, 208, 0.45);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
 }
 
 .dateNumber {

@@ -1,0 +1,385 @@
+.container {
+  padding: 2rem;
+  background-color: #f9fafb;
+  min-height: 90vh;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  width: 93%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+  animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.backButton {
+  margin-bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.backButton :global(svg),
+.backButton :global(span) {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.backButton :global(svg) {
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  margin: 0;
+}
+
+.content {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeletonCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.preguntasList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.preguntaCard {
+  background: white;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.preguntaCard:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+.preguntaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.preguntaInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.preguntaNumber {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.875rem;
+}
+
+.preguntaPoints {
+  padding: 0.25rem 0.75rem;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.preguntaActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #3b82f6;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+}
+
+.actionButton:hover {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.actionButtonDelete {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+}
+
+.actionButtonDelete:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.preguntaText {
+  font-size: 1rem;
+  color: #374151;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+}
+
+.opcionesSection {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.opcionesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.opcionesHeader button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.opcionesHeader button :global(svg),
+.opcionesHeader button :global(span) {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.opcionesHeader button :global(svg) {
+  flex-shrink: 0;
+}
+
+.opcionesTitle {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.875rem;
+}
+
+.opcionesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.opcionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.opcionItem:hover {
+  background: #f3f4f6;
+}
+
+.opcionCorrecta {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.opcionContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.correctIcon {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.opcionText {
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.opcionActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.noOpciones {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px dashed #d1d5db;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.formActions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.formActions button :global(svg),
+.formActions button :global(span) {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.formActions button :global(svg) {
+  flex-shrink: 0;
+}
+
+.header button :global(svg),
+.header button :global(span) {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.header button :global(svg) {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .preguntaHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
+
