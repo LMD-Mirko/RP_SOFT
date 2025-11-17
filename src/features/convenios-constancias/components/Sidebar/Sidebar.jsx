@@ -7,6 +7,8 @@ import {
   Settings,
   ChevronDown,
   ChevronRight,
+  FileText,
+  FileCheck,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
@@ -40,6 +42,21 @@ const menuItems = [
       },
     ],
   },
+  {
+    title: 'USUARIOS',
+    items: [
+      {
+        icon: FileText,
+        label: 'Convenios',
+        path: '/convenios-constancias/usuario/convenio',
+      },
+      {
+        icon: FileCheck,
+        label: 'Constancias',
+        path: '/convenios-constancias/usuario/constancias',
+      },
+    ],
+  },
 ]
 
 export function Sidebar() {
@@ -47,6 +64,7 @@ export function Sidebar() {
   const navigate = useNavigate()
   const [expandedSections, setExpandedSections] = useState({
     'CONVENIOS Y CONSTANCIAS': true,
+    'USUARIOS': true,
   })
 
   const toggleSection = (title) => {

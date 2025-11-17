@@ -1,0 +1,183 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.section {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+}
+
+.sectionHeader {
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+.titleWithIcon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.titleWithIcon .sectionTitle {
+  margin: 0;
+}
+
+.sectionDescription {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.plantillaConfig {
+  width: 100%;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.inputWithButton {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.pathInput {
+  flex: 1;
+}
+
+.uploadButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.uploadButton:hover {
+  background-color: #2563eb;
+}
+
+.fileInput {
+  display: none;
+}
+
+.helpText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  font-style: italic;
+}
+
+.camposGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.campoCard {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.campoCard:hover {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+.campoHeader {
+  margin-bottom: 0.75rem;
+}
+
+.campoNombre {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #3b82f6;
+  font-family: 'Courier New', monospace;
+  background-color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+.campoContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.campoDescripcion {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  margin: 0;
+}
+
+.campoFuente {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.saveSection {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.saveButton {
+  min-width: 200px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section {
+    padding: 1.5rem;
+  }
+
+  .inputWithButton {
+    flex-direction: column;
+  }
+
+  .uploadButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .camposGrid {
+    grid-template-columns: 1fr;
+  }
+}
+

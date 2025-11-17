@@ -1,0 +1,85 @@
+/*
+  Button.module.css
+  - Migración desde Tailwind a CSS Modules
+  - Mantiene colores, tamaños y comportamiento original
+  - Añade hover/focus/active suaves y animaciones en iconos SVG
+*/
+
+:root {
+  /* Sistema de diseño */
+  --radius-xl: 0.75rem; /* rounded-xl */
+  --space-x: 1rem;      /* px-4 */
+  --space-y: 0.625rem;  /* py-2.5 */
+  --font-sm: 0.875rem;  /* text-sm */
+  --font-semibold: 600;
+  --transition-fast: 300ms ease; /* transición uniforme */
+
+  /* Colores base */
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-300: #d1d5db;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Elevación */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xl);
+  padding: var(--space-y) var(--space-x);
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-fast);
+  line-height: 1.25rem;
+}
+
+/* Variante: light (bg-white, borde, texto gris) */
+.light {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  color: var(--color-gray-700);
+}
+.light:hover {
+  background-color: var(--color-gray-50);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Variante: dark (bg-gray-900, texto blanco) */
+.dark {
+  background-color: var(--color-gray-900);
+  border: 1px solid transparent;
+  color: var(--color-white);
+}
+.dark:hover {
+  background-color: var(--color-gray-800);
+  box-shadow: var(--shadow-md);
+}
+
+/* Estados de accesibilidad y feedback */
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* ring azul */
+}
+.button:active {
+  transform: translateY(0.5px);
+}
+
+.button svg {
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+.button:hover svg {
+  transform: translateY(-1px);
+}
+
+/* Utilidad para margen de iconos a la izquierda */
+.iconLeft {
+  margin-right: 0.5rem;
+}
+
+/* Compatibilidad navegadores principales: propiedades estándar sin prefijos */

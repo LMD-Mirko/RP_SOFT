@@ -1,0 +1,33 @@
+.container {
+  padding: 40px 48px;
+  background: #f9fafb;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header { margin-bottom: 24px; }
+.title { font-size: 32px; font-weight: 700; color: #111827; }
+.subtitle { font-size: 18px; color: #6b7280; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.requirementsCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.reqTitle { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+.reqList { font-size: 16px; color: #374151; padding-left: 24px; }
+.reqList li { margin: 8px 0; }
+.reqActions { display: flex; align-items: center; }
