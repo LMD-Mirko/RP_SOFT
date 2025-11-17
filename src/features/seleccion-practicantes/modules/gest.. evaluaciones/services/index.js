@@ -1,2 +1,3 @@
-export * from './evaluacionService';
+export * from './evaluacionService'
+export * from './preguntasService';
 

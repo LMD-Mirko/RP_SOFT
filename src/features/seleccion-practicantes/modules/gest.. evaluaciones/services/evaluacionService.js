@@ -153,6 +153,35 @@ export const gradeAttempt = async (attemptId) => {
 };
 
 /**
+ * Obtiene una evaluación por ID (Solo Admin)
+ * @param {string} evaluationId - ID de la evaluación
+ * @returns {Promise} Datos de la evaluación
+ */
+export const getEvaluacionById = async (evaluationId) => {
+  try {
+    return await get(`evaluations/${evaluationId}/`);
+  } catch (error) {
+    console.error('Error al obtener evaluación:', error);
+    throw error;
+  }
+};
+
+/**
+ * Actualiza una evaluación (Solo Admin)
+ * @param {string} evaluationId - ID de la evaluación
+ * @param {Object} data - Datos a actualizar
+ * @returns {Promise} Evaluación actualizada
+ */
+export const updateEvaluacion = async (evaluationId, data) => {
+  try {
+    return await patch(`evaluations/${evaluationId}/`, data);
+  } catch (error) {
+    console.error('Error al actualizar evaluación:', error);
+    throw error;
+  }
+};
+
+/**
  * Elimina una evaluación (Solo Admin)
  * @param {string} evaluationId - ID de la evaluación
  * @returns {Promise} Resultado de la operación

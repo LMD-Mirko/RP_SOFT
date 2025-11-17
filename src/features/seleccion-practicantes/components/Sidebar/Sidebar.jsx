@@ -60,8 +60,9 @@ const menuItems = [
     items: [
       {
         icon: CheckCircle,
-        label: 'Evaluaciones',
+        label: 'Evaluaciones Técnicas',
         path: '/seleccion-practicantes/evaluaciones',
+        adminOnly: true,
       },
       {
         icon: Calendar,
