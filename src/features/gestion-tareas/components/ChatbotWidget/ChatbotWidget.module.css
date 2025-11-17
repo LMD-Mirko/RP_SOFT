@@ -1,0 +1,119 @@
+.container {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+}
+
+.fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #111827;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 14px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.fab:hover { opacity: 0.95; }
+.fabLabel { font-weight: 600; font-size: 14px; }
+
+.panel {
+  position: absolute;
+  right: 0;
+  bottom: 64px;
+  width: 360px;
+  max-width: calc(100vw - 40px);
+  height: 460px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px 0 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #f9fafb, #ffffff);
+}
+
+.title { font-weight: 700; font-size: 14px; color: #111827; }
+
+.iconBtn { 
+  display: inline-flex; align-items: center; justify-content: center; 
+  width: 28px; height: 28px; border-radius: 8px; border: none; background: transparent; cursor: pointer; 
+}
+.iconBtn:hover { background: #f3f4f6; }
+
+.messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: #f9fafb;
+}
+
+.msgUser {
+  align-self: flex-end;
+  background: #111827;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 14px 14px 4px 14px;
+  max-width: 80%;
+  margin: 6px 0 6px auto;
+  font-size: 14px;
+}
+
+.msgBot {
+  align-self: flex-start;
+  background: white;
+  color: #111827;
+  padding: 10px 12px;
+  border-radius: 14px 14px 14px 4px;
+  max-width: 80%;
+  margin: 6px auto 6px 0;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.inputBar {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding: 8px;
+  background: white;
+}
+
+.textarea {
+  flex: 1;
+  resize: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+}
+.textarea:focus { border-color: #111827; box-shadow: 0 0 0 3px rgba(17,24,39,0.1); }
+
+.sendBtn {
+  background: #111827;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.sendBtn:hover { opacity: 0.95; }
