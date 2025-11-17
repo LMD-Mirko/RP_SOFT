@@ -1,0 +1,1 @@
+export { PsicologiaStep } from './PsicologiaStep'

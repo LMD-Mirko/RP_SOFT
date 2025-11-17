@@ -1,0 +1,2 @@
+export { ConfiguracionEvaluacionPage } from './ConfiguracionEvaluacionPage'
+

@@ -24,8 +24,16 @@ export function useConfiguracion() {
         setConfig(loadedConfig)
         setError(null)
       } catch (err) {
-        setError(err.message)
-        console.error('Error al cargar configuración:', err)
+        // Solo establecer error si no es un error de conexión (backend no disponible)
+        const isConnectionError = err.status === 0 || 
+                                  err.message?.includes('Failed to fetch') ||
+                                  err.message?.includes('ERR_CONNECTION_REFUSED')
+        
+        if (!isConnectionError) {
+          setError(err.message)
+          console.error('Error al cargar configuración:', err)
+        }
+        // Si es error de conexión, no establecer error ya que se usan valores por defecto
       } finally {
         setLoading(false)
       }

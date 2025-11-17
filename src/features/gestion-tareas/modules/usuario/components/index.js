@@ -1,0 +1,5 @@
+export { UserHome } from '../../../components/user/UserHome'
+export { UserTasks } from '../../../components/user/UserTasks'
+export { UserFeedback } from '../../../components/user/UserFeedback'
+export { UserTeams } from '../../../components/user/UserTeams'
+export { UserProfile } from '../../../components/user/UserProfile'

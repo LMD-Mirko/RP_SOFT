@@ -1,0 +1,286 @@
+/* Overlay principal - estilo moderno y minimalista */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Backdrop con blur elegante */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: backdropFade 0.4s ease-out forwards;
+}
+
+@keyframes backdropFade {
+  from {
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    background: rgba(255, 255, 255, 1);
+  }
+  to {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+}
+
+/* Contenedor principal del contenido */
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 3rem;
+  animation: contentSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes contentSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Wrapper del icono */
+.iconWrapper {
+  position: relative;
+}
+
+/* Círculo del icono - estilo minimalista */
+.iconCircle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  animation: iconScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.iconCircle::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #000000, #000000);
+  opacity: 0;
+  animation: iconGlow 2s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes iconScale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes iconGlow {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.1);
+  }
+}
+
+/* Icono */
+.icon {
+  color: white;
+  animation: iconRotate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform: rotate(-90deg);
+}
+
+@keyframes iconRotate {
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* Wrapper del texto */
+.textWrapper {
+  text-align: center;
+  animation: textFade 0.6s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+@keyframes textFade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Título */
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Subtítulo */
+.subtitle {
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 400;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+/* Contenedor de progreso */
+.progressContainer {
+  width: 200px;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  animation: progressContainerFade 0.6s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+@keyframes progressContainerFade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Barra de progreso */
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #111827 0%, #374151 100%);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+  position: relative;
+  overflow: hidden;
+}
+
+.progressBar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: progressShine 1.5s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Patrón de fondo sutil */
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0;
+  animation: gridFade 0.8s ease-out 0.2s forwards;
+  pointer-events: none;
+}
+
+@keyframes gridFade {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animación de salida */
+.overlay.fadeOut {
+  animation: fadeOut 0.4s ease-in forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .content {
+    padding: 2rem 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .iconCircle {
+    width: 64px;
+    height: 64px;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+  }
+
+  .progressContainer {
+    width: 160px;
+  }
+}

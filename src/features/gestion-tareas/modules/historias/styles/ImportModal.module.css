@@ -1,0 +1,17 @@
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 50; }
+.modal { background: #fff; border-radius: 0.75rem; width: 100%; max-width: 640px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden; }
+.header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid rgba(229,231,235,0.8); }
+.headerLeft { display: flex; align-items: center; gap: 0.5rem; }
+.title { font-size: 1rem; font-weight: 600; }
+.closeBtn { display: inline-flex; align-items: center; justify-content: center; height: 2rem; width: 2rem; border-radius: 9999px; }
+.closeBtn:hover { background: #f3f4f6; }
+.content { padding: 1.25rem; display: grid; gap: 0.75rem; }
+.dropZone { border: 2px dashed #9ca3af; border-radius: 0.75rem; padding: 1.75rem; display: grid; justify-items: center; gap: 0.25rem; color: #374151; cursor: pointer; }
+.hint { color: #6b7280; font-size: 0.875rem; }
+.fileInput { display: none; }
+.fileInfo { display: flex; align-items: center; gap: 0.5rem; color: #374151; }
+.fileName { font-weight: 500; }
+.alert { display: flex; align-items: center; gap: 0.5rem; border-radius: 0.5rem; padding: 0.5rem 0.75rem; }
+.success { background: #ecfccb; color: #166534; }
+.error { background: #fee2e2; color: #991b1b; }
+.actions { display: flex; justify-content: flex-end; gap: 0.5rem; }

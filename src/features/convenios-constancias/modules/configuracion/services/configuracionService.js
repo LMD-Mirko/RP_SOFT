@@ -146,7 +146,7 @@ Equipo RP SOFT`,
 }
 
 /**
- * Carga la configuración desde el backend
+ * Carga la configuración desde el almacenamiento local
  */
 export async function loadConfiguracion() {
   const stored = readStorage()
@@ -156,7 +156,7 @@ export async function loadConfiguracion() {
 }
 
 /**
- * Guarda la configuración en el backend
+ * Guarda la configuración en el almacenamiento local
  */
 export async function saveConfiguracion(config) {
   writeStorage(mergeConfig(defaultConfig, config))

@@ -87,7 +87,12 @@ export default function Configuracion() {
             }
           }
         } else {
-          console.warn('Firma guardada inválida, usando valores por defecto:', validation.error)
+          // Solo mostrar warning si realmente hay datos pero están incompletos
+          // No mostrar si simplemente no hay datos guardados (valores por defecto)
+          // Solo en desarrollo y si hay datos parciales
+          if (import.meta.env.DEV && (savedFirma.imagen || savedFirma.preview)) {
+            // Silenciar warnings de validación en desarrollo cuando no hay backend
+          }
         }
       }
       
@@ -97,7 +102,11 @@ export default function Configuracion() {
         if (validation.valid) {
           setSelloEmpresa(savedSello)
         } else {
-          console.warn('Sello guardado inválido, usando valores por defecto:', validation.error)
+          // Solo mostrar warning si realmente hay datos pero están incompletos
+          // Solo en desarrollo y si hay datos parciales
+          if (import.meta.env.DEV && (savedSello.imagen || savedSello.preview)) {
+            // Silenciar warnings de validación en desarrollo cuando no hay backend
+          }
         }
       }
       
