@@ -8,6 +8,9 @@ import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
+import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
+import { Reports } from '../modules/reportes/pages/Reports'
+import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages/DisciplinaryTrackingView'
 
 /**
  * Router del Módulo
@@ -19,13 +22,13 @@ export function ModuleRouter() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
-        
+
         {/* Rutas de Monitoreo */}
         <Route
           path="bot-integracion"
           element={<div><h2>Bot de Integración</h2></div>}
         />
-        
+
         {/* Rutas de Asistencia */}
         <Route
           path="puntualidad"
@@ -43,7 +46,7 @@ export function ModuleRouter() {
           path="gestion-horarios"
           element={<GestionHorariosDashboard />}
         />
-        
+
         {/* Rutas de Módulos */}
         <Route
           path="reportes"
@@ -57,7 +60,7 @@ export function ModuleRouter() {
           path="historial-practicantes"
           element={<div><h2>Historial de Practicantes</h2></div>}
         />
-        
+
         {/* Rutas de Practicante */}
         <Route
           path="practicante/inicio"
