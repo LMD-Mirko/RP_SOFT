@@ -8,10 +8,14 @@ import {
   CheckCircle,
   Clock,
   Settings,
+  User,
+  Users,
+  Shield,
+  GraduationCap,
+  FileType,
   ChevronDown,
   ChevronRight,
   MessageSquare,
-  Users,
   Download,
 } from 'lucide-react'
 import clsx from 'clsx'
@@ -56,8 +60,9 @@ const menuItems = [
     items: [
       {
         icon: CheckCircle,
-        label: 'Evaluaciones',
+        label: 'Evaluaciones Técnicas',
         path: '/seleccion-practicantes/evaluaciones',
+        adminOnly: true,
       },
       {
         icon: Calendar,
@@ -69,6 +74,36 @@ const menuItems = [
         label: 'Historial',
         path: '/seleccion-practicantes/historial',
       },
+      {
+        icon: Users,
+        label: 'Usuarios',
+        path: '/seleccion-practicantes/usuarios',
+        adminOnly: true, // Solo visible para administradores
+      },
+      {
+        icon: Shield,
+        label: 'Roles',
+        path: '/seleccion-practicantes/roles',
+        adminOnly: true, // Solo visible para administradores
+      },
+      {
+        icon: GraduationCap,
+        label: 'Especialidades',
+        path: '/seleccion-practicantes/especialidades',
+        adminOnly: true, // Solo visible para administradores
+      },
+      {
+        icon: FileType,
+        label: 'Tipos de Documento',
+        path: '/seleccion-practicantes/tipos-documento',
+        adminOnly: true, // Solo visible para administradores
+      },
+      {
+        icon: Download,
+        label: 'Gestión de CVs',
+        path: '/seleccion-practicantes/cvs-admin',
+        adminOnly: true, // Solo visible para administradores
+      },
     ],
   },
 
@@ -77,6 +112,11 @@ const menuItems = [
   {
     title: 'CUENTA',
     items: [
+      {
+        icon: User,
+        label: 'Mi Perfil',
+        path: '/seleccion-practicantes/perfil',
+      },
       {
         icon: Settings,
         label: 'Configuración',
@@ -97,6 +137,27 @@ export function Sidebar() {
     CUENTA: true,
   })
 
+  // Obtener información del usuario desde localStorage
+  const getUserInfo = () => {
+    try {
+      const userData = localStorage.getItem('rpsoft_user')
+      if (userData) {
+        return JSON.parse(userData)
+      }
+    } catch (error) {
+      console.error('Error al obtener información del usuario:', error)
+    }
+    return null
+  }
+
+  // Verificar si el usuario es administrador
+  const isAdmin = () => {
+    const userInfo = getUserInfo()
+    if (!userInfo) return false
+    // Verificar por role_id (2 = Admin) o por is_admin
+    return userInfo.role_id === 2 || userInfo.is_admin === true || userInfo.role_slug === 'admin'
+  }
+
   const toggleSection = (title) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -114,13 +175,30 @@ export function Sidebar() {
     return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
+  // Filtrar items según permisos
+  const filterMenuItems = () => {
+    const userIsAdmin = isAdmin()
+    return menuItems.map((section) => ({
+      ...section,
+      items: section.items.filter((item) => {
+        // Si el item requiere admin y el usuario no es admin, ocultarlo
+        if (item.adminOnly && !userIsAdmin) {
+          return false
+        }
+        return true
+      }),
+    })).filter((section) => section.items.length > 0) // Eliminar secciones vacías
+  }
+
+  const filteredMenuItems = filterMenuItems()
+
   return (
     <div className={styles.sidebar}>
       <SidebarHeader />
       <SidebarBackButton />
 
       <nav className={styles.nav}>
-        {menuItems.map((section) => (
+        {filteredMenuItems.map((section) => (
           <div key={section.title} className={styles.section}>
             <button
               onClick={() => toggleSection(section.title)}

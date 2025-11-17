@@ -1,191 +1,166 @@
-import { useState } from 'react'
-import { Edit, Trash2, Award } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { Search, Award, Trash2 } from 'lucide-react'
+import { Pagination } from 'antd'
 import { Table } from '@shared/components/UI/Table'
-import { Input } from '@shared/components/Input'
-import { Select } from '@shared/components/Select'
-import { Button } from '@shared/components/Button'
-import { EvaluacionModal } from '../components/EvaluacionModal'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
+import { useEvaluaciones } from '../hooks/useEvaluaciones'
 import { useToast } from '@shared/components/Toast'
+import { Skeleton } from '../../../shared/components/Skeleton'
 import styles from './EvaluacionesPage.module.css'
 
-// Datos mock para demostración
-const mockEvaluaciones = [
-  {
-    id: 1,
-    postulante: 'Juan Pérez',
-    prueba: 'Prueba Técnica',
-    puntaje: null,
-    estado: 'pendiente',
-  },
-  {
-    id: 2,
-    postulante: 'María García',
-    prueba: 'Entrevista',
-    puntaje: 85,
-    estado: 'completada',
-  },
-  {
-    id: 3,
-    postulante: 'Carlos López',
-    prueba: 'Evaluación Psicológica',
-    puntaje: 92,
-    estado: 'completada',
-  },
-  {
-    id: 4,
-    postulante: 'Ana Ramírez',
-    prueba: 'Prueba Técnica',
-    puntaje: null,
-    estado: 'pendiente',
-  },
-]
-
-// Lista de postulantes para el select
-const mockPostulantes = [
-  { value: '1', label: 'Juan Pérez' },
-  { value: '2', label: 'María García' },
-  { value: '3', label: 'Carlos López' },
-  { value: '4', label: 'Ana Ramírez' },
-  { value: '5', label: 'Pedro Sánchez' },
-]
+const mapEvaluacionFromAPI = (apiData) => {
+  return {
+    id: apiData.id,
+    title: apiData.title || 'N/A',
+    description: apiData.description || '',
+    jobPosting: apiData.job_posting?.title || apiData.job_posting_id || 'N/A',
+    jobPostingId: apiData.job_posting_id,
+    createdAt: apiData.created_at,
+    updatedAt: apiData.updated_at,
+    _apiData: apiData,
+  }
+}
 
 export function EvaluacionesPage() {
-  const [evaluaciones, setEvaluaciones] = useState(mockEvaluaciones)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
+  const { evaluaciones: apiEvaluaciones, loading, pagination, loadEvaluaciones, deleteEvaluacion } = useEvaluaciones()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedEvaluacion, setSelectedEvaluacion] = useState(null)
-  const [evaluacionToDelete, setEvaluacionToDelete] = useState(null)
-  const [formData, setFormData] = useState({
-    postulante: '',
-    puntaje: '',
-  })
   const toast = useToast()
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+  useEffect(() => {
+    loadEvaluaciones()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Filtrar y paginar en el frontend
+  const filteredEvaluaciones = useMemo(() => {
+    let filtered = apiEvaluaciones.map(mapEvaluacionFromAPI)
+    
+    // Filtrar por búsqueda
+    if (searchTerm.trim()) {
+      const search = searchTerm.toLowerCase()
+      filtered = filtered.filter(evaluacion => 
+        evaluacion.title.toLowerCase().includes(search) ||
+        evaluacion.description.toLowerCase().includes(search) ||
+        evaluacion.jobPosting.toString().toLowerCase().includes(search)
+      )
+    }
+    
+    return filtered
+  }, [apiEvaluaciones, searchTerm])
+
+  // Paginación en el frontend
+  const paginatedEvaluaciones = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    const end = start + pageSize
+    return filteredEvaluaciones.slice(start, end)
+  }, [filteredEvaluaciones, currentPage, pageSize])
+
+  const handleDelete = (evaluacion) => {
+    setSelectedEvaluacion(evaluacion)
+    setIsDeleteModalOpen(true)
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
-    // Crear nueva evaluación desde el formulario lateral
-    const newEvaluacion = {
-      id: Date.now(),
-      postulante: formData.postulante,
-      prueba: 'Evaluación General',
-      puntaje: parseInt(formData.puntaje),
-      estado: parseInt(formData.puntaje) > 0 ? 'completada' : 'pendiente',
+  const handleConfirmDelete = async () => {
+    if (selectedEvaluacion) {
+      await deleteEvaluacion(selectedEvaluacion.id)
+      setIsDeleteModalOpen(false)
+      setSelectedEvaluacion(null)
     }
-    setEvaluaciones(prev => [newEvaluacion, ...prev])
-    toast.success('Evaluación creada correctamente')
-    
-    // Reset form
-    setFormData({
-      postulante: '',
-      puntaje: '',
+  }
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
     })
   }
 
-  const handleSaveFromModal = (formData) => {
-    if (formData.id) {
-      // Editar evaluación existente
-      setEvaluaciones(prev =>
-        prev.map(ev =>
-          ev.id === formData.id
-            ? {
-                ...ev,
-                postulante: formData.postulante,
-                prueba: formData.prueba,
-                puntaje: parseInt(formData.puntaje),
-                estado: parseInt(formData.puntaje) > 0 ? 'completada' : 'pendiente',
-              }
-            : ev
-        )
-      )
-      toast.success('Evaluación actualizada correctamente')
+  const handlePageChange = (page, size) => {
+    setCurrentPage(page)
+    if (size && size !== pageSize) {
+      setPageSize(size)
+      setCurrentPage(1) // Resetear a la primera página cuando cambia el tamaño
     }
-    setSelectedEvaluacion(null)
-  }
-
-  const handleEdit = (evaluacion) => {
-    setSelectedEvaluacion(evaluacion)
-    setIsModalOpen(true)
-  }
-
-  const handleDelete = (evaluacion) => {
-    setEvaluacionToDelete(evaluacion)
-    setIsConfirmModalOpen(true)
-  }
-
-  const confirmDelete = () => {
-    if (evaluacionToDelete) {
-      setEvaluaciones(prev => prev.filter(ev => ev.id !== evaluacionToDelete.id))
-      toast.success('Evaluación eliminada correctamente')
-      setEvaluacionToDelete(null)
-    }
-    setIsConfirmModalOpen(false)
-  }
-
-  const getEstadoBadge = (estado) => {
-    if (estado === 'completada') {
-      return <span className={styles.badgeCompleted}>Completado</span>
-    }
-    return <span className={styles.badgePending}>Pendiente</span>
   }
 
   return (
     <div className={styles.container}>
-      {/* Header */}
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Evaluaciones</h1>
-          <p className={styles.subtitle}>Registra y gestiona evaluaciones técnicas y psicológicas</p>
+          <p className={styles.subtitle}>Gestiona las evaluaciones del sistema</p>
         </div>
       </div>
 
-      {/* Content Grid */}
-      <div className={styles.contentGrid}>
-        {/* Tabla de Evaluaciones */}
+      <div className={styles.searchAndFilters}>
+        <div className={styles.searchBox}>
+          <Search size={20} className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Buscar por título, descripción o convocatoria..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setCurrentPage(1) // Resetear a la primera página al buscar
+            }}
+            className={styles.searchInput}
+          />
+        </div>
+      </div>
+
+      <div className={styles.tableContainer}>
         <div className={styles.tableSection}>
           <Table>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell>Postulante</Table.HeaderCell>
-                <Table.HeaderCell>Prueba</Table.HeaderCell>
-                <Table.HeaderCell align="center">Puntaje</Table.HeaderCell>
-                <Table.HeaderCell align="center">Estado</Table.HeaderCell>
+                <Table.HeaderCell>Título</Table.HeaderCell>
+                <Table.HeaderCell>Descripción</Table.HeaderCell>
+                <Table.HeaderCell>Convocatoria</Table.HeaderCell>
+                <Table.HeaderCell align="center">Fecha Creación</Table.HeaderCell>
                 <Table.HeaderCell align="center" width="120px">Acciones</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {evaluaciones.length > 0 ? (
-                evaluaciones.map((evaluacion) => (
+              {loading ? (
+                <>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Table.Row key={i}>
+                      <Table.Cell><Skeleton variant="text" width="70%" height={16} /></Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell><Skeleton variant="text" width="50%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="text" width="60%" height={16} /></Table.Cell>
+                      <Table.Cell align="center"><Skeleton variant="rectangular" width={32} height={32} /></Table.Cell>
+                    </Table.Row>
+                  ))}
+                </>
+              ) : paginatedEvaluaciones.length > 0 ? (
+                paginatedEvaluaciones.map((evaluacion) => (
                   <Table.Row key={evaluacion.id}>
                     <Table.Cell>
-                      <span className={styles.postulanteNombre}>{evaluacion.postulante}</span>
+                      <span className={styles.evaluationTitle}>{evaluacion.title}</span>
                     </Table.Cell>
-                    <Table.Cell>{evaluacion.prueba}</Table.Cell>
-                    <Table.Cell align="center">
-                      {evaluacion.puntaje !== null ? (
-                        <span className={styles.puntaje}>{evaluacion.puntaje}</span>
-                      ) : (
-                        <span className={styles.puntajeEmpty}>-</span>
-                      )}
+                    <Table.Cell>
+                      <span className={styles.evaluationDescription}>
+                        {evaluacion.description || '-'}
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className={styles.jobPosting}>{evaluacion.jobPosting}</span>
                     </Table.Cell>
                     <Table.Cell align="center">
-                      {getEstadoBadge(evaluacion.estado)}
+                      <span className={styles.fecha}>{formatDate(evaluacion.createdAt)}</span>
                     </Table.Cell>
                     <Table.Cell align="center">
                       <div className={styles.actions}>
-                        <button
-                          onClick={() => handleEdit(evaluacion)}
-                          className={styles.actionButton}
-                          title="Editar"
-                        >
-                          <Edit size={16} />
-                        </button>
                         <button
                           onClick={() => handleDelete(evaluacion)}
                           className={styles.actionButtonDelete}
@@ -199,76 +174,48 @@ export function EvaluacionesPage() {
                 ))
               ) : (
                 <Table.Empty colSpan={5} icon={Award}>
-                  No hay evaluaciones registradas
+                  {searchTerm
+                    ? 'No se encontraron evaluaciones con ese criterio de búsqueda'
+                    : 'No hay evaluaciones registradas'}
                 </Table.Empty>
               )}
             </Table.Body>
           </Table>
         </div>
 
-        {/* Formulario de Evaluación */}
-        <div className={styles.formSection}>
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <Select
-              label="Postulante"
-              id="postulante"
-              name="postulante"
-              value={formData.postulante}
-              onChange={handleChange}
-              options={mockPostulantes}
-              placeholder="Seleccionar postulante"
-              required
+        {!loading && filteredEvaluaciones.length > 0 && (
+          <div className={styles.pagination}>
+            <Pagination
+              current={currentPage}
+              total={filteredEvaluaciones.length}
+              pageSize={pageSize}
+              pageSizeOptions={['10', '20', '30', '50', '100']}
+              showSizeChanger={true}
+              showQuickJumper={filteredEvaluaciones.length > 50}
+              showTotal={(total, range) => {
+                if (total === 0) return 'Sin evaluaciones'
+                return `${range[0]}-${range[1]} de ${total} evaluaciones`
+              }}
+              onChange={handlePageChange}
+              onShowSizeChange={handlePageChange}
+              hideOnSinglePage={false}
             />
-
-            <Input
-              label="Puntaje"
-              type="number"
-              id="puntaje"
-              name="puntaje"
-              value={formData.puntaje}
-              onChange={handleChange}
-              placeholder="0-100"
-              min="0"
-              max="100"
-              required
-            />
-
-            <Button
-              type="submit"
-              variant="primary"
-              fullWidth
-            >
-              Guardar Evaluación
-            </Button>
-          </form>
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Modal de Edición */}
-      <EvaluacionModal
-        isOpen={isModalOpen}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsModalOpen(false)
+          setIsDeleteModalOpen(false)
           setSelectedEvaluacion(null)
         }}
-        onSave={handleSaveFromModal}
-        evaluacion={selectedEvaluacion}
-        postulantes={mockPostulantes}
-      />
-
-      {/* Modal de Confirmación */}
-      <ConfirmModal
-        isOpen={isConfirmModalOpen}
-        onClose={() => {
-          setIsConfirmModalOpen(false)
-          setEvaluacionToDelete(null)
-        }}
-        onConfirm={confirmDelete}
+        onConfirm={handleConfirmDelete}
         title="Eliminar Evaluación"
         message={
-          evaluacionToDelete
-            ? `¿Seguro que deseas eliminar la evaluación de ${evaluacionToDelete.postulante}?`
-            : '¿Seguro que deseas eliminar esta evaluación?'
+          selectedEvaluacion
+            ? `¿Estás seguro de que deseas eliminar la evaluación "${selectedEvaluacion.title}"? Esta acción no se puede deshacer.`
+            : '¿Estás seguro de que deseas eliminar esta evaluación?'
         }
         confirmText="Eliminar"
         cancelText="Cancelar"
@@ -277,4 +224,3 @@ export function EvaluacionesPage() {
     </div>
   )
 }
-

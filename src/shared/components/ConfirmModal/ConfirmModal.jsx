@@ -69,10 +69,11 @@ export function ConfirmModal({
             variant="primary"
             onClick={handleConfirm}
             disabled={isLoading}
+            loading={isLoading}
             fullWidth
             className={clsx(styles.confirmButton, styles[`confirmButton_${type}`])}
           >
-            {isLoading ? 'Procesando...' : confirmText}
+            {confirmText}
           </Button>
         </div>
       </div>

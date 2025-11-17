@@ -14,6 +14,7 @@ export function Modal({
   className,
   centered = false,
   rounded = true,
+  zIndex,
 }) {
   useEffect(() => {
     if (isOpen) {
@@ -29,14 +30,14 @@ export function Modal({
 
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape' && isOpen && closeOnOverlayClick && onClose) {
         onClose()
       }
     }
 
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, closeOnOverlayClick])
 
   if (!isOpen) return null
 
@@ -50,15 +51,21 @@ export function Modal({
   const useTopAlignment = isCompact && !centered
   const isFullscreen = size === 'fullscreen'
 
+  const overlayStyle = zIndex ? { zIndex } : {}
+
   return (
-    <div className={clsx(styles.overlay, useTopAlignment && styles.overlayTop, isFullscreen && styles.overlayNoPadding)} onClick={handleOverlayClick}>
+    <div 
+      className={clsx(styles.overlay, useTopAlignment && styles.overlayTop, isFullscreen && styles.overlayNoPadding)} 
+      onClick={handleOverlayClick}
+      style={overlayStyle}
+    >
       <div className={clsx(styles.modal, styles[size], useTopAlignment && styles.modalTop, !rounded && styles.square, className)}>
         {/* Header */}
         {(title || showCloseButton) && (
           <div className={styles.header}>
             {title && <h2 className={styles.title}>{title}</h2>}
-            {showCloseButton && (
-              <button onClick={onClose} className={styles.closeButton} type="button">
+            {showCloseButton && onClose && (
+              <button onClick={onClose} className={styles.closeButton} type="button" disabled={!closeOnOverlayClick}>
                 <X size={24} />
               </button>
             )}

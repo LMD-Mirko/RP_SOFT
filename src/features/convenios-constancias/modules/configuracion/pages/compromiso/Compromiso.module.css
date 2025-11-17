@@ -1,0 +1,158 @@
+.container {
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.plantillasList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.plantillaCard {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.plantillaCard:hover {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-color: #d1d5db;
+}
+
+.plantillaContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.plantillaIcon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.plantillaInfo {
+  flex: 1;
+}
+
+.plantillaNombre {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+}
+
+.plantillaEstado {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.plantillaActions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.cambiarButton {
+  min-width: 120px;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggleInput {
+  display: none;
+}
+
+.toggleSlider {
+  position: relative;
+  width: 3.5rem;
+  height: 1.75rem;
+  background-color: #d1d5db;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.toggleSlider::before {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggleActive {
+  background-color: #10b981;
+}
+
+.toggleActive::before {
+  transform: translateX(1.75rem);
+}
+
+.toggleText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  min-width: 50px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .plantillaCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .plantillaActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+

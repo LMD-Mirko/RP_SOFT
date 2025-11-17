@@ -1,0 +1,2 @@
+export { CVsTable } from './CVsTable'
+

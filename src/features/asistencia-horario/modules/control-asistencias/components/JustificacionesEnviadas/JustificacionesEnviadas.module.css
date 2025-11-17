@@ -1,0 +1,78 @@
+.container {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 2.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #111827;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.cardAprobado {
+  background-color: #f0fdf4;
+}
+
+.cardPendiente {
+  background-color: #fff7ed;
+}
+
+.cardContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  flex-shrink: 0;
+}
+
+.iconAprobado {
+  background-color: #22c55e;
+}
+
+.iconPendiente {
+  background-color: #f97316;
+}
+
+.fecha {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #111827;
+  margin: 0;
+}
+
+.motivo {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0 0;
+}
+
+.estado {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  margin-left: 1.5rem;
+  flex-shrink: 0;
+}
