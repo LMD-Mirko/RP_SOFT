@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useRef } from 'react'
 import { CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Toast.module.css'
@@ -7,9 +7,11 @@ const ToastContext = createContext(null)
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([])
+  const toastIdCounter = useRef(0)
 
   const addToast = useCallback((message, type = 'info', duration = 4000, title) => {
-    const id = Date.now()
+    // Generar ID único combinando timestamp con contador
+    const id = `${Date.now()}-${++toastIdCounter.current}`
     const newToast = { id, message, type, duration, title }
     
     setToasts(prev => [...prev, newToast])

@@ -55,6 +55,26 @@
   box-shadow: 0 2px 8px rgba(252, 165, 165, 0.3);
 }
 
+.typeAceptacion {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  box-shadow: 0 2px 8px rgba(52, 211, 153, 0.3);
+}
+
+.typeEliminacion {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  box-shadow: 0 2px 8px rgba(248, 113, 113, 0.3);
+}
+
+.typeLogin {
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+  box-shadow: 0 2px 8px rgba(167, 139, 250, 0.3);
+}
+
+.typeLogout {
+  background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+  box-shadow: 0 2px 8px rgba(192, 132, 252, 0.3);
+}
+
 .typeDefault {
   background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
   box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);

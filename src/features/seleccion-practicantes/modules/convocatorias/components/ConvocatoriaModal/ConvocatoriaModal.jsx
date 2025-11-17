@@ -21,12 +21,12 @@ export function ConvocatoriaModal({ isOpen, onClose, onSave, convocatoria = null
   useEffect(() => {
     if (convocatoria) {
       setFormData({
-        titulo: convocatoria.titulo || '',
-        descripcion: convocatoria.descripcion || '',
-        fechaInicio: convocatoria.fechaInicioDate || null,
-        fechaFin: convocatoria.fechaFinDate || null,
+        titulo: convocatoria.titulo || convocatoria._apiData?.title || '',
+        descripcion: convocatoria.descripcion || convocatoria._apiData?.description || '',
+        fechaInicio: convocatoria.fechaInicioDate || (convocatoria._apiData?.start_date ? new Date(convocatoria._apiData.start_date) : null),
+        fechaFin: convocatoria.fechaFinDate || (convocatoria._apiData?.end_date ? new Date(convocatoria._apiData.end_date) : null),
         cupos: convocatoria.cupos || '',
-        estado: convocatoria.estado || 'borrador',
+        estado: convocatoria.estado || convocatoria._apiData?.status || 'borrador',
       })
     } else {
       setFormData({
@@ -136,8 +136,9 @@ export function ConvocatoriaModal({ isOpen, onClose, onSave, convocatoria = null
               onChange={handleChange}
               options={[
                 { value: 'borrador', label: 'Borrador', Icon: FileEdit },
-                { value: 'activa', label: 'Activa', Icon: CheckCircle },
+                { value: 'abierta', label: 'Abierta', Icon: CheckCircle },
                 { value: 'cerrada', label: 'Cerrada', Icon: Lock },
+                { value: 'finalizada', label: 'Finalizada', Icon: Lock },
               ]}
             />
           </div>

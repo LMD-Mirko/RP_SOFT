@@ -7,6 +7,26 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { MainLayout } from '@shared/components/Layout/MainLayout'
 
+// Lazy loading de páginas de autenticación
+const LoginPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.LoginPage }))
+)
+const RegisterPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.RegisterPage }))
+)
+const OAuthCallbackPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.OAuthCallbackPage }))
+)
+const ForgotPasswordPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.ForgotPasswordPage }))
+)
+const ResetPasswordPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.ResetPasswordPage }))
+)
+const RegisterAdminPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.RegisterAdminPage }))
+)
+
 // Lazy loading de módulos - se cargan bajo demanda
 const SeleccionPracticantesIndex = lazy(() =>
   import('@features/seleccion-practicantes').then((m) => ({ default: m.SeleccionPracticantesIndex }))
@@ -28,20 +48,16 @@ const Evaluacion360Index = lazy(() =>
   import('@features/evaluacion-360').then((m) => ({ default: m.Evaluacion360Index }))
 )
 
-const DatasetTranscripcionIndex = lazy(() =>
-  import('@features/dataset-transcripcion').then((m) => ({ default: m.DatasetTranscripcionIndex }))
-)
-
-const AgenteIntegradorIndex = lazy(() =>
-  import('@features/agente-integrador').then((m) => ({ default: m.AgenteIntegradorIndex }))
-)
-
 const ConveniosConstanciasIndex = lazy(() =>
   import('@features/convenios-constancias').then((m) => ({ default: m.ConveniosConstanciasIndex }))
 )
 
+// Lazy loading del Dashboard
+const DashboardPage = lazy(() =>
+  import('@features/seleccion-practicantes/modules/dashboard/pages').then((m) => ({ default: m.DashboardPage }))
+)
+
 // Placeholders
-const Dashboard = () => null
 const Configuracion = () => null
 
 /**
@@ -53,8 +69,66 @@ export function Router() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Rutas públicas de autenticación (sin Layout) */}
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={null}>
+              <LoginPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <Suspense fallback={null}>
+              <RegisterPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/auth/callback"
+          element={
+            <Suspense fallback={null}>
+              <OAuthCallbackPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <Suspense fallback={null}>
+              <ForgotPasswordPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <Suspense fallback={null}>
+              <ResetPasswordPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/admin/register"
+          element={
+            <Suspense fallback={null}>
+              <RegisterAdminPage />
+            </Suspense>
+          }
+        />
+
+        {/* Rutas con Layout (requieren autenticación) */}
         <Route element={<MainLayout />}>
-          <Route index element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Suspense fallback={null}>
+                <DashboardPage />
+              </Suspense>
+            }
+          />
 
           <Route
             path="/seleccion-practicantes/*"
@@ -97,22 +171,6 @@ export function Router() {
             }
           />
           <Route
-            path="/dataset-transcripcion/*"
-            element={
-              <Suspense fallback={null}>
-                <DatasetTranscripcionIndex />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/agente-integrador/*"
-            element={
-              <Suspense fallback={null}>
-                <AgenteIntegradorIndex />
-              </Suspense>
-            }
-          />
-          <Route
             path="/convenios-constancias/*"
             element={
               <Suspense fallback={null}>
@@ -120,6 +178,7 @@ export function Router() {
               </Suspense>
             }
           />
+
 
           <Route path="/configuracion" element={<Configuracion />} />
           <Route path="*" element={<Navigate to="/" replace />} />

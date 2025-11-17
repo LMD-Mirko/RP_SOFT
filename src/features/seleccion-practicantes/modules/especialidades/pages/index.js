@@ -1,0 +1,2 @@
+export { EspecialidadesPage } from './EspecialidadesPage'
+
