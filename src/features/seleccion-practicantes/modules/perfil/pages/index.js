@@ -1,0 +1,2 @@
+export { PerfilPage } from './PerfilPage'
+

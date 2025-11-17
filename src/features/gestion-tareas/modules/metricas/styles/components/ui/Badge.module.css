@@ -1,0 +1,45 @@
+/*
+  Badge Component Styles (layout > typography > colors > spacing > others)
+  - Inline pill badge with variants
+  - Mirrors Tailwind: inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
+*/
+
+:root {
+  /* colors */
+  --metrics-gray-100: #f3f4f6;
+  --metrics-gray-800: #1f2937;
+  --metrics-green-100: #dcfce7;
+  --metrics-green-800: #166534;
+}
+
+/* layout */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px; /* rounded-full */
+}
+
+/* typography */
+.badge {
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600; /* font-semibold */
+}
+
+/* colors */
+.success {
+  background-color: var(--metrics-green-100);
+  color: var(--metrics-green-800);
+}
+
+.neutral {
+  background-color: var(--metrics-gray-100);
+  color: var(--metrics-gray-800);
+}
+
+/* spacing */
+.badge {
+  padding: 0.125rem 0.625rem; /* py-0.5 px-2.5 */
+}
+
+/* others */
+/* none */

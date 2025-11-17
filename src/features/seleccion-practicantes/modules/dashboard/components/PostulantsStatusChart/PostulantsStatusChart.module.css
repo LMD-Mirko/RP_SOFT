@@ -1,0 +1,214 @@
+.container {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.badge {
+  background: #111827;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.badgeNumber {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.badgeLabel {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+
+.chartContent {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  margin-top: 1rem;
+  min-height: 280px;
+  justify-content: center;
+}
+
+.chartWrapper {
+  flex: 0 0 240px;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.emptyText {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.legend {
+  flex: 0 0 auto;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.legendItem:hover {
+  background: #f9fafb;
+}
+
+.legendIndicator {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.legendContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.legendLabel {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 100px;
+}
+
+.legendStats {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+}
+
+.legendValue {
+  color: #111827;
+  font-weight: 600;
+}
+
+.legendPercentage {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.tooltip {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  overflow: hidden;
+}
+
+.tooltipIndicator {
+  width: 4px;
+  flex-shrink: 0;
+}
+
+.tooltipContent {
+  padding: 0.75rem;
+}
+
+.tooltipLabel {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.tooltipValue {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.tooltipNumber {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.tooltipUnit {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.tooltipPercentage {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.chartLabel {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}

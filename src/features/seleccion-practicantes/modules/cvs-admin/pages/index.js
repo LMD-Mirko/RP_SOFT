@@ -1,0 +1,2 @@
+export { CVsAdminPage } from './CVsAdminPage'
+

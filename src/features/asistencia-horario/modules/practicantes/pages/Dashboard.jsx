@@ -118,6 +118,34 @@ const mockPracticantes = [
     infracciones: 1,
     avatar: 'DR',
     color: '#3b82f6'
+  },
+  {
+    id: 9,
+    nombre: 'Valentina Morales',
+    email: 'valentina.morales@rpsoft.com',
+    equipo: 'Rpsoft • Team Gamma',
+    servidor: 'rpsoft',
+    estado: 'activo',
+    cohorte: 'Cohorte 2024-A',
+    score: 780,
+    asistencia: '97%',
+    infracciones: 0,
+    avatar: 'VM',
+    color: '#3b82f6'
+  },
+  {
+    id: 10,
+    nombre: 'Roberto Fernández',
+    email: 'roberto.fernandez@rpsoft.com',
+    equipo: 'Innovacion • Team Alpha',
+    servidor: 'innovacion',
+    estado: 'riesgo',
+    cohorte: 'Cohorte 2024-B',
+    score: 420,
+    asistencia: '86%',
+    infracciones: 2,
+    avatar: 'RF',
+    color: '#3b82f6'
   }
 ]
 
@@ -131,16 +159,16 @@ export function Dashboard() {
 
   const filteredPracticantes = mockPracticantes.filter(practicante => {
     const matchesSearch = practicante.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         practicante.email.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesServer = selectedServer === 'todos' || 
-                         practicante.servidor === selectedServer
-    
-    const matchesStatus = selectedStatus === 'todos' || 
-                         practicante.estado === selectedStatus
-    
-    const matchesCohort = selectedCohort === 'todas' || 
-                         practicante.cohorte.includes(selectedCohort)
+      practicante.email.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesServer = selectedServer === 'todos' ||
+      practicante.servidor === selectedServer
+
+    const matchesStatus = selectedStatus === 'todos' ||
+      practicante.estado === selectedStatus
+
+    const matchesCohort = selectedCohort === 'todas' ||
+      practicante.cohorte.includes(selectedCohort)
 
     return matchesSearch && matchesServer && matchesStatus && matchesCohort
   })
@@ -165,7 +193,7 @@ export function Dashboard() {
           <h1>Directorio de Practicantes</h1>
           <p>Gestiona y monitorea a todos los practicantes del programa</p>
         </div>
-        
+
         <div className={styles.actions}>
           <button className={styles.exportButton}>
             <Download size={16} />
@@ -183,7 +211,7 @@ export function Dashboard() {
       </div>
 
       <StatsCards />
-      
+
       <SearchAndFilters
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
@@ -202,7 +230,7 @@ export function Dashboard() {
       </div>
 
       <div className={styles.pagination}>
-        <button 
+        <button
           className={styles.paginationButton}
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
@@ -212,7 +240,7 @@ export function Dashboard() {
         <span className={styles.paginationInfo}>
           Página {currentPage} de {totalPages}
         </span>
-        <button 
+        <button
           className={styles.paginationButton}
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
