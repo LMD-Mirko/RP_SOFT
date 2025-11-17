@@ -15,6 +15,7 @@ import HistorialPracticantes from '../modules/historial-practicantes/pages/Histo
 import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
 import { Inicio } from '../modules/inicio/pages/nicolayus'
 import PuntualidadDashboard from '../modules/puntualidad/pages/PuntualidadDashboard'
+import { Botintegrative } from '../modules/bot_integracion/pages/Botintegrative'
 
 /**
  * Router del Módulo
@@ -30,7 +31,7 @@ export function ModuleRouter() {
         {/* Rutas de Monitoreo */}
         <Route
           path="bot-integracion"
-          element={<div><h2>Bot de Integración</h2></div>}
+          element={<Botintegrative />}
         />
 
         {/* Rutas de Asistencia */}

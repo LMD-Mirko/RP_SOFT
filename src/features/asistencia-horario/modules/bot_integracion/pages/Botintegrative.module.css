@@ -1,0 +1,275 @@
+/* --- Variables de Color (Basadas en la imagen) --- */
+:root {
+  --bg-color: #fff9fb;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #f3e8eb;
+  --shadow: 0px 4px 12px rgba(0, 0, 0, 0.04);
+  
+  --blue: #5e5ceb;
+  --blue-bg: #f0f0ff;
+  --purple: #8e5ceb;
+  --purple-bg: #f5f0ff;
+  --green: #34c759;
+  --green-bg: #f0fff3;
+  --orange: #ff9500;
+  --orange-bg: #fffaf0;
+  --pink: #eb5ceb;
+  --pink-bg: #fff0ff;
+  --light-orange-bg: #fff5f0;
+}
+
+/* --- Contenedor Principal --- */
+.botPage {
+  background-color: var(--bg-color);
+  padding: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-primary);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* --- Encabezado --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 4px 0 0 0;
+}
+
+.statusBadgeWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--green-bg);
+  color: var(--green);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #c7f2d3;
+}
+
+.activeDot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--green);
+  border-radius: 50%;
+}
+
+/* --- Secciones --- */
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* --- Resumen Global --- */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.summaryCard {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+}
+
+.summaryIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.summaryContent {
+  overflow: hidden;
+}
+
+.summaryValue {
+  font-size: 22px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summaryLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* --- Estado en Tiempo Real --- */
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.statusCard {
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.statusHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.statusBadge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.7);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.statusValue {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 12px;
+  color: var(--text-primary);
+}
+
+/* --- Lista de Servidores --- */
+.serverGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.serverCard {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.serverHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: white;
+}
+
+.checkIcon {
+  margin-left: auto;
+  opacity: 0.8;
+}
+
+.serverBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.serverRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.serverInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.serverFooter {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.statusSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: var(--green-bg);
+  color: var(--green);
+  font-weight: 600;
+  font-size: 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2334c759' viewBox='0 0 256 256'%3E%3Cpath d='M215.39,90.61l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,51.31,79.31L128,155.94l76.69-76.63a8,8,0,0,1,10.7,11.32Z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+/* --- Modificadores de Color --- */
+
+/* Resumen */
+.summaryIcon.blue { background-color: var(--blue-bg); color: var(--blue); }
+.summaryIcon.purple { background-color: var(--purple-bg); color: var(--purple); }
+.summaryIcon.green { background-color: var(--green-bg); color: var(--green); }
+.summaryIcon.orange { background-color: var(--orange-bg); color: var(--orange); }
+
+/* Estado */
+.statusCard.green { background-color: var(--green-bg); border: 1px solid #c7f2d3; }
+.statusCard.green .statusHeader { color: #006419; }
+.statusCard.blue { background-color: var(--blue-bg); border: 1px solid #d3d3ff; }
+.statusCard.blue .statusHeader { color: #2323a8; }
+.statusCard.purple { background-color: var(--purple-bg); border: 1px solid #e3d3ff; }
+.statusCard.purple .statusHeader { color: #4e23a8; }
+.statusCard.lightOrange { background-color: var(--light-orange-bg); border: 1px solid #ffe3d3; }
+.statusCard.lightOrange .statusHeader { color: #a85f23; }
+
+/* Servidor */
+.serverHeader.blue { background-color: var(--blue); }
+.serverHeader.green { background-color: var(--green); }
+.serverHeader.pink { background-color: var(--pink); }
+.serverHeader.orange { background-color: var(--orange); }
+
+/* --- Responsividad --- */
+@media (max-width: 768px) {
+  .summaryGrid, .statusGrid, .serverGrid {
+    grid-template-columns: 1fr;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
