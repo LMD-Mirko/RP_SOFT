@@ -26,6 +26,7 @@ export function DatePicker({
   placeholder = 'Seleccionar fecha',
   minDate = null,
   maxDate = null,
+  withPortal = false,
   ...props
 }) {
   return (
@@ -39,6 +40,23 @@ export function DatePicker({
         maxDate={maxDate}
         calendarClassName={styles.calendar}
         wrapperClassName={styles.wrapper}
+        withPortal={withPortal}
+        popperModifiers={[
+          {
+            name: 'offset',
+            options: {
+              offset: [0, 8],
+            },
+          },
+          {
+            name: 'preventOverflow',
+            options: {
+              rootBoundary: 'viewport',
+              tether: false,
+              altAxis: true,
+            },
+          },
+        ]}
         {...props}
       />
     </div>

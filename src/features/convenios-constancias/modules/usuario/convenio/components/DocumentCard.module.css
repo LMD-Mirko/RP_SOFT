@@ -1,0 +1,50 @@
+.cardDefault {
+  background: #fff;
+  border: 2px solid #9ec5fe;
+  border-radius: 16px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.cardSuccess {
+  background: #fff;
+  border: 2px solid #34d399;
+  border-radius: 16px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.15);
+}
+
+.iconWrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: #e0edff;
+}
+
+.defaultIcon { color: #3b82f6; }
+.successIcon { color: #10b981; }
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  text-align: center;
+}
+
+.actions { margin-top: 4px; }
+.uploadedLabel {
+  background: #22c55e;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+}

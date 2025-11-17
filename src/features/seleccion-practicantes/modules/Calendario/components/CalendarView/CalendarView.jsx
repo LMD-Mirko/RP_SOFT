@@ -55,14 +55,25 @@ export function CalendarView({ selectedDate, onDateSelect, scheduledDates = {} }
     )
   }
 
+  const isToday = (day) => {
+    if (!day) return false
+    const today = new Date()
+    return (
+      day === today.getDate() &&
+      month === today.getMonth() &&
+      year === today.getFullYear()
+    )
+  }
+
   const isScheduled = (day) => {
     if (!day) return false
     const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    return scheduledDates[dateKey]
+    return scheduledDates[dateKey] && !isToday(day)
   }
 
   const getScheduleType = (day) => {
     if (!day) return null
+    if (isToday(day)) return 'today'
     const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     return scheduledDates[dateKey]?.type || null
   }
@@ -97,6 +108,7 @@ export function CalendarView({ selectedDate, onDateSelect, scheduledDates = {} }
           const scheduleType = getScheduleType(day)
           const scheduled = isScheduled(day)
           const selected = isSelected(day)
+          const today = isToday(day)
 
           return (
             <div
@@ -108,9 +120,10 @@ export function CalendarView({ selectedDate, onDateSelect, scheduledDates = {} }
                 <div
                   className={`
                     ${styles.dateCell}
+                    ${today ? styles.today : ''}
                     ${selected ? styles.selected : ''}
                     ${scheduled ? styles[`scheduled_${scheduleType}`] || styles.scheduled : ''}
-                    ${!scheduled && !selected ? styles.default : ''}
+                    ${!scheduled && !selected && !today ? styles.default : ''}
                   `}
                 >
                   <span className={styles.dateNumber}>{day}</span>

@@ -1,0 +1,22 @@
+.weekListGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eventDay {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.ListVoid {
+  display: flex;
+  flex-direction: column;
+}
+
+.state {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
