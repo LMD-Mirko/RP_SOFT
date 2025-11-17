@@ -1,0 +1,2 @@
+export { EvaluacionIndividualPage } from './EvaluacionIndividualPage'
+

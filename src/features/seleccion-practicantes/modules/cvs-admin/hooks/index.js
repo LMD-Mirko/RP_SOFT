@@ -1,0 +1,2 @@
+export { useCVsAdmin } from './useCVsAdmin'
+

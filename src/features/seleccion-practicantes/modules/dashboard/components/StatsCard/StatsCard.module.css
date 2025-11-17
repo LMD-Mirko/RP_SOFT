@@ -1,18 +1,42 @@
 .card {
-  background-color: white;
-  border-radius: 0.75rem;
+  background: white;
+  border-radius: 12px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.25rem;
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Be Vietnam Pro', sans-serif;
-  min-height: 120px;
+  min-height: 100px;
   animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #111827, #374151, #1f2937, #4b5563);
+  background-size: 200% 100%;
+  animation: gradientShift 3s ease infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 @keyframes slideInUp {
@@ -27,40 +51,43 @@
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
   flex: 1;
 }
 
 .value {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #111827;
   line-height: 1;
-  margin-bottom: 0.25rem;
+  margin: 0;
   font-family: 'Be Vietnam Pro', sans-serif;
+  letter-spacing: -0.02em;
 }
 
 .title {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.9375rem;
+  font-weight: 600;
   color: #374151;
-  margin-bottom: 0.25rem;
+  margin: 0;
   font-family: 'Be Vietnam Pro', sans-serif;
   line-height: 1.4;
 }
 
 .detail {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   font-family: 'Be Vietnam Pro', sans-serif;
   line-height: 1.4;
+  margin: 0;
 }
 
 .detail_default {
@@ -84,18 +111,38 @@
 }
 
 .iconContainer {
-  width: 48px;
-  height: 48px;
-  border-radius: 0.5rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.iconContainer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .iconContainer::before {
+  opacity: 1;
 }
 
 .card:hover .iconContainer {
-  transform: scale(1.1) rotate(5deg);
+  transform: scale(1.05);
 }
 
 .icon {
@@ -105,7 +152,8 @@
 }
 
 .iconContainer_blue {
-  background-color: #dbeafe;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .iconContainer_blue .icon {
@@ -113,7 +161,8 @@
 }
 
 .iconContainer_green {
-  background-color: #d1fae5;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .iconContainer_green .icon {
@@ -121,7 +170,8 @@
 }
 
 .iconContainer_red {
-  background-color: #fee2e2;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .iconContainer_red .icon {
@@ -129,7 +179,8 @@
 }
 
 .iconContainer_orange {
-  background-color: #fed7aa;
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
 }
 
 .iconContainer_orange .icon {
@@ -137,9 +188,19 @@
 }
 
 .iconContainer_gray {
-  background-color: #fef3c7;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
 .iconContainer_gray .icon {
   color: #f59e0b;
+}
+
+.iconContainer_purple {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+.iconContainer_purple .icon {
+  color: #8b5cf6;
 }
