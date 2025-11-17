@@ -12,12 +12,9 @@ import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages
 //import { Botintegrative } from '../modules/bot_integracion/pages/botintegrative'//
 import { Reports } from '../modules/reportes/pages/Reports'
 import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
-
 import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
 import { Inicio } from '../modules/inicio/pages/nicolayus'
-
 import HistorialPracticantes from '../modules/historial-practicantes/pages/HistorialPracticantes'
-
 
 /**
  * Router del Módulo
@@ -29,13 +26,13 @@ export function ModuleRouter() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
-        
+
         {/* Rutas de Monitoreo */}
         <Route
           path="bot-integracion"
           element={<div><h2>Bot de Integración</h2></div>}
         />
-        
+
         {/* Rutas de Asistencia */}
         <Route
           path="puntualidad"
@@ -53,7 +50,7 @@ export function ModuleRouter() {
           path="gestion-horarios"
           element={<GestionHorariosDashboard />}
         />
-        
+
         {/* Rutas de Módulos */}
         <Route
           path="reportes"
@@ -67,7 +64,7 @@ export function ModuleRouter() {
           path="historial-practicantes"
           element={<HistorialPracticantes />}
         />
-        
+
         {/* Rutas de Practicante */}
         <Route
           path="practicante/inicio"
