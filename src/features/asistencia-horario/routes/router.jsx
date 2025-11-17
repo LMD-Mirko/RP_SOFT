@@ -14,6 +14,7 @@ import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages
 import HistorialPracticantes from '../modules/historial-practicantes/pages/HistorialPracticantes'
 import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
 import { Inicio } from '../modules/inicio/pages/nicolayus'
+import PuntualidadDashboard from '../modules/puntualidad/pages/PuntualidadDashboard'
 
 /**
  * Router del Módulo
@@ -35,7 +36,7 @@ export function ModuleRouter() {
         {/* Rutas de Asistencia */}
         <Route
           path="puntualidad"
-          element={<div><h2>Puntualidad</h2></div>}
+          element={<PuntualidadDashboard />}
         />
         <Route
           path="practicantes"
@@ -54,10 +55,6 @@ export function ModuleRouter() {
         <Route
           path="reportes"
           element={<Reports />}
-        />
-        <Route
-          path="reforzamiento"
-          element={<div><h2>Reforzamiento</h2></div>}
         />
         <Route
           path="historial-practicantes"
