@@ -1,8 +1,8 @@
-import { Download, Eye, Printer } from 'lucide-react'
+import { Download, Eye, Printer, Trash2 } from 'lucide-react'
 import { Button } from '@shared/components/Button'
 import styles from './DocumentActions.module.css'
 
-export function DocumentActions({ onDownload, onViewFull, onPrint, hasSelection }) {
+export function DocumentActions({ onDownload, onViewFull, onPrint, onDelete, hasSelection }) {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Acciones</h2>
@@ -43,6 +43,20 @@ export function DocumentActions({ onDownload, onViewFull, onPrint, hasSelection 
         >
           Imprimir
         </Button>
+
+        {onDelete && (
+          <Button
+            variant="danger"
+            onClick={onDelete}
+            disabled={!hasSelection}
+            fullWidth
+            icon={Trash2}
+            iconPosition="left"
+            className={styles.deleteButton}
+          >
+            Eliminar
+          </Button>
+        )}
       </div>
     </div>
   )

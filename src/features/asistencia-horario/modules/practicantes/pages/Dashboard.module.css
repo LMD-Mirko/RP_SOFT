@@ -92,9 +92,10 @@
 .practicantesGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: 16px;
   margin-top: 16px;
-  min-height: 536px;
+  height: 536px;
 }
 
 .pagination {

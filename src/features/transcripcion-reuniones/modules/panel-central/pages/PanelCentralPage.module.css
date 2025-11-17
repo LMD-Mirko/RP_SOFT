@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.subtitle {
+  color: #6b7280;
+}
+
+ .headerSimple { display: flex; flex-direction: column; gap: 4px; }
+
+ .libraryWrapper { margin-top: 8px; }
+ .libraryHeader { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+ .searchInput { max-width: 420px; }
+ .sectionHeader { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+ .sectionTitle { font-weight: 700; }
+ .sectionDate { color: #6b7280; font-size: 12px; }
+ .sectionSummary { display: flex; gap: 16px; color: #6b7280; font-size: 12px; }
+ .listItem { display: flex; justify-content: space-between; align-items: center; width: 100%; }

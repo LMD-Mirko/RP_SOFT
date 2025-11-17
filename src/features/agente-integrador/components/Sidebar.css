@@ -1,0 +1,47 @@
+.system-btn {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 0;
+  margin-bottom: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #222;
+  font-size: 14px;
+}
+
+.system-btn:hover {
+  background: #000;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.system-btn:active {
+  transform: scale(0.95);
+  background: linear-gradient(90deg, #000 0%, #222 100%);
+  color: #00e0ff;
+}
+
+.return-btn {
+  width: 100%;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 0;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.return-btn:hover {
+  background: #00bcd4;
+  transform: translateY(-2px);
+}

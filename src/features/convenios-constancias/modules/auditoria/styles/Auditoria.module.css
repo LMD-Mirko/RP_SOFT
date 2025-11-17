@@ -1,0 +1,173 @@
+.container {
+  padding: 2rem;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.card {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+}
+
+.cardHeader {
+  margin-bottom: 1.5rem;
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.cardSubtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+
+.searchWrapper {
+  flex: 1;
+  min-width: 300px;
+}
+
+.searchInput {
+  width: 100%;
+}
+
+.selectsWrapper {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+  flex-direction: row;
+}
+
+.select {
+  min-width: 180px;
+  width: auto;
+}
+
+.tableWrapper {
+  margin-top: 1.5rem;
+}
+
+.fechaHora {
+  font-size: 0.875rem;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.usuario {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+.estudiante {
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+.documento {
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.tipoFirma {
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+/* Botones de acción */
+.btnFirmados {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnFirmados:hover {
+  background-color: #2563eb;
+}
+
+.btnPendiente {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnPendiente:hover {
+  background-color: #dc2626;
+}
+
+.btnGenerada {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnGenerada:hover {
+  background-color: #059669;
+}
+
+.emptyState {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.emptyState p {
+  font-size: 0.875rem;
+}
+
