@@ -1,0 +1,38 @@
+.classCard {
+  border-radius:8px;
+  width:100%;
+  background:linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  padding:12px;
+  border:1px solid var(--border);
+  box-shadow:0 1px 4px rgba(16,24,40,0.03);
+}
+
+.classTitle {
+  margin:0 0 6px 0;
+  font-size:14px;
+  font-weight:700;
+}
+
+.classInstructor {
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.classDuration {
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.classesGroup {
+  display:flex;
+  gap:28px;
+  width:100%;
+}
+
+.cardGroup {
+  display: flex;
+  gap: 12px;
+  
+}

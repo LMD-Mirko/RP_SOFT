@@ -99,6 +99,7 @@
 .timeInput {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.75rem;
+  padding-right: 2.75rem;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   font-size: 0.875rem;
@@ -106,16 +107,76 @@
   color: #111827;
   background-color: white;
   transition: all 0.2s ease;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.timeInput::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+  transition: opacity 0.2s ease;
+}
+
+.timeInput::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.timeInput::-webkit-inner-spin-button,
+.timeInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .timeInput:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #fafafa;
 }
 
 .timeInput:hover {
   border-color: #9ca3af;
+  background-color: #fafafa;
+}
+
+.timeInput::placeholder {
+  color: #9ca3af;
+}
+
+/* Estilos para el selector de hora nativo */
+.timeInput::-webkit-datetime-edit {
+  padding: 0;
+  color: #111827;
+}
+
+.timeInput::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+.timeInput::-webkit-datetime-edit-text {
+  color: #6b7280;
+  padding: 0 0.25rem;
+}
+
+.timeInput::-webkit-datetime-edit-hour-field,
+.timeInput::-webkit-datetime-edit-minute-field {
+  color: #111827;
+  padding: 0 0.125rem;
+}
+
+.timeInput::-webkit-datetime-edit-hour-field:focus,
+.timeInput::-webkit-datetime-edit-minute-field:focus {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-radius: 0.25rem;
+  outline: none;
 }
 
 .actions {

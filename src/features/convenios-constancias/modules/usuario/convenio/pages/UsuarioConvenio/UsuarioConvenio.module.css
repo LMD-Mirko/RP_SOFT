@@ -1,0 +1,70 @@
+.container {
+  padding: 40px 48px;
+  background: #f9fafb;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header { margin-bottom: 24px; }
+.title { font-size: 32px; font-weight: 700; color: #111827; }
+.subtitle { font-size: 18px; color: #6b7280; }
+
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cardTitle { font-size: 24px; font-weight: 700; color: #111827; }
+.description { color: #6b7280; font-size: 18px; }
+
+.list { margin-top: 20px; }
+.listTitle { font-weight: 700; color: #111827; margin-bottom: 10px; font-size: 20px; }
+.ul {
+  margin: 0;
+  padding-left: 28px;
+  color: #374151;
+  font-size: 18px;
+  list-style-type: disc; /* fuerza los puntitos */
+  list-style-position: outside;
+}
+.ul li {
+  margin: 12px 0; /* más separación entre elementos */
+  line-height: 1.65;
+}
+
+.actions { margin-top: 20px; }
+.startButton { height: 52px; font-size: 18px; border-radius: 10px; padding: 0 22px; }
+
+/* Estado con animación sutil */
+.statusTag {
+  font-weight: 600;
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+/* Animación para transiciones de estado */
+@keyframes pulseWarn {
+  0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.35); }
+  50% { transform: scale(1.0); box-shadow: 0 0 0 10px rgba(245, 158, 11, 0.0); }
+  100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.0); }
+}
+
+@keyframes pulseSuccess {
+  0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35); }
+  50% { transform: scale(1.0); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0.0); }
+  100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.0); }
+}
+
+.pulseWarn { animation: pulseWarn 1.2s ease-out; }
+.pulseSuccess { animation: pulseSuccess 1.2s ease-out; }

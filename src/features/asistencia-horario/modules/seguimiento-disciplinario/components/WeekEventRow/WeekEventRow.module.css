@@ -1,0 +1,37 @@
+.eventRow {
+  display:flex;
+  width:100%;
+  gap:12px;
+  align-items:center;
+  padding:10px;
+  border-radius:8px;
+  background:linear-gradient(180deg, rgba(37,99,235,0.03), rgba(37,99,235,0.01));
+  border:1px solid rgba(37,99,235,0.06);
+}
+
+.eventDay {
+  min-width:70px;
+  font-weight:700;
+  color:var(--primary);
+}
+
+.eventDetails {
+  display:flex;
+  flex-direction:column;
+}
+
+.eventTime {
+  font-size:13px;
+  color:var(--muted);
+}
+
+.eventTitle {
+  font-weight:600;
+  margin-top:4px;
+  color:black;
+  cursor: pointer;
+}
+.eventTitle:hover{
+    color: #2563eb;
+
+}

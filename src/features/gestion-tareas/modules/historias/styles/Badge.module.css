@@ -1,0 +1,41 @@
+/*
+  Badge.module.css
+  - Migración desde Tailwind
+  - Mantiene tipografía y espaciados
+*/
+
+:root {
+  --radius-full: 9999px;
+  --space-x-badge: 0.625rem; /* px-2.5 */
+  --space-y-badge: 0.125rem; /* py-0.5 */
+  --font-xs: 0.75rem;        /* text-xs */
+  --font-medium: 500;
+
+  --blue-100: #dbeafe;
+  --blue-800: #1e40af;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-full);
+  padding: var(--space-y-badge) var(--space-x-badge);
+  font-size: var(--font-xs);
+  font-weight: var(--font-medium);
+  transition: all 300ms ease;
+}
+
+/* variant: info (bg-blue-100 text-blue-800) */
+.info {
+  background-color: var(--blue-100);
+  color: var(--blue-800);
+}
+
+.badge:hover {
+  filter: brightness(0.98);
+}
+
+.badge:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}

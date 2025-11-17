@@ -1,30 +1,56 @@
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ConvocatoriaCard } from '../components/ConvocatoriaCard'
 import { ConvocatoriaModal } from '../components/ConvocatoriaModal'
+import { useConvocatorias } from '../hooks/useConvocatorias'
+import { SkeletonConvocatoriaCard } from '../../../shared/components/Skeleton'
 import styles from './ConvocatoriasPage.module.css'
 
-// Datos de ejemplo
-const convocatoriasData = [
-  {
-    id: 1,
-    titulo: 'Convocatoria Enero 2024',
-    descripcion: 'Proceso de selección para practicantes de desarrollo web',
-    fechaInicio: '09/01/2025',
-    fechaFin: '30/01/2025',
-    fechaInicioDate: new Date(2025, 0, 9),
-    fechaFinDate: new Date(2025, 0, 30),
-    cupos: 10,
-    postulantes: 15,
-    estado: 'activa',
-    link: 'https://rpsoft.com/postulacion/enero-2025',
-  },
-]
+/**
+ * Formatea una fecha ISO a formato DD/MM/YYYY
+ */
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
+}
+
+/**
+ * Convierte datos de la API al formato esperado por los componentes
+ */
+const mapConvocatoriaFromAPI = (apiData) => {
+  const startDate = apiData.start_date ? new Date(apiData.start_date) : null
+  const endDate = apiData.end_date ? new Date(apiData.end_date) : null
+  
+  return {
+    id: apiData.id,
+    titulo: apiData.title || '',
+    descripcion: apiData.description || '',
+    fechaInicio: formatDate(apiData.start_date),
+    fechaFin: formatDate(apiData.end_date),
+    fechaInicioDate: startDate,
+    fechaFinDate: endDate,
+    cupos: apiData.cupos || 0,
+    postulantes: apiData.postulantes_count || 0,
+    estado: apiData.status || 'borrador',
+    link: `${window.location.origin}/seleccion-practicantes/postulacion?convocatoria=${apiData.id}`,
+    // Datos originales de la API
+    _apiData: apiData,
+  }
+}
 
 export function ConvocatoriasPage() {
-  const [convocatorias, setConvocatorias] = useState(convocatoriasData)
+  const navigate = useNavigate()
+  const { convocatorias: apiConvocatorias, loading, createConvocatoria, updateConvocatoria } = useConvocatorias()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedConvocatoria, setSelectedConvocatoria] = useState(null)
+
+  // Mapear convocatorias de la API al formato del componente
+  const convocatorias = apiConvocatorias.map(mapConvocatoriaFromAPI)
 
   const handleNewConvocatoria = () => {
     setSelectedConvocatoria(null)
@@ -36,47 +62,35 @@ export function ConvocatoriasPage() {
     setIsModalOpen(true)
   }
 
-  const handleSave = (formData) => {
-    const formatDate = (date) => {
-      if (!date) return ''
-      const day = String(date.getDate()).padStart(2, '0')
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const year = date.getFullYear()
-      return `${day}/${month}/${year}`
-    }
-
-    const convocatoriaData = {
-      ...formData,
-      fechaInicio: formatDate(formData.fechaInicio),
-      fechaFin: formatDate(formData.fechaFin),
-      fechaInicioDate: formData.fechaInicio,
-      fechaFinDate: formData.fechaFin,
-    }
-
-    if (selectedConvocatoria) {
-      // Editar convocatoria existente
-      setConvocatorias(prev =>
-        prev.map(c =>
-          c.id === selectedConvocatoria.id
-            ? { ...c, ...convocatoriaData }
-            : c
-        )
-      )
-    } else {
-      // Crear nueva convocatoria
-      const newConvocatoria = {
-        id: Date.now(),
-        ...convocatoriaData,
-        postulantes: 0,
-        link: `https://rpsoft.com/postulacion/${formData.titulo.toLowerCase().replace(/\s+/g, '-')}`,
+  const handleSave = async (formData) => {
+    try {
+      // Preparar datos para la API
+      const apiData = {
+        title: formData.titulo,
+        description: formData.descripcion,
+        start_date: formData.fechaInicio ? formData.fechaInicio.toISOString() : null,
+        end_date: formData.fechaFin ? formData.fechaFin.toISOString() : null,
+        status: formData.estado || 'borrador',
       }
-      setConvocatorias(prev => [...prev, newConvocatoria])
+
+      if (selectedConvocatoria) {
+        // Editar convocatoria existente
+        await updateConvocatoria(selectedConvocatoria.id, apiData)
+      } else {
+        // Crear nueva convocatoria
+        await createConvocatoria(apiData)
+      }
+      
+      setIsModalOpen(false)
+      setSelectedConvocatoria(null)
+    } catch (error) {
+      console.error('Error al guardar convocatoria:', error)
+      // El error ya se maneja en el hook con toast
     }
   }
 
   const handleViewApplicants = (convocatoria) => {
-    console.log('Ver postulantes de:', convocatoria.titulo)
-    // Aquí navegarás a la página de postulantes
+    navigate(`/seleccion-practicantes/postulantes?convocatoria=${convocatoria.id}`)
   }
 
   return (
@@ -95,7 +109,13 @@ export function ConvocatoriasPage() {
 
       {/* Content */}
       <div className={styles.content}>
-        {convocatorias.length === 0 ? (
+        {loading ? (
+          <div className={styles.grid}>
+            <SkeletonConvocatoriaCard index={0} />
+            <SkeletonConvocatoriaCard index={1} />
+            <SkeletonConvocatoriaCard index={2} />
+          </div>
+        ) : convocatorias.length === 0 ? (
           <div className={styles.empty}>
             <p className={styles.emptyText}>No hay convocatorias creadas</p>
             <button onClick={handleNewConvocatoria} className={styles.buttonPrimary}>

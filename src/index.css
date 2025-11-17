@@ -1,12 +1,54 @@
 @import "tailwindcss";
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
 body {
   font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+/* Scrollbar minimalista y delgado para todo el proyecto - línea celeste pastel delgada */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #b3d9ff transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border: none;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #b3d9ff;
+  border-radius: 2px;
+  border: none;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #99ccff;
+}
+
+/* Quitar botones/flechas del scrollbar en todos los navegadores */
+*::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+*::-webkit-scrollbar-corner {
+  display: none;
+  background: transparent;
+}
+
+/* Firefox - asegurar que no haya bordes */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #b3d9ff transparent;
 }
 
