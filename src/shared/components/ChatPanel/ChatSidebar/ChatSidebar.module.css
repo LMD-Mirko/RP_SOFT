@@ -5,11 +5,26 @@
   display: flex;
   flex-direction: column;
   border-left: 2px solid #e2e8f0;
-  box-shadow: -2px 0 12px rgba(15, 23, 42, 0.08);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.06);
   flex-shrink: 0;
   position: relative;
   transition: width 0.3s ease, box-shadow 0.3s ease;
   overflow: visible;
+  
+  animation: slideRight 0.45s ease forwards;
+}
+
+@keyframes slideRight {
+  0% {
+    opacity: 0;
+    transform: translateX(40px);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
 }
 
 .chatSidebarCollapsed {
@@ -108,6 +123,14 @@
   overflow-y: auto;
   padding: 0.5rem;
   position: relative;
+
+  animation: floatSidebar 6s ease-in-out infinite;
+}
+
+@keyframes floatSidebar {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
 }
 
 .sectionTitle {
@@ -132,7 +155,7 @@
   font-size: 0.875rem;
   cursor: pointer;
   border-radius: 0.75rem;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
   overflow: visible;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -140,15 +163,27 @@
   user-select: none;
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Cambiado */
-  gap: 8px; /* Añadido */
+  justify-content: flex-start;
+  gap: 8px;
   position: relative;
 }
 
-.recentItemText {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.recentItem:hover {
+  background-color: rgba(77, 163, 255, 0.12);
+  color: #3b82f6;
+  transform: translateX(4px);
+}
+
+.recentItemText:hover {
+  color: #3b82f6;
+}
+
+.recentItemActive {
+  background-color: #e8f3ff;
+  color: #0284c7;
+  border-radius: 0.75rem;
+  transform: translateX(4px);
+  font-weight: 500;
 }
 
 .moreButton {
@@ -272,25 +307,7 @@
   }
 }
 
-.recentItem:hover {
-  background-color: #e2e8f0;
-  color: #0f172a;
-  transform: translateX(2px);
-}
-
-.recentItem:active {
-  background-color: #cbd5e1;
-  transform: translateX(0);
-}
-
-.emptyState {
-  padding: 1rem 0.75rem;
-  color: #94a3b8;
-  font-size: 0.875rem;
-  text-align: center;
-  border-radius: 0.75rem;
-}
-/* Scrollbar styling */
+/* Scrollbar */
 .sidebarContent::-webkit-scrollbar {
   width: 8px;
 }
@@ -307,4 +324,3 @@
 .sidebarContent::-webkit-scrollbar-thumb:hover {
   background: #93c5fd;
 }
-
