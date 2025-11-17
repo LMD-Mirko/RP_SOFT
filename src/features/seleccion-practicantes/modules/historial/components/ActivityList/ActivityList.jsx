@@ -1,4 +1,4 @@
-import { FilePlus, ArrowRight, ClipboardCheck, XCircle, User, Clock } from 'lucide-react'
+import { FilePlus, ArrowRight, ClipboardCheck, XCircle, CheckCircle, Trash2, LogIn, LogOut, User, Clock } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './ActivityList.module.css'
 
@@ -12,6 +12,14 @@ const getActivityIcon = (type) => {
       return ClipboardCheck
     case 'rechazo':
       return XCircle
+    case 'aceptacion':
+      return CheckCircle
+    case 'eliminacion':
+      return Trash2
+    case 'login':
+      return LogIn
+    case 'logout':
+      return LogOut
     default:
       return FilePlus
   }
@@ -20,13 +28,21 @@ const getActivityIcon = (type) => {
 const getActivityTypeLabel = (type) => {
   switch (type) {
     case 'creacion':
-      return 'Creación de Convocatoria'
+      return 'Creación'
     case 'cambio':
-      return 'Cambio etapa'
+      return 'Cambio'
     case 'evaluacion':
-      return 'Evaluación registrada'
+      return 'Evaluación'
     case 'rechazo':
-      return 'Postulante rechazado'
+      return 'Rechazo'
+    case 'aceptacion':
+      return 'Aceptación'
+    case 'eliminacion':
+      return 'Eliminación'
+    case 'login':
+      return 'Inicio de sesión'
+    case 'logout':
+      return 'Cierre de sesión'
     default:
       return 'Actividad'
   }
@@ -42,8 +58,37 @@ const getActivityTypeClass = (type) => {
       return styles.typeEvaluacion
     case 'rechazo':
       return styles.typeRechazo
+    case 'aceptacion':
+      return styles.typeAceptacion
+    case 'eliminacion':
+      return styles.typeEliminacion
+    case 'login':
+      return styles.typeLogin
+    case 'logout':
+      return styles.typeLogout
     default:
       return styles.typeDefault
+  }
+}
+
+/**
+ * Formatea un timestamp ISO 8601 a formato legible
+ * @param {string} timestamp - Timestamp en formato ISO 8601
+ * @returns {string} Timestamp formateado
+ */
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return 'Fecha no disponible'
+  try {
+    const date = new Date(timestamp)
+    return date.toLocaleString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch (error) {
+    return timestamp
   }
 }
 
@@ -85,7 +130,7 @@ export function ActivityList({ activities, onActivityClick }) {
                 </div>
                 <div className={styles.timestamp}>
                   <Clock size={16} />
-                  <span>{activity.timestamp}</span>
+                  <span>{formatTimestamp(activity.timestamp)}</span>
                 </div>
               </div>
             </div>

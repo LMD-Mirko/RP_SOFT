@@ -1,0 +1,2 @@
+export { ConvocatoriasStatusChart } from './ConvocatoriasStatusChart'
+

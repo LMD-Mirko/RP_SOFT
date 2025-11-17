@@ -1,0 +1,2 @@
+export { EditorFirmaModal } from './EditorFirmaModal'
+
