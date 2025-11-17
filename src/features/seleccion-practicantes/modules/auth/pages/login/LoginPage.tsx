@@ -83,8 +83,15 @@ export default function LoginPage() {
     }
   }
 
+  const handleSkip = () => {
+    navigate('/dashboard')
+  }
+
   return (
     <div className={styles.container}>
+      <button onClick={handleSkip} className={styles.skipButton}>
+        Saltar
+      </button>
       <div className={styles.background}>
         <div className={styles.blob}></div>
         <div className={`${styles.blob} ${styles.blobDelay1}`}></div>

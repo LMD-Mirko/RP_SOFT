@@ -127,7 +127,7 @@ export default function RoleGate() {
         </div>
 
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/dashboard")}
           style={{
             marginTop: "20px",
             backgroundColor: "#000",

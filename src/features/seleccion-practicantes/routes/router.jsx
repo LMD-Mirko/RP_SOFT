@@ -13,7 +13,7 @@ import { PostulantesPage } from '../modules/postulantes/pages'
 import { CVsPage } from '../modules/cv/pages'
 import { CVsAdminPage } from '../modules/cvs-admin/pages'
 import { CalendarioPage } from '../modules/Calendario/pages'
-import { EvaluacionesPage } from '../modules/gest.. evaluaciones/pages'
+import { EvaluacionesRouter } from '../modules/gest.. evaluaciones/routes/EvaluacionesRouter'
 import { HistorialPage } from '../modules/historial/pages'
 import { PostulacionPage } from '../modules/Practicante-Form/pages'
 import { PerfilPage } from '../modules/perfil/pages'
@@ -63,8 +63,12 @@ export function ModuleRouter() {
         
         {/* Rutas de Gestión */}
         <Route
-          path="evaluaciones"
-          element={<EvaluacionesPage />}
+          path="evaluaciones/*"
+          element={
+            <RequireRole requireAdmin={true}>
+              <EvaluacionesRouter />
+            </RequireRole>
+          }
         />
         <Route
           path="calendario"

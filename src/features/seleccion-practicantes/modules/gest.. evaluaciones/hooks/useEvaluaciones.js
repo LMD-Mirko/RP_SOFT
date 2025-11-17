@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useToast } from '@shared/components/Toast';
 import { requestGuard } from '@shared/utils/requestGuard';
 import * as evaluacionService from '../services/evaluacionService';
@@ -15,7 +15,7 @@ export const useEvaluaciones = () => {
   const [error, setError] = useState(null);
   const isLoadingRef = useRef(false); // Flag para evitar peticiones concurrentes
 
-  const loadEvaluaciones = async () => {
+  const loadEvaluaciones = useCallback(async () => {
     // Si ya hay una petición en curso, no hacer nada
     if (isLoadingRef.current) {
       return;
@@ -49,7 +49,7 @@ export const useEvaluaciones = () => {
         isLoadingRef.current = false;
       }
     });
-  };
+  }, [toast]);
 
   const deleteEvaluacion = async (id) => {
     setLoading(true);
@@ -70,6 +70,23 @@ export const useEvaluaciones = () => {
     }
   };
 
+  const updateEvaluacion = async (id, data) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await evaluacionService.updateEvaluacion(id, data);
+      toast.success('Evaluación actualizada correctamente');
+      await loadEvaluaciones();
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || err.message || 'Error al actualizar evaluación';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     evaluaciones,
@@ -77,6 +94,7 @@ export const useEvaluaciones = () => {
     error,
     loadEvaluaciones,
     deleteEvaluacion,
+    updateEvaluacion,
   };
 };
 

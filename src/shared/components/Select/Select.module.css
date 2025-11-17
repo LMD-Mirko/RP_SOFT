@@ -112,7 +112,7 @@
 }
 
 .dropdown::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .dropdown::-webkit-scrollbar-track {
@@ -120,12 +120,12 @@
 }
 
 .dropdown::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
+  background: #b3d9ff;
+  border-radius: 2px;
 }
 
 .dropdown::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #99ccff;
 }
 
 @keyframes slideDown {

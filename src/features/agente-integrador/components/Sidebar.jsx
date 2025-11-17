@@ -314,7 +314,7 @@ export default function Sidebar() {
           ❓ Centro de Ayuda
         </button>
 
-        <button className="return-btn" onClick={() => navigate("/")} style={{ marginTop: "12px" }}>
+        <button className="return-btn" onClick={() => navigate("/dashboard")} style={{ marginTop: "12px" }}>
           REGRESAR
         </button>
       </div>
