@@ -14,8 +14,10 @@ import { CVsPage } from '../modules/cv/pages'
 import { CVsAdminPage } from '../modules/cvs-admin/pages'
 import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesRouter } from '../modules/gest.. evaluaciones/routes/EvaluacionesRouter'
+import { EvaluacionPage, ResultadosEvaluacionPage, MisEvaluacionesPage } from '../modules/evaluaciones-postulante/pages'
 import { HistorialPage } from '../modules/historial/pages'
 import { PostulacionPage } from '../modules/Practicante-Form/pages'
+import { SeleccionarConvocatoriaPage } from '../modules/Practicante-Form/pages/SeleccionarConvocatoriaPage'
 import { PerfilPage } from '../modules/perfil/pages'
 import { UsuariosPage } from '../modules/usuarios/pages'
 import { RolesPage } from '../modules/roles/pages'
@@ -32,7 +34,8 @@ import { TranscripcionesPage } from '@features/transcripcion-reuniones'
 export function ModuleRouter() {
   return (
     <Routes>
-      {/* Ruta pública de postulación (sin Layout) */}
+      {/* Rutas públicas de postulación (sin Layout) */}
+      <Route path="seleccionar-convocatoria" element={<SeleccionarConvocatoriaPage />} />
       <Route path="postulacion" element={<PostulacionPage />} />
       
       {/* Rutas con Layout (requieren autenticación) */}
@@ -61,7 +64,21 @@ export function ModuleRouter() {
           }
         />
         
-        {/* Rutas de Gestión */}
+        {/* Rutas de Evaluaciones para Postulantes (deben ir antes del wildcard) */}
+        <Route
+          path="evaluaciones/mis-evaluaciones"
+          element={<MisEvaluacionesPage />}
+        />
+        <Route
+          path="evaluaciones/:evaluationId/completar"
+          element={<EvaluacionPage />}
+        />
+        <Route
+          path="evaluaciones/:evaluationId/resultados"
+          element={<ResultadosEvaluacionPage />}
+        />
+        
+        {/* Rutas de Gestión de Evaluaciones (Admin) */}
         <Route
           path="evaluaciones/*"
           element={

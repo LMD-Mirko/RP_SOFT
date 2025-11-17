@@ -28,12 +28,27 @@ export function PostulacionPage() {
   const { 
     loading, 
     convocatoriaId, 
+    postulacionId,
+    personalData,
     postularse, 
     guardarDatosPersonales, 
     subirCV,
     iniciarEvaluacion,
-    obtenerDatosPersonales 
+    obtenerDatosPersonales,
+    guardarEncuestaPerfil,
+    guardarEncuestaPsicologica,
+    guardarEncuestaMotivacion,
   } = usePostulacion()
+  
+  // Estado para saber qué campos vienen del User (son de solo lectura)
+  const [userFields, setUserFields] = useState({
+    name: false,
+    paternal_lastname: false,
+    maternal_lastname: false,
+    document_number: false,
+    phone: false,
+    district_id: false,
+  })
   
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
@@ -76,49 +91,64 @@ export function PostulacionPage() {
     cvFile: null,
   })
 
-  // Verificar si hay convocatoriaId y postularse automáticamente
-  useEffect(() => {
-    const checkPostulacion = async () => {
-      const id = searchParams.get('convocatoria');
-      if (id) {
-        try {
-          await postularse(parseInt(id));
-        } catch (error) {
-          // Si ya está postulado o hay error, continuar de todas formas
-          console.log('Error o ya postulado:', error);
-        }
-      }
-    };
-    checkPostulacion();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
-  // Cargar datos personales si existen
+  // Cargar datos personales (GET siempre retorna 200 OK con datos del User)
   useEffect(() => {
     if (currentStep === 1) {
       obtenerDatosPersonales().then(data => {
         if (data) {
+          // Mapear nivel de experiencia del API al formato del formulario
+          const experienceLevelMap = {
+            'beginner': 'principiante',
+            'intermediate': 'intermedio',
+            'advanced': 'avanzado',
+            'principiante': 'principiante',
+            'intermedio': 'intermedio',
+            'avanzado': 'avanzado'
+          };
+
           // Mapear datos de la API al formato del formulario
+          // La API devuelve: name, paternal_lastname, maternal_lastname (del User)
+          const nombres = data.name || '';
+          const apellidos = [data.paternal_lastname, data.maternal_lastname].filter(Boolean).join(' ');
+
+          // Identificar qué campos vienen del User (son de solo lectura)
+          setUserFields({
+            name: !!data.name,
+            paternal_lastname: !!data.paternal_lastname,
+            maternal_lastname: !!data.maternal_lastname,
+            document_number: !!data.document_number,
+            phone: !!data.phone,
+            district_id: !!data.district_id,
+          });
+
+          // Obtener nombre del distrito (puede venir como objeto o string)
+          const districtName = typeof data.district === 'object' 
+            ? data.district?.name 
+            : data.district;
+
           setFormData(prev => ({
             ...prev,
-            dni: data.document_number || '',
-            tipoDocumento: data.document_type_id || '',
-            fechaNacimiento: data.birth_date || '',
-            telefono: data.phone?.replace('+51', '') || '',
-            sexo: data.sex || 'M',
-            direccion: data.address || '',
-            especialidadId: data.specialty_id || '',
-            carrera: data.career || '',
-            semestre: data.semester || '',
-            nivelExperiencia: data.experience_level || 'principiante',
-            distrito: data.district_id || '',
-            selectedData: {
-              distrito: { id: data.district_id, name: '' },
-              provincia: { id: data.province_id, name: '' },
-              region: { id: data.region_id, name: '' },
-            },
+            // Campos del User (vienen pre-llenados, son de solo lectura)
+            nombres: nombres || prev.nombres || '',
+            apellidos: apellidos || prev.apellidos || '',
+            dni: data.document_number || prev.dni || '',
+            telefono: data.phone ? data.phone.replace(/^\+51/, '') : prev.telefono || '',
+            // Si la ubicación viene del User, solo guardar el nombre (NO selectedData para no pre-llenar CascadeSelect)
+            distrito: districtName || prev.distrito || '',
+            selectedData: data.district_id ? null : (prev.selectedData || null), // NO pre-llenar si viene del User
+            
+            // Campos específicos del postulante (editables, pueden ser null)
+            fechaNacimiento: data.birth_date || prev.fechaNacimiento || '',
+            direccion: data.address || prev.direccion || '',
+            especialidadId: data.specialty_id || data.specialty?.id || prev.especialidadId || '',
+            carrera: data.career || prev.carrera || '',
+            semestre: data.semester || prev.semestre || '',
+            nivelExperiencia: experienceLevelMap[data.experience_level] || prev.nivelExperiencia || 'principiante',
           }));
         }
+      }).catch(error => {
+        // El GET siempre debería retornar datos, pero por si acaso
+        console.error('Error al obtener datos personales:', error);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,6 +165,51 @@ export function PostulacionPage() {
     if (currentStep === 1) {
       try {
         await guardarDatosPersonales({ ...formData, ...stepData });
+      } catch (error) {
+        // El error ya se maneja en el hook
+        return; // No avanzar si hay error
+      }
+    }
+    
+    // Si es el paso 2 (Perfil), guardar encuesta de perfil
+    if (currentStep === 2) {
+      try {
+        await guardarEncuestaPerfil({
+          area_interes: stepData.areaInteres,
+          experiencia_previa: stepData.experienciaPrevia,
+          nivel_compromiso: stepData.nivelCompromiso,
+        });
+      } catch (error) {
+        // El error ya se maneja en el hook
+        return; // No avanzar si hay error
+      }
+    }
+
+    // Si es el paso 3 (Técnica), la evaluación se maneja dentro del componente
+    // El componente EvaluacionEmbedded llama a onNext cuando se completa
+    
+    // Si es el paso 4 (Psicología), guardar encuesta psicológica
+    if (currentStep === 4) {
+      try {
+        await guardarEncuestaPsicologica({
+          trabajo_equipo: stepData.trabajoEquipo,
+          manejo_conflictos: stepData.manejoConflictos,
+          actitud_desafios: stepData.actitudDesafios,
+        });
+      } catch (error) {
+        // El error ya se maneja en el hook
+        return; // No avanzar si hay error
+      }
+    }
+
+    // Si es el paso 5 (Motivación), guardar encuesta de motivación
+    if (currentStep === 5) {
+      try {
+        await guardarEncuestaMotivacion({
+          motivacion: stepData.motivacion,
+          expectativas: stepData.expectativas,
+          participacion_proyectos: stepData.participacionProyectos,
+        });
       } catch (error) {
         // El error ya se maneja en el hook
         return; // No avanzar si hay error
@@ -218,6 +293,9 @@ export function PostulacionPage() {
           onSubmit={handleSubmit}
           isFirstStep={currentStep === 1}
           isLastStep={currentStep === STEPS.length}
+          convocatoriaId={convocatoriaId}
+          userFields={userFields}
+          personalData={personalData}
         />
       </div>
     </div>

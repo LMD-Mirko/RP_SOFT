@@ -59,3 +59,45 @@ export const obtenerDatosPersonales = async () => {
   }
 };
 
+/**
+ * Guarda la encuesta de perfil del postulante autenticado
+ * @param {Object} surveyData - Datos de la encuesta de perfil
+ * @returns {Promise} Resultado de la operación
+ */
+export const guardarEncuestaPerfil = async (surveyData) => {
+  try {
+    return await post('postulants/me/survey-responses/profile', surveyData);
+  } catch (error) {
+    console.error('Error al guardar encuesta de perfil:', error);
+    throw error;
+  }
+};
+
+/**
+ * Guarda la encuesta psicológica del postulante autenticado
+ * @param {Object} surveyData - Datos de la encuesta psicológica
+ * @returns {Promise} Resultado de la operación
+ */
+export const guardarEncuestaPsicologica = async (surveyData) => {
+  try {
+    return await post('postulants/me/survey-responses/psychological', surveyData);
+  } catch (error) {
+    console.error('Error al guardar encuesta psicológica:', error);
+    throw error;
+  }
+};
+
+/**
+ * Guarda la encuesta de motivación del postulante autenticado
+ * @param {Object} surveyData - Datos de la encuesta de motivación
+ * @returns {Promise} Resultado de la operación
+ */
+export const guardarEncuestaMotivacion = async (surveyData) => {
+  try {
+    return await post('postulants/me/survey-responses/motivation', surveyData);
+  } catch (error) {
+    console.error('Error al guardar encuesta de motivación:', error);
+    throw error;
+  }
+};
+

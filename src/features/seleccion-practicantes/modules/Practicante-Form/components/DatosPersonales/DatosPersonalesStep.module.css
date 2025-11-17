@@ -4,6 +4,8 @@
 .stepContainer {
     width: 100%;
     animation: slideIn 0.4s ease-out;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes slideIn {
@@ -25,6 +27,9 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     padding: 2.5rem;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    overflow: visible;
 }
 
 .stepCard:hover {
@@ -115,6 +120,79 @@
     color: #ef4444;
     font-weight: 500;
     margin-top: 0.25rem;
+}
+
+/* Completed Badge */
+.completedBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    color: #10b981;
+    font-weight: 500;
+}
+
+.completedBadge svg {
+    color: #10b981;
+}
+
+/* Ant Design Select Styles */
+.antSelect {
+    width: 100%;
+}
+
+.antSelect :global(.ant-select-selector) {
+    border-radius: 0.5rem !important;
+    border: 1px solid #d1d5db !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    color: #111827 !important;
+    background-color: white !important;
+    transition: all 0.2s ease !important;
+    min-height: 42px !important;
+}
+
+.antSelect :global(.ant-select-selector:hover) {
+    border-color: #9ca3af !important;
+}
+
+.antSelect :global(.ant-select-focused .ant-select-selector) {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.antSelect :global(.ant-select-selection-placeholder) {
+    color: #9ca3af !important;
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+}
+
+.antSelect :global(.ant-select-selection-item) {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    color: #111827 !important;
+}
+
+.antSelect :global(.ant-select-disabled .ant-select-selector) {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+}
+
+.antSelect :global(.ant-select-disabled .ant-select-selection-item) {
+    color: #111827 !important;
+    opacity: 1 !important;
+}
+
+/* Estilos para inputs deshabilitados - asegurar que se vean los valores */
+.formGroup :global(input:disabled),
+.formGroup :global(select:disabled) {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: #111827 !important;
 }
 
 /* Actions */
