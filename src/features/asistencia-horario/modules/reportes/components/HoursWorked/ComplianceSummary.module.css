@@ -1,0 +1,41 @@
+.resumen {
+  background: #fff;
+  border: 1px solid #e6e9ee;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 32px;
+}
+
+.resumen h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.1rem;
+}
+
+.desc {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 80px 220px;
+  gap: 12px;
+  align-items: center;
+}
+
+.left .row { padding: 6px 0; color: #374151 }
+.center .value { padding: 6px 0; font-weight:600; color: #111827 }
+.right .stat { display:flex; justify-content:space-between; padding:6px 0; align-items:center }
+
+.good { color: #10b981; margin-right:8px }
+.warn { color: #f59e0b; margin-right:8px }
+.crit { color: #ef4444; margin-right:8px }
+
+.progressWrap { margin-top: 16px }
+.progressLabel { font-size: 14px; color: #374151; margin-bottom:8px }
+.progressBar { background:#f3f4f6; height:12px; border-radius:6px; overflow:hidden }
+.progressFill { background:#111827; height:100%; transition: width 0.4s ease }
+.progressFooter { display:flex; justify-content:space-between; margin-top:8px; color:#6b7280; font-size:13px }
+
+.note { margin-top:12px; color:#6b7280; font-size:13px }

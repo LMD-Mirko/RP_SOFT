@@ -1,0 +1,2 @@
+export { UsuariosPage } from './UsuariosPage'
+

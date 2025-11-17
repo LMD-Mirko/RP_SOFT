@@ -1,0 +1,28 @@
+.backButtonContainer {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.backButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: color 0.2s;
+  border-radius: 0.375rem;
+}
+
+.backButton:hover {
+  color: #374151;
+  background-color: #f3f4f6;
+}
+
