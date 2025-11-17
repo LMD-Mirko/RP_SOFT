@@ -1,0 +1,2 @@
+export { ProgressByConvocatoriaChart } from './ProgressByConvocatoriaChart'
+

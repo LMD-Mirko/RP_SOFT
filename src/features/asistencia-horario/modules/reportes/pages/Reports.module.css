@@ -1,0 +1,136 @@
+.dashboard {
+  width: 100%;
+  max-width: 1400px;
+  padding: 0  48px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-top: 24px;
+}
+
+.titleSection h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.titleSection p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Sección de Exportar Reportes */
+.exportSection {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 32px;
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.exportSection h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+
+.exportSection p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 24px 0;
+}
+
+.exportButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.downloadButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 56px;
+}
+
+.downloadButton:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.downloadButton:active {
+  background-color: #f3f4f6;
+}
+
+/* Sección de Tabs */
+.tabsSection {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 32px;
+}
+
+.tabs {
+  display: flex;
+  background: #f0f4f8;
+  padding: 6px;
+  gap: 6px;
+  border-radius: 24px;
+  margin:  32px 0 32px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 20px;
+}
+
+.tab:hover {
+  color: #0f172a;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.tabActive {
+  color: #0f172a;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tabContent {
+  min-height: 300px;
+  
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+  }
+  

@@ -1,0 +1,105 @@
+.container {
+  width: 100%;
+}
+
+.loading {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.titleCell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.title {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.9375rem;
+}
+
+.date {
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.timeCell {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.interviewerCell {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.participantsCell {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.icon {
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.actionButton,
+.actionButtonView,
+.actionButtonDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.actionButtonView {
+  color: #3b82f6;
+}
+
+.actionButtonView:hover {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.actionButton {
+  color: #10b981;
+}
+
+.actionButton:hover {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.actionButtonDelete {
+  color: #ef4444;
+}
+
+.actionButtonDelete:hover {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+

@@ -1,0 +1,2 @@
+export { TecnicaStep } from './TecnicaStep'
+

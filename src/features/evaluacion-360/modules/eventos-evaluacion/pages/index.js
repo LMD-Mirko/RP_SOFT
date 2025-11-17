@@ -1,0 +1,2 @@
+export { EventosEvaluacionPage } from './EventosEvaluacionPage'
+

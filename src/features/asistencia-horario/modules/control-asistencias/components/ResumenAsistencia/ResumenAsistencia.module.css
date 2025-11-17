@@ -1,0 +1,38 @@
+.container {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 2.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #111827;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3rem;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.value {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #111827;
+}

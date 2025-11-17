@@ -1,79 +1,29 @@
-import { useState, useMemo } from 'react'
-import { Download } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Download, Trash2 } from 'lucide-react'
 import { ActivityFilter } from '../components/ActivityFilter'
 import { ActivityList } from '../components/ActivityList'
 import { ActivityDetailModal } from '../components/ActivityDetailModal'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { Button } from '@shared/components/Button'
 import { useToast } from '@shared/components/Toast'
+import { useHistorial } from '../hooks/useHistorial'
+import { SkeletonList } from '../../../shared/components/Skeleton'
 import styles from './HistorialPage.module.css'
-
-// Datos mock de actividades
-const mockActivities = [
-  {
-    id: 1,
-    type: 'creacion',
-    description: 'Convocatoria Enero 2025 creada',
-    actor: 'Carlos Mendoza',
-    timestamp: '2025-01-20 14:30',
-  },
-  {
-    id: 2,
-    type: 'cambio',
-    description: 'Juan Pérez movido a Prueba Técnica',
-    actor: 'Carlos Mendoza',
-    timestamp: '2025-01-19 10:15',
-  },
-  {
-    id: 3,
-    type: 'evaluacion',
-    description: 'Puntaje 85 registrado para María García',
-    actor: 'Carlos Mendoza',
-    timestamp: '2025-01-18 16:45',
-  },
-  {
-    id: 4,
-    type: 'rechazo',
-    description: 'Carlos López rechazado del proceso',
-    actor: 'Carlos Mendoza',
-    timestamp: '2025-01-17 09:20',
-  },
-  {
-    id: 5,
-    type: 'creacion',
-    description: 'Convocatoria Diciembre 2024 creada',
-    actor: 'Ana Torres',
-    timestamp: '2025-01-16 11:30',
-  },
-  {
-    id: 6,
-    type: 'cambio',
-    description: 'María García movida a Entrevista',
-    actor: 'Ana Torres',
-    timestamp: '2025-01-15 08:45',
-  },
-  {
-    id: 7,
-    type: 'evaluacion',
-    description: 'Puntaje 92 registrado para Juan Pérez',
-    actor: 'Ana Torres',
-    timestamp: '2025-01-14 15:20',
-  },
-  {
-    id: 8,
-    type: 'rechazo',
-    description: 'Pedro Sánchez rechazado del proceso',
-    actor: 'Carlos Mendoza',
-    timestamp: '2025-01-13 12:10',
-  },
-]
 
 export function HistorialPage() {
   const [filter, setFilter] = useState('all')
   const [selectedActivity, setSelectedActivity] = useState(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
+  const [isClearModalOpen, setIsClearModalOpen] = useState(false)
   const toast = useToast()
+  const { loading, actividades, pagination, loadActividades, limpiarHistorial } = useHistorial()
+
+  // Cargar actividades al montar el componente y cuando cambia el filtro
+  useEffect(() => {
+    loadActividades({ type: filter !== 'all' ? filter : undefined })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter])
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value)
@@ -89,12 +39,18 @@ export function HistorialPage() {
     setSelectedActivity(null)
   }
 
-  const filteredActivities = useMemo(() => {
-    if (filter === 'all') {
-      return mockActivities
+  const handleClearClick = () => {
+    setIsClearModalOpen(true)
+  }
+
+  const handleClearConfirm = async () => {
+    try {
+      await limpiarHistorial()
+      setIsClearModalOpen(false)
+    } catch (error) {
+      // El error ya se maneja en el hook
     }
-    return mockActivities.filter((activity) => activity.type === filter)
-  }, [filter])
+  }
 
   const handleExportClick = () => {
     setIsExportModalOpen(true)
@@ -104,7 +60,7 @@ export function HistorialPage() {
     // Lógica para exportar a CSV
     const csvContent = [
       ['Tipo', 'Descripción', 'Actor', 'Fecha y Hora'],
-      ...filteredActivities.map((activity) => [
+      ...actividades.map((activity) => [
         activity.type,
         activity.description,
         activity.actor,
@@ -136,15 +92,28 @@ export function HistorialPage() {
           <h1 className={styles.title}>Historial de Actividad</h1>
           <p className={styles.subtitle}>Registro de todas las acciones realizadas en el sistema</p>
         </div>
-        <Button
-          variant="secondary"
-          onClick={handleExportClick}
-          icon={Download}
-          iconPosition="left"
-          className={styles.exportButton}
-        >
-          Exportar CSV
-        </Button>
+        <div className={styles.headerActions}>
+          <Button
+            variant="secondary"
+            onClick={handleExportClick}
+            icon={Download}
+            iconPosition="left"
+            className={styles.exportButton}
+            disabled={loading || !actividades || actividades.length === 0}
+          >
+            Exportar CSV
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleClearClick}
+            icon={Trash2}
+            iconPosition="left"
+            className={styles.clearButton}
+            disabled={loading || !actividades || actividades.length === 0}
+          >
+            Limpiar Historial
+          </Button>
+        </div>
       </div>
 
       {/* Filter */}
@@ -154,10 +123,14 @@ export function HistorialPage() {
 
       {/* Activity List */}
       <div className={styles.listSection}>
-        <ActivityList 
-          activities={filteredActivities} 
-          onActivityClick={handleActivityClick}
-        />
+        {loading ? (
+          <SkeletonList items={8} />
+        ) : (
+          <ActivityList 
+            activities={actividades} 
+            onActivityClick={handleActivityClick}
+          />
+        )}
       </div>
 
       {/* Detail Modal */}
@@ -173,10 +146,22 @@ export function HistorialPage() {
         onClose={() => setIsExportModalOpen(false)}
         onConfirm={handleExportConfirm}
         title="Exportar Historial"
-        message={`¿Estás seguro de que deseas exportar ${filteredActivities.length} actividad(es) a CSV?`}
+        message={`¿Estás seguro de que deseas exportar ${actividades.length} actividad(es) a CSV?`}
         confirmText="Exportar"
         cancelText="Cancelar"
         type="info"
+      />
+
+      {/* Clear Confirm Modal */}
+      <ConfirmModal
+        isOpen={isClearModalOpen}
+        onClose={() => setIsClearModalOpen(false)}
+        onConfirm={handleClearConfirm}
+        title="Limpiar Historial"
+        message="¿Estás seguro de que deseas eliminar todo el historial? Esta acción es irreversible y eliminará todos los registros de actividad."
+        confirmText="Limpiar"
+        cancelText="Cancelar"
+        type="danger"
       />
     </div>
   )

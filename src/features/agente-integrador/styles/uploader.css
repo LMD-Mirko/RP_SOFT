@@ -1,0 +1,28 @@
+.uploader {
+  background: var(--card);
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  margin-top: 12px;
+}
+
+.uploader h3 {
+  margin-top: 0;
+  color: var(--text);
+}
+
+.uploader input[type="file"] {
+  margin: 12px 0;
+  padding: 6px;
+}
+
+.analysis {
+  background: #f9fafb;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}

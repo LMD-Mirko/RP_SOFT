@@ -1,4 +1,4 @@
-import { FilePlus, ArrowRight, ClipboardCheck, XCircle, User, Clock, Calendar } from 'lucide-react'
+import { FilePlus, ArrowRight, ClipboardCheck, XCircle, CheckCircle, Trash2, LogIn, LogOut, User, Clock, Calendar } from 'lucide-react'
 import { Modal } from '@shared/components/Modal'
 import clsx from 'clsx'
 import styles from './ActivityDetailModal.module.css'
@@ -13,6 +13,14 @@ const getActivityIcon = (type) => {
       return ClipboardCheck
     case 'rechazo':
       return XCircle
+    case 'aceptacion':
+      return CheckCircle
+    case 'eliminacion':
+      return Trash2
+    case 'login':
+      return LogIn
+    case 'logout':
+      return LogOut
     default:
       return FilePlus
   }
@@ -21,13 +29,21 @@ const getActivityIcon = (type) => {
 const getActivityTypeLabel = (type) => {
   switch (type) {
     case 'creacion':
-      return 'Creación de Convocatoria'
+      return 'Creación'
     case 'cambio':
-      return 'Cambio etapa'
+      return 'Cambio'
     case 'evaluacion':
-      return 'Evaluación registrada'
+      return 'Evaluación'
     case 'rechazo':
-      return 'Postulante rechazado'
+      return 'Rechazo'
+    case 'aceptacion':
+      return 'Aceptación'
+    case 'eliminacion':
+      return 'Eliminación'
+    case 'login':
+      return 'Inicio de sesión'
+    case 'logout':
+      return 'Cierre de sesión'
     default:
       return 'Actividad'
   }
@@ -43,8 +59,38 @@ const getActivityTypeClass = (type) => {
       return styles.typeEvaluacion
     case 'rechazo':
       return styles.typeRechazo
+    case 'aceptacion':
+      return styles.typeAceptacion
+    case 'eliminacion':
+      return styles.typeEliminacion
+    case 'login':
+      return styles.typeLogin
+    case 'logout':
+      return styles.typeLogout
     default:
       return styles.typeDefault
+  }
+}
+
+/**
+ * Formatea un timestamp ISO 8601 a formato legible
+ * @param {string} timestamp - Timestamp en formato ISO 8601
+ * @returns {string} Timestamp formateado
+ */
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return 'Fecha no disponible'
+  try {
+    const date = new Date(timestamp)
+    return date.toLocaleString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    })
+  } catch (error) {
+    return timestamp
   }
 }
 
@@ -92,7 +138,7 @@ export function ActivityDetailModal({ isOpen, onClose, activity }) {
             </div>
             <div className={styles.detailContent}>
               <span className={styles.detailLabel}>Fecha y Hora</span>
-              <p className={styles.detailValue}>{activity.timestamp}</p>
+              <p className={styles.detailValue}>{formatTimestamp(activity.timestamp)}</p>
             </div>
           </div>
         </div>
