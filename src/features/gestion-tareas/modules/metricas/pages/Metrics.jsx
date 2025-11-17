@@ -1,6 +1,5 @@
-import React from 'react'
-import { Share2, CheckCircle2, Gauge, Timer, Target, TrendingUp } from 'lucide-react'
-import { Button } from '../components/ui/Button'
+import React, { useRef } from 'react'
+import { CheckCircle2, Gauge, Timer, Target, TrendingUp } from 'lucide-react'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
 import { Avatar } from '../components/ui/Avatar'
@@ -11,7 +10,8 @@ import { useMetrics } from '../../../hooks/useMetrics'
 import styles from '../styles/pages/Metrics.module.css'
 
 export const Metrics = () => {
-  const { loading, stats, velocity, burndown, team } = useMetrics()
+  const { loading, stats, velocity, burndown, team, range, ranges, changeRange } = useMetrics()
+  const printRef = useRef(null)
 
   if (loading) {
     return (
@@ -25,15 +25,23 @@ export const Metrics = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.content}>
+      <div className={styles.content} ref={printRef}>
         <div className={styles.header}>
           <div>
             <h1 className={styles.title}>Métricas de Tareas</h1>
             <p className={styles.subtitle}>Análisis de desempeño y productividad del equipo</p>
           </div>
           <div className={styles.actions}>
-            <Badge variant="success">Sprint Actual</Badge>
-            <Button variant="light"><Share2 size={18} className={styles.iconLeft} /> Reportar</Button>
+            <select
+              className={styles.select}
+              value={range}
+              onChange={e => changeRange(e.target.value)}
+            >
+              {ranges.map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+              <span class="arrow"></span>
+            </select>
           </div>
         </div>
 

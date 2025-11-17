@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Users, Calendar as CalendarIcon, Clock, User, Link } from 'lucide-react'
 import { Input } from '@shared/components/Input'
 import { Button } from '@shared/components/Button'
 import { DatePicker } from '@shared/components/DatePicker'
 import { Select } from '@shared/components/Select'
+import { useUsers } from '../../../shared/hooks/useUsers'
 import styles from './ScheduleForm.module.css'
 
 const durationOptions = [
@@ -14,27 +15,49 @@ const durationOptions = [
   { value: '90', label: '90 minutos' },
 ]
 
-const interviewerOptions = [
-  { value: 'entrevistador1', label: 'Entrevistador 1' },
-  { value: 'entrevistador2', label: 'Entrevistador 2' },
-  { value: 'entrevistador3', label: 'Entrevistador 3' },
-]
-
 export function ScheduleForm({
   selectedDate,
   onSelectParticipants,
   participants = [],
   onSubmit,
   onCancel,
+  initialData = null,
+  isEditing = false,
+  isLoading = false,
 }) {
-  const [formData, setFormData] = useState({
-    motivo: '',
-    fecha: selectedDate || new Date(),
-    hora: '14:00',
-    duracion: '30',
-    entrevistador: '',
-    enlace: '',
-  })
+  const { users, loadUsers } = useUsers()
+  const [formData, setFormData] = useState(
+    initialData || {
+      title: '',
+      fecha: selectedDate || new Date(),
+      hora: '14:00',
+      duration: '30',
+      interviewer: '',
+      meeting_link: '',
+      description: '',
+    }
+  )
+
+  // Cargar usuarios (admins) para el selector de entrevistador
+  useEffect(() => {
+    loadUsers({ 
+      is_active: true, 
+      role_id: 2, // Solo admins
+      page_size: 100 
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Mapear usuarios a opciones para el select de entrevistador
+  const interviewerOptions = useMemo(() => {
+    return users.map((user) => {
+      const fullName = `${user.name || ''} ${user.paternal_lastname || ''} ${user.maternal_lastname || ''}`.trim() || user.email || 'Sin nombre'
+      return {
+        value: user.id.toString(),
+        label: `${fullName} (${user.email})`,
+      }
+    })
+  }, [users])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -46,10 +69,16 @@ export function ScheduleForm({
   }
 
   useEffect(() => {
-    if (selectedDate) {
+    if (selectedDate && !initialData) {
       setFormData((prev) => ({ ...prev, fecha: selectedDate }))
     }
-  }, [selectedDate])
+  }, [selectedDate, initialData])
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData)
+    }
+  }, [initialData])
 
   const handleSelectChange = (e) => {
     const { name, value } = e.target
@@ -78,11 +107,6 @@ export function ScheduleForm({
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>Agendar reunión</h2>
-        <p className={styles.subtitle}>Selecciona la información necesaria</p>
-      </div>
-
       <form onSubmit={handleSubmit} className={styles.form}>
         <Button
           type="button"
@@ -100,12 +124,12 @@ export function ScheduleForm({
         </Button>
 
         <Input
-          label="Motivo de la reunión"
-          id="motivo"
-          name="motivo"
-          value={formData.motivo}
+          label="Título de la reunión"
+          id="title"
+          name="title"
+          value={formData.title}
           onChange={handleChange}
-          placeholder="Ingrese el motivo"
+          placeholder="Ej: Entrevista técnica, Reunión de seguimiento..."
           required
         />
 
@@ -118,6 +142,7 @@ export function ScheduleForm({
               selected={formData.fecha}
               onChange={handleDateChange}
               placeholder={formatSelectedDate() || 'Seleccionar fecha'}
+              withPortal={true}
             />
           </div>
 
@@ -143,10 +168,10 @@ export function ScheduleForm({
         <div className={styles.formRow}>
           <div className={styles.formGroup}>
             <Select
-              label="Duracion"
-              id="duracion"
-              name="duracion"
-              value={formData.duracion}
+              label="Duración"
+              id="duration"
+              name="duration"
+              value={formData.duration}
               onChange={handleSelectChange}
               options={durationOptions}
               placeholder="Seleccionar duración"
@@ -157,27 +182,37 @@ export function ScheduleForm({
           <div className={styles.formGroup}>
             <Select
               label="Entrevistador"
-              id="entrevistador"
-              name="entrevistador"
-              value={formData.entrevistador}
+              id="interviewer"
+              name="interviewer"
+              value={formData.interviewer}
               onChange={handleSelectChange}
               options={interviewerOptions}
               placeholder="Seleccionar entrevistador"
               required
+              disabled={interviewerOptions.length === 0}
             />
           </div>
         </div>
 
         <Input
-          label="Enlace de la reunion"
-          id="enlace"
-          name="enlace"
+          label="Enlace de la reunión (opcional)"
+          id="meeting_link"
+          name="meeting_link"
           type="url"
-          value={formData.enlace}
+          value={formData.meeting_link}
           onChange={handleChange}
-          placeholder="Link de la reunion"
+          placeholder="https://meet.google.com/..."
           icon={Link}
           iconPosition="left"
+        />
+
+        <Input
+          label="Descripción (opcional)"
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Descripción adicional de la reunión"
         />
 
         <div className={styles.actions}>
@@ -186,6 +221,7 @@ export function ScheduleForm({
             variant="secondary"
             onClick={onCancel}
             fullWidth
+            disabled={isLoading}
           >
             Cancelar
           </Button>
@@ -193,8 +229,10 @@ export function ScheduleForm({
             type="submit"
             variant="primary"
             fullWidth
+            loading={isLoading}
+            disabled={isLoading}
           >
-            Crear
+            {isEditing ? 'Guardar Cambios' : 'Crear'}
           </Button>
         </div>
       </form>

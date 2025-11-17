@@ -1,0 +1,2 @@
+export { ListaEvaluacionesPage } from './ListaEvaluacionesPage'
+

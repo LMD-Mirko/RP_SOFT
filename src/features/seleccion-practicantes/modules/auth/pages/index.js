@@ -1,0 +1,6 @@
+export { LoginPage } from './login'
+export { RegisterPage } from './register'
+export { RegisterAdminPage } from './registeradmin'
+export { OAuthCallbackPage } from './oauth-callback'
+export { ForgotPasswordPage } from './forgot-password'
+export { ResetPasswordPage } from './reset-password'

@@ -1,0 +1,30 @@
+.container { padding: 32px 40px; background: #f9fafb; min-height: 100vh; }
+.header { margin-bottom: 16px; }
+.title { font-size: 28px; font-weight: 700; color: #111827; }
+.subtitle { font-size: 14px; color: #6b7280; }
+
+.blockSuccess, .blockError {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  margin: 18px 0;
+  border: 2px solid transparent;
+  transition: transform .15s ease, box-shadow .15s ease;
+  animation: fadeInUp .3s ease both;
+}
+.blockSuccess { border-color: #86efac; background: #ecfdf5; }
+.blockError { border-color: #fca5a5; background: #fee2e2; }
+.blockSuccess:hover, .blockError:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+
+.blockHeader { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.blockTitle { font-weight: 700; color: #111827; }
+.successIcon { color: #10b981; }
+.errorIcon { color: #ef4444; }
+.blockText { color: #374151; }
+
+.errorBox { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; color: #374151; }
+.blockActions { margin-top: 12px; }
+
+.footerActions { display: flex; justify-content: center; margin-top: 18px; }
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
