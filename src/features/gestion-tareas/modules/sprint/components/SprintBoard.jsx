@@ -7,6 +7,7 @@ import { Button } from '../../../components/ui/Button'
 import { Modal } from '../../../components/ui/Modal'
 import { Progress } from '../../../components/ui/Progress'
 import { useToast } from '../../../components/ui/ToastProvider'
+import { Select } from '../../../components/ui/Select'
 import styles from './SprintBoard.module.css'
 
 function ColumnCard({ card, columnId, onEdit, onDelete, onMoveWithin, onHoverWithin, onHoverLeave, dense }) {
@@ -169,18 +170,7 @@ function Column({ column, members, onAdd, onMove, onEdit, onDelete, forceOpen = 
           <button
             className="h-8 w-8 inline-flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-100 text-gray-600 whitespace-nowrap focus-visible:outline-none"
             aria-label="Opciones de columna"
-            onClick={() => {
-              const action = window.prompt('Acción: renombrar / eliminar', 'renombrar')
-              if (!action) return
-              if (/eliminar/i.test(action)) {
-                onDelete?.('column', { id: column.id, titulo: column.titulo })
-              } else if (/renombrar/i.test(action)) {
-                const name = window.prompt('Nuevo nombre de la columna', column.titulo)
-                if (name != null) {
-                  onEdit?.('column', { id: column.id, titulo: name })
-                }
-              }
-            }}
+            onClick={() => setColOptions({ id: column.id, titulo: column.titulo })}
           >
             <Ellipsis size={18} />
           </button>
@@ -264,16 +254,12 @@ function Column({ column, members, onAdd, onMove, onEdit, onDelete, forceOpen = 
                   placeholder="Tags (coma separada)"
                   className={`${styles.formInput}`}
                 />
-                <select
-                  value={owner}
-                  onChange={(e) => setOwner(e.target.value)}
-                  className={styles.formSelect}
-                >
+                <Select value={owner} onChange={(e) => setOwner(e.target.value)} className={styles.formSelect}>
                   <option value="">Asignar</option>
                   {members?.map((m) => (
                     <option key={m.id} value={m.iniciales}>{m.iniciales}</option>
                   ))}
-                </select>
+                </Select>
               </div>
               <div className={styles.formRow}>
                 <Button onClick={handleCreate} className={`h-9 px-3 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600`}>Crear</Button>
@@ -438,6 +424,9 @@ export function SprintBoard() {
   const [canLeft, setCanLeft] = useState(false)
   const [canRight, setCanRight] = useState(false)
   const toast = useToast()
+  const colRefs = useRef({})
+  const [colOptions, setColOptions] = useState(null)
+  const [renameValue, setRenameValue] = useState('')
 
   const presetLabels = ['Prioridad Alta', 'Back-End', 'Front-End', 'Seguridad', 'Base de Datos', 'Diseño']
   const [q, setQ] = useState('')
@@ -556,7 +545,7 @@ export function SprintBoard() {
                   <Share2 size={18} className={styles.shareIcon} /> Compartir
                 </Button>
                 <Button
-                  variant="dark"
+                  variant="primary"
                   onClick={() => setOpenColumnId(columns?.[0]?.id || null)}
                   className={`${styles.actionBtn} ${styles.addColumnButton}`}
                 >
@@ -582,26 +571,18 @@ export function SprintBoard() {
                 className={styles.input}
               />
               <div className={styles.filtersRow}>
-                <select
-                  value={ownerFilter}
-                  onChange={e => setOwnerFilter(e.target.value)}
-                  className={styles.select}
-                >
+                <Select value={ownerFilter} onChange={e => setOwnerFilter(e.target.value)} className={styles.select}>
                   <option value="">Owner</option>
                   {members.map(m => (
                     <option key={m.id} value={m.iniciales}>{m.iniciales}</option>
                   ))}
-                </select>
-                <select
-                  value={tagFilter}
-                  onChange={e => setTagFilter(e.target.value)}
-                  className={styles.select}
-                >
+                </Select>
+                <Select value={tagFilter} onChange={e => setTagFilter(e.target.value)} className={styles.select}>
                   <option value="">Etiqueta</option>
                   {presetLabels.map(t => (
                     <option key={t} value={t.toLowerCase()}>{t}</option>
                   ))}
-                </select>
+                </Select>
               </div>
             </div>
           </div>
@@ -651,7 +632,13 @@ export function SprintBoard() {
             <div className={styles.columnsRow} role="list" aria-label="Columnas del sprint">
               <div style={{ width: 8, flex: '0 0 auto' }} />
               {columns.map(col => (
-                <div key={col.id} role="listitem" aria-label={`Columna ${col.titulo}`} className={styles.columnContainer}>
+                <div
+                  key={col.id}
+                  role="listitem"
+                  aria-label={`Columna ${col.titulo}`}
+                  className={styles.columnContainer}
+                  ref={(el) => { if (el) colRefs.current[col.id] = el }}
+                >
                   <Column
                     column={col}
                     members={members}
@@ -683,7 +670,11 @@ export function SprintBoard() {
                       });
                     }}
                     forceOpen={openColumnId === col.id}
-                    onOpened={() => setOpenColumnId(null)}
+                    onOpened={() => {
+                      setOpenColumnId(null)
+                      const el = colRefs.current[col.id]
+                      if (el) el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+                    }}
                     filters={{ q, owner: ownerFilter, tag: tagFilter }}
                     dense={dense}
                   />
@@ -725,6 +716,51 @@ export function SprintBoard() {
           )}
         >
           <p className="text-sm text-gray-600">{confirmDlg?.message}</p>
+        </Modal>
+
+        <Modal
+          open={!!colOptions}
+          onClose={() => { setColOptions(null); setRenameValue('') }}
+          title="Opciones de columna"
+          footer={(
+            <>
+              <Button variant="light" className="h-9 px-4" onClick={() => { setColOptions(null); setRenameValue('') }}>Cerrar</Button>
+              <Button className="h-9 px-4" onClick={() => {
+                if (!renameValue.trim()) return
+                renameColumn(colOptions.id, renameValue.trim())
+                toast.info('Columna renombrada', `"${renameValue.trim()}"`)
+                setColOptions(null)
+                setRenameValue('')
+              }}>Guardar</Button>
+            </>
+          )}
+        >
+          <div className="space-y-4">
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Nombre actual</div>
+              <div className="text-gray-800">{colOptions?.titulo}</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Nuevo nombre</div>
+              <input
+                type="text"
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                className="h-10 w-full rounded-lg border border-gray-300 px-3"
+                placeholder="Ej. En progreso"
+              />
+            </div>
+            <div className="pt-2">
+              <Button variant="secondary" className="h-9 px-4" onClick={() => {
+                setConfirmDlg({
+                  title: 'Eliminar columna',
+                  message: `¿Seguro que deseas eliminar la columna "${colOptions?.titulo}"? Esta acción no se puede deshacer.`,
+                  onConfirm: () => { if (colOptions?.id) { deleteColumn(colOptions.id); toast.error('Columna eliminada', `"${colOptions?.titulo}"`) } },
+                })
+                setColOptions(null)
+              }}>Eliminar columna</Button>
+            </div>
+          </div>
         </Modal>
       </div>
     </div>

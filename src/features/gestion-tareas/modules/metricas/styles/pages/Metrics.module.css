@@ -114,11 +114,17 @@
   box-shadow: var(--metrics-shadow-sm);
   transition: transform 300ms ease-in-out, box-shadow 300ms ease-in-out; /* 300ms duration */
   will-change: transform, box-shadow;
+  animation: fadeInUp 300ms ease both;
 }
 
 .panel:hover {
   box-shadow: var(--metrics-shadow-xl); /* hover:shadow-xl */
   transform: scale(1.03);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .panelHeader {
