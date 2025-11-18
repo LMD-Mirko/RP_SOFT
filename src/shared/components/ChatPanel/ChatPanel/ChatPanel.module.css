@@ -114,6 +114,10 @@
   font-size: 1rem;
   line-height: 1.6;
   word-wrap: break-word;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .messageUser .messageBubble {
@@ -123,11 +127,64 @@
 }
 
 .messageBot .messageBubble {
-  background: #f3f4f6;
+  background: transparent;
   color: #111827;
   border: none;
   border-bottom-left-radius: 0.5rem;
   font-weight: 400;
+}
+
+.messageActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: none;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6b7280;
+  font-size: 0.875rem;
+  position: relative;
+}
+
+.actionButton:hover {
+  color: #374151;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.actionButtonActive {
+  color: #3b82f6;
+}
+
+.actionButtonActive:hover {
+  color: #2563eb;
+}
+
+.copiedText {
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  animation: fadeInOut 0.3s ease;
+}
+
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 

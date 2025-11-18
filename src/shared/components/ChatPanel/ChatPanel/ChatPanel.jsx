@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
-import { Plus, Mic, Send, FileText, FileSpreadsheet } from 'lucide-react'
+import { Plus, Mic, Send, FileText, FileSpreadsheet, Copy, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
 import { ChatSidebar } from '../ChatSidebar/ChatSidebar'
 import styles from './ChatPanel.module.css'
@@ -14,6 +14,8 @@ export function ChatPanel() {
   const [menuPosition, setMenuPosition] = useState('top')
   const [placeholderIndex, setPlaceholderIndex] = useState(0)
   const [isRecording, setIsRecording] = useState(false)
+  const [messageFeedback, setMessageFeedback] = useState({}) // { messageIndex: 'like' | 'dislike' }
+  const [copiedIndex, setCopiedIndex] = useState(null)
 
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
@@ -113,6 +115,13 @@ export function ChatPanel() {
         ...prev,
         { text: 'Gracias por tu mensaje. ¿En qué más puedo ayudarte?', who: 'bot' },
       ])
+      // Resetear feedback para el nuevo mensaje del bot
+      setMessageFeedback(prev => {
+        const newFeedback = { ...prev }
+        const botMessageIndex = messages.length + 1
+        delete newFeedback[botMessageIndex]
+        return newFeedback
+      })
     }, 500)
   }
 
@@ -244,6 +253,35 @@ export function ChatPanel() {
       { text: chatTitle.replace('...', ''), who: 'user' },
       { text: response, who: 'bot' }
     ])
+    setMessageFeedback({})
+  }
+
+  const handleCopy = async (text, index) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedIndex(index)
+      setTimeout(() => setCopiedIndex(null), 2000)
+    } catch (err) {
+      console.error('Error al copiar:', err)
+    }
+  }
+
+  const handleLike = (index) => {
+    setMessageFeedback(prev => ({
+      ...prev,
+      [index]: prev[index] === 'like' ? null : 'like'
+    }))
+    // Aquí puedes agregar lógica para enviar el feedback al backend para entrenar el modelo
+    console.log('Like en mensaje', index, messages[index])
+  }
+
+  const handleDislike = (index) => {
+    setMessageFeedback(prev => ({
+      ...prev,
+      [index]: prev[index] === 'dislike' ? null : 'dislike'
+    }))
+    // Aquí puedes agregar lógica para enviar el feedback al backend para entrenar el modelo
+    console.log('Dislike en mensaje', index, messages[index])
   }
 
   const renderInputBar = () => (
@@ -368,19 +406,63 @@ export function ChatPanel() {
         ) : (
           <>
             <div className={styles.chatMessages}>
-              {messages.map((msg, index) => (
-                <div
-                  key={`${msg.who}-${index}`}
-                  className={clsx(
-                    styles.message,
-                    msg.who === 'user' ? styles.messageUser : styles.messageBot,
-                  )}
-                >
-                  <div className={styles.messageBubble}>
-                    {msg.text}
+              {messages.map((msg, index) => {
+                const isBot = msg.who === 'bot'
+                const feedback = messageFeedback[index]
+                const isCopied = copiedIndex === index
+
+                return (
+                  <div
+                    key={`${msg.who}-${index}`}
+                    className={clsx(
+                      styles.message,
+                      msg.who === 'user' ? styles.messageUser : styles.messageBot,
+                    )}
+                  >
+                    <div className={styles.messageBubble}>
+                      {msg.text}
+                      {isBot && (
+                        <div className={styles.messageActions}>
+                          <button
+                            className={clsx(
+                              styles.actionButton,
+                              isCopied && styles.actionButtonActive
+                            )}
+                            onClick={() => handleCopy(msg.text, index)}
+                            title="Copiar mensaje"
+                            aria-label="Copiar mensaje"
+                          >
+                            <Copy size={16} />
+                            {isCopied && <span className={styles.copiedText}>Copiado</span>}
+                          </button>
+                          <button
+                            className={clsx(
+                              styles.actionButton,
+                              feedback === 'like' && styles.actionButtonActive
+                            )}
+                            onClick={() => handleLike(index)}
+                            title="Me gusta"
+                            aria-label="Me gusta"
+                          >
+                            <ThumbsUp size={16} />
+                          </button>
+                          <button
+                            className={clsx(
+                              styles.actionButton,
+                              feedback === 'dislike' && styles.actionButtonActive
+                            )}
+                            onClick={() => handleDislike(index)}
+                            title="No me gusta"
+                            aria-label="No me gusta"
+                          >
+                            <ThumbsDown size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
               <div ref={messagesEndRef} />
             </div>
             {renderInputBar()}
