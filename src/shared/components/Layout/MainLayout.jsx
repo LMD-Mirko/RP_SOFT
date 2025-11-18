@@ -7,18 +7,21 @@ import { useChatPanel } from '@shared/context/ChatPanelContext'
 export function MainLayout() {
   const location = useLocation()
   const { isOpen: isChatOpen } = useChatPanel()
-  const isModuleRoute = location.pathname !== '/' && 
-    !location.pathname.startsWith('/configuracion') &&
-    !location.pathname.startsWith('/directorio-practicantes') &&
-    (location.pathname.startsWith('/seleccion-practicantes') ||
-     location.pathname.startsWith('/transcripcion-reuniones') ||
-     location.pathname.startsWith('/gestion-tareas') ||
-     location.pathname.startsWith('/asistencia-horario') ||
-     location.pathname.startsWith('/evaluacion-360') ||
-     location.pathname.startsWith('/convenios-constancias'))
+  const modulePrefixes = [
+    '/configuracion',
+    '/seleccion-practicantes',
+    '/transcripcion-reuniones',
+    '/gestion-tareas',
+    '/asistencia-horario',
+    '/evaluacion-360',
+    '/convenios-constancias',
+  ]
+  const isModuleRoute =
+    location.pathname !== '/' &&
+    modulePrefixes.some((prefix) => location.pathname.startsWith(prefix))
 
-  // En módulos: el Layout del módulo incluye Header + Sidebar
-  // En dashboard/configuración: Header + Sidebar principal aquí
+  // En módulos (incluye Configuración General): el Layout del módulo maneja Header + Sidebar
+  // En dashboard: Header + Sidebar principal aquí
   if (isModuleRoute) {
     return (
       <div className="h-screen bg-gray-50">
