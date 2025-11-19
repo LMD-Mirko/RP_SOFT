@@ -23,8 +23,7 @@
 
 .selectWrapper {
   position: relative;
-  z-index: 1;
-  isolation: isolate;
+  z-index: auto;
   width: 100%;
 }
 
@@ -98,17 +97,18 @@
 }
 
 .dropdown {
-  position: fixed;
+  position: fixed !important;
   background-color: white;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  z-index: 1001;
+  z-index: 99999 !important;
   overflow: hidden;
   animation: slideDown 0.2s ease-out;
   max-height: 250px;
   overflow-y: auto;
   box-sizing: border-box;
+  isolation: isolate;
 }
 
 .dropdown::-webkit-scrollbar {

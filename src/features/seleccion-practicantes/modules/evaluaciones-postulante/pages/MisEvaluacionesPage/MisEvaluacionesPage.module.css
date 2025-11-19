@@ -1,0 +1,164 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0;
+}
+
+.filters {
+  margin-bottom: 24px;
+}
+
+.filterSelect {
+  padding: 10px 16px;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  color: var(--color-text, #111827);
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: var(--color-primary, #3b82f6);
+}
+
+.tableContainer {
+  background: white;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.evaluationInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.evaluationTitle {
+  font-weight: 600;
+  color: var(--color-text, #111827);
+  font-size: 15px;
+}
+
+.evaluationDescription {
+  font-size: 13px;
+  color: var(--color-text-secondary, #6b7280);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--color-bg-secondary, #f9fafb);
+}
+
+.iconGraded {
+  color: var(--color-success, #10b981);
+}
+
+.iconSubmitted {
+  color: var(--color-warning, #f59e0b);
+}
+
+.iconInProgress {
+  color: var(--color-primary, #3b82f6);
+}
+
+.iconExpired {
+  color: var(--color-error, #ef4444);
+}
+
+.scoreInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  justify-content: center;
+}
+
+.scoreValue {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-text, #111827);
+}
+
+.scoreTotal {
+  font-size: 14px;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.scorePercentage {
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.noScore {
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.date {
+  font-size: 14px;
+  color: var(--color-text, #111827);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.actionButton {
+  white-space: nowrap;
+}
+
+.pagination {
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .evaluationDescription {
+    max-width: 200px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actionButton {
+    width: 100%;
+  }
+}
+

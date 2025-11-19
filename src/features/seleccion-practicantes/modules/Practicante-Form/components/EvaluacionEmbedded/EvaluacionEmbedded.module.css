@@ -1,0 +1,439 @@
+.container {
+  width: 100%;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  border-radius: 0.875rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.description {
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.progressSection {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.progressInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 600;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.progressInfoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #86efac, #6ee7b7, #5eead4, #7dd3fc);
+  background-size: 200% 100%;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 9999px;
+  animation: gradientShift 3s ease infinite;
+  box-shadow: 0 2px 8px rgba(134, 239, 172, 0.4);
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.questionsNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  border-radius: 0.875rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+}
+
+.questionNavItem {
+  width: 42px;
+  height: 42px;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.625rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  color: #111827;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.questionNavItem::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.questionNavItem:hover {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.questionNavItem:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.questionNavItemActive {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+  }
+}
+
+.questionNavItemAnswered {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #10b981;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.questionNavItemAnswered:hover {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.allQuestionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.questionWrapper {
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.questionWrapper:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.questionWrapper:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.questionWrapper:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.questionWrapper:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.questionWrapper:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.questionWrapper:nth-child(n+6) {
+  animation-delay: 0.6s;
+}
+
+.questionSection {
+  margin-bottom: 1.5rem;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+  margin-top: 2rem;
+}
+
+.actionsLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-right: auto;
+}
+
+.saveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  color: #059669;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-radius: 0.625rem;
+  border: 1.5px solid #86efac;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  animation: shimmer 2s ease-in-out infinite;
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.1);
+}
+
+.saveIndicator svg {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.actionsRight {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.finalizeButton {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.625rem !important;
+  padding: 0.875rem 2rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  border-radius: 0.75rem !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
+  border: none !important;
+  color: white !important;
+  min-width: 200px;
+  flex-direction: row !important;
+  white-space: nowrap !important;
+}
+
+.finalizeButton:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+  background: linear-gradient(135deg, #111827 0%, #030712 100%) !important;
+}
+
+.finalizeButton:active:not(:disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.finalizeButton:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+}
+
+.finalizeButton svg {
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.finalizeButton span {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  border-radius: 0.875rem;
+  border: 1px solid #e5e7eb;
+}
+
+.noEvaluation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  gap: 1.5rem;
+  color: #6b7280;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  border-radius: 0.875rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.noEvaluation h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.noEvaluation p {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.25rem;
+  }
+
+  .actionsRight {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .actionsRight button {
+    width: 100%;
+  }
+
+  .questionNavItem {
+    width: 38px;
+    height: 38px;
+    font-size: 0.875rem;
+  }
+}

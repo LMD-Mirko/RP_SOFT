@@ -98,3 +98,139 @@ export const deleteConvocatoria = async (id) => {
   }
 };
 
+// ============================================
+// MÉTODOS PARA GESTIÓN DE ENCUESTAS
+// ============================================
+
+/**
+ * Obtiene las 4 encuestas de una convocatoria
+ * @param {number} jobPostingId - ID de la convocatoria
+ * @param {boolean} includeQuestions - Si incluir preguntas (default: false)
+ * @returns {Promise} Objeto con las 4 encuestas
+ */
+export const getEvaluacionesAll = async (jobPostingId, includeQuestions = false) => {
+  try {
+    return await get(`convocatorias/${jobPostingId}/evaluations/all/?include_questions=${includeQuestions}`);
+  } catch (error) {
+    console.error('Error al obtener evaluaciones:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene una evaluación específica con sus preguntas
+ * @param {number} jobPostingId - ID de la convocatoria
+ * @param {string} evaluationType - Tipo de evaluación (profile, technical, psychological, motivation)
+ * @returns {Promise} Evaluación con preguntas y opciones
+ */
+export const getEvaluacionByType = async (jobPostingId, evaluationType) => {
+  try {
+    return await get(`convocatorias/${jobPostingId}/evaluations/${evaluationType}/?include_questions=true`);
+  } catch (error) {
+    console.error('Error al obtener evaluación:', error);
+    throw error;
+  }
+};
+
+/**
+ * Crea una nueva pregunta para una evaluación
+ * @param {string} evaluationId - ID de la evaluación (UUID)
+ * @param {Object} data - Datos de la pregunta { text, order, is_active }
+ * @returns {Promise} Pregunta creada
+ */
+export const createQuestion = async (evaluationId, data) => {
+  try {
+    return await post(`evaluations/${evaluationId}/questions/`, data);
+  } catch (error) {
+    console.error('Error al crear pregunta:', error);
+    throw error;
+  }
+};
+
+/**
+ * Actualiza una pregunta
+ * @param {string} questionId - ID de la pregunta (UUID)
+ * @param {Object} data - Datos a actualizar { text, order, is_active }
+ * @returns {Promise} Pregunta actualizada
+ */
+export const updateQuestion = async (questionId, data) => {
+  try {
+    return await patch(`questions/${questionId}/`, data);
+  } catch (error) {
+    console.error('Error al actualizar pregunta:', error);
+    throw error;
+  }
+};
+
+/**
+ * Elimina una pregunta
+ * @param {string} questionId - ID de la pregunta (UUID)
+ * @returns {Promise} Resultado de la operación
+ */
+export const deleteQuestion = async (questionId) => {
+  try {
+    return await del(`questions/${questionId}/`);
+  } catch (error) {
+    console.error('Error al eliminar pregunta:', error);
+    throw error;
+  }
+};
+
+/**
+ * Crea una nueva opción para una pregunta
+ * @param {string} questionId - ID de la pregunta (UUID)
+ * @param {Object} data - Datos de la opción { text, is_correct, order }
+ * @returns {Promise} Opción creada
+ */
+export const createOption = async (questionId, data) => {
+  try {
+    return await post(`questions/${questionId}/options/`, data);
+  } catch (error) {
+    console.error('Error al crear opción:', error);
+    throw error;
+  }
+};
+
+/**
+ * Actualiza una opción
+ * @param {string} optionId - ID de la opción (UUID)
+ * @param {Object} data - Datos a actualizar { text, is_correct, order }
+ * @returns {Promise} Opción actualizada
+ */
+export const updateOption = async (optionId, data) => {
+  try {
+    return await patch(`answer-options/${optionId}/`, data);
+  } catch (error) {
+    console.error('Error al actualizar opción:', error);
+    throw error;
+  }
+};
+
+/**
+ * Elimina una opción
+ * @param {string} optionId - ID de la opción (UUID)
+ * @returns {Promise} Resultado de la operación
+ */
+export const deleteOption = async (optionId) => {
+  try {
+    return await del(`answer-options/${optionId}/`);
+  } catch (error) {
+    console.error('Error al eliminar opción:', error);
+    throw error;
+  }
+};
+
+/**
+ * Crea o actualiza una evaluación completa desde JSON
+ * @param {Object} jsonData - Datos JSON con evaluation y questions
+ * @returns {Promise} Resultado con la evaluación creada/actualizada y estadísticas
+ */
+export const createEvaluationFromJson = async (jsonData) => {
+  try {
+    return await post('evaluations/create-from-json/', jsonData);
+  } catch (error) {
+    console.error('Error al crear evaluación desde JSON:', error);
+    throw error;
+  }
+};
+

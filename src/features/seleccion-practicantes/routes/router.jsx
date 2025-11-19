@@ -8,20 +8,20 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
-import { ConvocatoriasPage } from '../modules/convocatorias/pages'
+import { ConvocatoriasPage, GestionEncuestasPage, GestionPreguntasPage } from '../modules/convocatorias/pages'
 import { PostulantesPage } from '../modules/postulantes/pages'
 import { CVsPage } from '../modules/cv/pages'
 import { CVsAdminPage } from '../modules/cvs-admin/pages'
 import { CalendarioPage } from '../modules/Calendario/pages'
 import { EvaluacionesRouter } from '../modules/gest.. evaluaciones/routes/EvaluacionesRouter'
+import { EvaluacionPage, ResultadosEvaluacionPage, MisEvaluacionesPage } from '../modules/evaluaciones-postulante/pages'
 import { HistorialPage } from '../modules/historial/pages'
 import { PostulacionPage } from '../modules/Practicante-Form/pages'
-import { PerfilPage } from '../modules/perfil/pages'
-import { UsuariosPage } from '../modules/usuarios/pages'
-import { RolesPage } from '../modules/roles/pages'
+import { SeleccionarConvocatoriaPage } from '../modules/Practicante-Form/pages/SeleccionarConvocatoriaPage'
 import { EspecialidadesPage } from '../modules/especialidades/pages'
-import { TiposDocumentoPage } from '../modules/tipos-documento/pages'
+import { GestionExamenPage, RealizarExamenPage, ExamenesPage, MisExamenesPage } from '../modules/examenes/pages'
 import { RequireRole } from './RequireRole'
+import { RequirePostulante } from './RequirePostulante'
 import { TranscripcionesPage } from '@features/transcripcion-reuniones'
 
 /**
@@ -32,25 +32,55 @@ import { TranscripcionesPage } from '@features/transcripcion-reuniones'
 export function ModuleRouter() {
   return (
     <Routes>
-      {/* Ruta pública de postulación (sin Layout) */}
+      {/* Rutas públicas de postulación (sin Layout) */}
+      <Route path="seleccionar-convocatoria" element={<SeleccionarConvocatoriaPage />} />
       <Route path="postulacion" element={<PostulacionPage />} />
       
       {/* Rutas con Layout (requieren autenticación) */}
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
         
-        {/* Rutas de Reclutamiento */}
+        {/* Rutas de Reclutamiento - Solo Admin */}
         <Route
           path="convocatorias"
-          element={<ConvocatoriasPage />}
+          element={
+            <RequireRole requireAdmin={true}>
+              <ConvocatoriasPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="convocatorias/:jobPostingId/encuestas"
+          element={
+            <RequireRole requireAdmin={true}>
+              <GestionEncuestasPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="convocatorias/:jobPostingId/encuestas/:evaluationType"
+          element={
+            <RequireRole requireAdmin={true}>
+              <GestionPreguntasPage />
+            </RequireRole>
+          }
         />
         <Route
           path="postulantes"
-          element={<PostulantesPage />}
+          element={
+            <RequireRole requireAdmin={true}>
+              <PostulantesPage />
+            </RequireRole>
+          }
         />
+        {/* Ver CV/s - Solo Postulante */}
         <Route
           path="cvs"
-          element={<CVsPage />}
+          element={
+            <RequirePostulante>
+              <CVsPage />
+            </RequirePostulante>
+          }
         />
         <Route
           path="cvs-admin"
@@ -61,7 +91,33 @@ export function ModuleRouter() {
           }
         />
         
-        {/* Rutas de Gestión */}
+        {/* Rutas de Evaluaciones para Postulantes (deben ir antes del wildcard) - Solo Postulante */}
+        <Route
+          path="evaluaciones/mis-evaluaciones"
+          element={
+            <RequirePostulante>
+              <MisEvaluacionesPage />
+            </RequirePostulante>
+          }
+        />
+        <Route
+          path="evaluaciones/:evaluationId/completar"
+          element={
+            <RequirePostulante>
+              <EvaluacionPage />
+            </RequirePostulante>
+          }
+        />
+        <Route
+          path="evaluaciones/:evaluationId/resultados"
+          element={
+            <RequirePostulante>
+              <ResultadosEvaluacionPage />
+            </RequirePostulante>
+          }
+        />
+        
+        {/* Rutas de Gestión de Evaluaciones (Admin) */}
         <Route
           path="evaluaciones/*"
           element={
@@ -70,27 +126,21 @@ export function ModuleRouter() {
             </RequireRole>
           }
         />
+        {/* Calendario - Solo Admin */}
         <Route
           path="calendario"
-          element={<CalendarioPage />}
-        />
-        <Route
-          path="historial"
-          element={<HistorialPage />}
-        />
-        <Route
-          path="usuarios"
           element={
             <RequireRole requireAdmin={true}>
-              <UsuariosPage />
+              <CalendarioPage />
             </RequireRole>
           }
         />
+        {/* Historial - Solo Admin */}
         <Route
-          path="roles"
+          path="historial"
           element={
             <RequireRole requireAdmin={true}>
-              <RolesPage />
+              <HistorialPage />
             </RequireRole>
           }
         />
@@ -102,24 +152,35 @@ export function ModuleRouter() {
             </RequireRole>
           }
         />
+        {/* Rutas de Exámenes */}
         <Route
-          path="tipos-documento"
+          path="examenes"
           element={
             <RequireRole requireAdmin={true}>
-              <TiposDocumentoPage />
+              <ExamenesPage />
             </RequireRole>
           }
+        />
+        <Route
+          path="examenes/:examId/gestionar"
+          element={
+            <RequireRole requireAdmin={true}>
+              <GestionExamenPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="examenes/:examId/realizar"
+          element={<RealizarExamenPage />}
+        />
+        <Route
+          path="examenes/mis-examenes"
+          element={<MisExamenesPage />}
         />
         {/* Transcripción: enlaza a la vista del módulo transcripcion-reuniones */}
         <Route
           path="transcripciones"
           element={<TranscripcionesPage />}
-        />
-        
-        {/* Rutas de Cuenta */}
-        <Route
-          path="perfil"
-          element={<PerfilPage />}
         />
         <Route
           path="configuracion"

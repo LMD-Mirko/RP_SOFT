@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Bell, User, Calendar, Clock, Users, Video, Loader2 } from 'lucide-react'
+import { Bell, User, Calendar, Clock, Users, Video, Loader2, BookOpen, Play } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useUserProfile } from '@shared/context/UserProfileContext'
 import styles from './Header.module.css'
@@ -36,28 +36,33 @@ export function Header() {
       
       const queryParams = new URLSearchParams()
       queryParams.append('upcoming', 'true')
-      queryParams.append('page_size', '10')
+      queryParams.append('page_size', '20')
 
       const endpoint = `meetings/my-meetings/?${queryParams.toString()}`
       const response = await get(endpoint)
       
-      // Filtrar reuniones que ya pasaron
       const now = new Date()
-      const upcomingMeetings = (response.results || []).filter((meeting) => {
-        if (!meeting.date || !meeting.time) return false
-        
-        // Crear fecha completa de la reunión
-        const [year, month, day] = meeting.date.split('-').map(Number)
-        const [hours, minutes] = meeting.time.substring(0, 5).split(':').map(Number)
-        const meetingDateTime = new Date(year, month - 1, day, hours, minutes)
-        
-        // Solo mostrar si la fecha/hora es futura
-        return meetingDateTime > now
+      const allItems = (response.results || []).filter((item) => {
+        if (item.type === 'meeting') {
+          if (!item.date || !item.time) return false
+          const [year, month, day] = item.date.split('-').map(Number)
+          const [hours, minutes] = item.time.substring(0, 5).split(':').map(Number)
+          const meetingDateTime = new Date(year, month - 1, day, hours, minutes)
+          return meetingDateTime > now
+        } else if (item.type === 'exam') {
+          // Filtrar exámenes que aún no han expirado
+          if (item.end_date) {
+            const endDate = new Date(item.end_date)
+            return endDate > now
+          }
+          return true
+        }
+        return false
       })
       
-      setMeetings(upcomingMeetings)
+      setMeetings(allItems)
     } catch (error) {
-      console.error('Error al cargar reuniones:', error)
+      console.error('Error al cargar notificaciones:', error)
       setMeetings([])
     } finally {
       setLoading(false)
@@ -135,7 +140,14 @@ export function Header() {
     return `${hour12}:${minutes} ${ampm}`
   }
 
-  const upcomingMeetingsCount = meetings.length
+  const upcomingCount = meetings.length
+  const meetingsCount = meetings.filter(m => m.type === 'meeting').length
+  const examsCount = meetings.filter(m => m.type === 'exam').length
+
+  const handleExamClick = (examId) => {
+    navigate(`/seleccion-practicantes/examenes/${examId}/realizar`)
+    setIsNotificationsOpen(false)
+  }
 
   return (
     <header className={styles.header}>
@@ -148,7 +160,7 @@ export function Header() {
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
             >
               <Bell size={20} className={styles.icon} />
-              {upcomingMeetingsCount > 0 && (
+              {upcomingCount > 0 && (
                 <span className={styles.notificationBadge}></span>
               )}
             </button>
@@ -165,11 +177,11 @@ export function Header() {
             {isNotificationsOpen && (
               <div className={styles.notificationsDropdown}>
                 <div className={styles.notificationsHeader}>
-                  <h3 className={styles.notificationsTitle}>Mis Reuniones</h3>
+                  <h3 className={styles.notificationsTitle}>Notificaciones</h3>
                   <span className={styles.notificationsSubtitle}>
-                    {upcomingMeetingsCount > 0 
-                      ? `${upcomingMeetingsCount} reunión${upcomingMeetingsCount > 1 ? 'es' : ''} próximas`
-                      : 'No hay reuniones próximas'}
+                    {upcomingCount > 0 
+                      ? `${meetingsCount} reunión${meetingsCount !== 1 ? 'es' : ''}, ${examsCount} examen${examsCount !== 1 ? 'es' : ''}`
+                      : 'No hay notificaciones'}
                   </span>
                 </div>
 
@@ -177,53 +189,104 @@ export function Header() {
                   {loading ? (
                     <div className={styles.loadingState}>
                       <Loader2 size={24} className={styles.spinner} />
-                      <p>Cargando reuniones...</p>
+                      <p>Cargando notificaciones...</p>
                     </div>
                   ) : meetings.length > 0 ? (
                     <div className={styles.meetingsList}>
-                      {meetings.map((meeting) => (
-                        <div key={meeting.id} className={styles.meetingItem}>
-                          <div className={styles.meetingIcon}>
-                            <Calendar size={16} />
-                          </div>
-                          <div className={styles.meetingInfo}>
-                            <h4 className={styles.meetingTitle}>{meeting.title}</h4>
-                            <div className={styles.meetingDetails}>
-                              <span className={styles.meetingDate}>
-                                <Calendar size={12} />
-                                {formatDate(meeting.date)}
-                              </span>
-                              <span className={styles.meetingTime}>
-                                <Clock size={12} />
-                                {formatTime(meeting.time)}
-                              </span>
-                              {meeting.participants && meeting.participants.length > 0 && (
-                                <span className={styles.meetingParticipants}>
-                                  <Users size={12} />
-                                  {meeting.participants.length}
-                                </span>
-                              )}
+                      {meetings.map((item) => {
+                        if (item.type === 'meeting') {
+                          return (
+                            <div key={item.id} className={styles.meetingItem}>
+                              <div className={styles.meetingIcon}>
+                                <Calendar size={16} />
+                              </div>
+                              <div className={styles.meetingInfo}>
+                                <h4 className={styles.meetingTitle}>{item.title}</h4>
+                                <div className={styles.meetingDetails}>
+                                  <span className={styles.meetingDate}>
+                                    <Calendar size={12} />
+                                    {formatDate(item.date)}
+                                  </span>
+                                  <span className={styles.meetingTime}>
+                                    <Clock size={12} />
+                                    {formatTime(item.time)}
+                                  </span>
+                                  {item.participants && item.participants.length > 0 && (
+                                    <span className={styles.meetingParticipants}>
+                                      <Users size={12} />
+                                      {item.participants.length}
+                                    </span>
+                                  )}
+                                </div>
+                                {item.meeting_link && (
+                                  <a
+                                    href={item.meeting_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.meetingLink}
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <Video size={12} />
+                                    Unirse a la reunión
+                                  </a>
+                                )}
+                              </div>
                             </div>
-                            {meeting.meeting_link && (
-                              <a
-                                href={meeting.meeting_link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={styles.meetingLink}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Video size={12} />
-                                Unirse a la reunión
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                          )
+                        } else if (item.type === 'exam') {
+                          return (
+                            <div 
+                              key={item.id} 
+                              className={styles.meetingItem}
+                              onClick={() => item.can_start && handleExamClick(item.id)}
+                              style={{ cursor: item.can_start ? 'pointer' : 'default' }}
+                            >
+                              <div className={styles.meetingIcon} style={{ background: 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)' }}>
+                                <BookOpen size={16} />
+                              </div>
+                              <div className={styles.meetingInfo}>
+                                <h4 className={styles.meetingTitle}>{item.title}</h4>
+                                <div className={styles.meetingDetails}>
+                                  <span className={styles.meetingDate}>
+                                    <Calendar size={12} />
+                                    Hasta {formatDate(item.end_date)}
+                                  </span>
+                                  {item.time_limit_minutes && (
+                                    <span className={styles.meetingTime}>
+                                      <Clock size={12} />
+                                      {item.time_limit_minutes} min
+                                    </span>
+                                  )}
+                                  {item.attempts_count > 0 && (
+                                    <span className={styles.meetingParticipants}>
+                                      <BookOpen size={12} />
+                                      {item.attempts_count} intento{item.attempts_count !== 1 ? 's' : ''}
+                                    </span>
+                                  )}
+                                </div>
+                                {item.can_start && (
+                                  <div className={styles.meetingLink} style={{ cursor: 'pointer' }}>
+                                    <Play size={12} />
+                                    Iniciar Examen
+                                  </div>
+                                )}
+                                {item.status === 'completed' && (
+                                  <div className={styles.meetingLink}>
+                                    <BookOpen size={12} />
+                                    Completado
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                        return null
+                      })}
                     </div>
                   ) : (
                     <div className={styles.emptyState}>
                       <Calendar size={48} className={styles.emptyIcon} />
-                      <p>No tienes reuniones próximas</p>
+                      <p>No tienes notificaciones</p>
                     </div>
                   )}
                 </div>
@@ -234,7 +297,7 @@ export function Header() {
           <button
             className={styles.avatarButton}
             aria-label="Usuario"
-            onClick={() => navigate('/seleccion-practicantes/perfil')}
+            onClick={() => navigate('/configuracion/global/perfil')}
           >
             <div className={styles.avatar}>
               {profileImageUrl ? (

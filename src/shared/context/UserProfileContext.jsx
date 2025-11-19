@@ -3,7 +3,7 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import * as perfilService from '../../features/seleccion-practicantes/modules/perfil/services/perfilService';
+import * as perfilService from '../../features/configuracion-general/modules/perfil/services/perfilService';
 
 const UserProfileContext = createContext(null);
 

@@ -1,0 +1,134 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 0;
+  margin: 0;
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form > * {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  transition: all 0.3s ease;
+}
+
+.form > *:hover {
+  transform: translateY(-1px);
+}
+
+.form > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.form > *:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.form > *:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.form > *:nth-child(4) {
+  animation-delay: 0.25s;
+}
+
+/* Efecto de brillo en inputs al focus */
+.form :global(.input:focus),
+.form :global(.textarea:focus) {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.actions {
+  display: flex;
+  gap: 0.875rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid #f3f4f6;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+}
+
+.actions button {
+  min-width: 140px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.actions button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.actions button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.errorMessage {
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  border: 1px solid #fecaca;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  box-shadow: 0 2px 8px rgba(153, 27, 27, 0.15);
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+@media (max-width: 768px) {
+  .form {
+    gap: 1.5rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 1.5rem;
+  }
+
+  .actions button {
+    width: 100%;
+    min-width: 100%;
+  }
+}
+

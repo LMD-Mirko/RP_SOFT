@@ -1,2 +1,0 @@
-export { EvaluacionModal } from './EvaluacionModal'
-
