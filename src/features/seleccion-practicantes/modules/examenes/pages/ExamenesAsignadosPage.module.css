@@ -261,6 +261,18 @@
   flex: 1;
 }
 
+.infoMessage {
+  font-size: 0.85rem;
+  color: #4338ca;
+  background: #eef2ff;
+  border: 1px dashed #c7d2fe;
+  border-radius: 0.625rem;
+  padding: 0.65rem 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  flex: 1;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;

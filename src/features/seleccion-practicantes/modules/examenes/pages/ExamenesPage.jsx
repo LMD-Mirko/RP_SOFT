@@ -9,8 +9,6 @@ import { useToast } from '@shared/components/Toast'
 import { ExamModal } from '../components/ExamModal'
 import { CreateExamFromJsonModal } from '../components/CreateExamFromJsonModal'
 import { AssignExamModal } from '../components/AssignExamModal'
-import { ExamParticipantsModal } from '../components/ExamParticipantsModal'
-import * as examService from '../services'
 import styles from './ExamenesPage.module.css'
 
 const formatDate = (dateString) => {
@@ -25,7 +23,7 @@ const formatDate = (dateString) => {
 export function ExamenesPage() {
   const navigate = useNavigate()
   const toast = useToast()
-  const { examenes, loading, createExam: createExamFromHook, updateExam: updateExamFromHook, deleteExam: deleteExamFromHook } = useExamenes()
+  const { examenes, loading, createExam: createExamFromHook, updateExam: updateExamFromHook, deleteExam: deleteExamFromHook, loadExamenes } = useExamenes()
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [selectedExam, setSelectedExam] = useState(null)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -34,8 +32,6 @@ export function ExamenesPage() {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [examToAssign, setExamToAssign] = useState(null)
   const [isSaving, setIsSaving] = useState(false)
-  const [isParticipantsModalOpen, setIsParticipantsModalOpen] = useState(false)
-  const [examForParticipants, setExamForParticipants] = useState(null)
 
   const handleCreateExam = () => {
     setSelectedExam(null)
@@ -56,27 +52,26 @@ export function ExamenesPage() {
       setIsSaving(true)
       if (selectedExam) {
         await updateExamFromHook(selectedExam.id, data)
-        toast.success('Examen actualizado exitosamente')
       } else {
         await createExamFromHook(data)
-        toast.success('Examen creado exitosamente')
       }
       setIsExamModalOpen(false)
       setSelectedExam(null)
-      // Recargar lista
-      window.location.reload()
+      if (loadExamenes) {
+        await loadExamenes(1)
+      }
     } catch (error) {
       console.error('Error al guardar examen:', error)
-      // El error ya se maneja en el hook con toast
     } finally {
       setIsSaving(false)
     }
   }
 
-  const handleCreateJsonSuccess = () => {
+  const handleCreateJsonSuccess = async () => {
     setIsCreateJsonModalOpen(false)
-    // Recargar lista
-    window.location.reload()
+    if (loadExamenes) {
+      await loadExamenes(1)
+    }
   }
 
   const handleAssignClick = (exam) => {
@@ -85,8 +80,7 @@ export function ExamenesPage() {
   }
 
   const handleViewParticipants = (exam) => {
-    setExamForParticipants(exam)
-    setIsParticipantsModalOpen(true)
+    navigate(`/seleccion-practicantes/examenes/${exam.id}/participantes`)
   }
 
   const handleAssignSuccess = () => {
@@ -108,19 +102,14 @@ export function ExamenesPage() {
 
     try {
       setIsDeleting(true)
-      await examService.deleteExam(selectedExam.id)
-      toast.success('Examen eliminado exitosamente')
+      await deleteExamFromHook(selectedExam.id)
       setDeleteModalOpen(false)
       setSelectedExam(null)
-      // Recargar lista
-      window.location.reload()
+      if (loadExamenes) {
+        await loadExamenes(1)
+      }
     } catch (error) {
       console.error('Error al eliminar examen:', error)
-      const errorMessage =
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        'Error al eliminar el examen'
-      toast.error(errorMessage)
     } finally {
       setIsDeleting(false)
     }
@@ -190,9 +179,10 @@ export function ExamenesPage() {
                         <button
                           onClick={() => handleViewParticipants(exam)}
                           className={styles.participantsButton}
-                          title="Ver Participantes"
+                          title="Ver participantes"
                         >
-                          <UserCheck size={18} />
+                          <UserCheck size={16} />
+                          Ver participantes
                         </button>
                       </div>
                     ) : (
@@ -308,16 +298,6 @@ export function ExamenesPage() {
         }}
         examId={examToAssign?.id}
         onSuccess={handleAssignSuccess}
-      />
-
-      <ExamParticipantsModal
-        isOpen={isParticipantsModalOpen}
-        onClose={() => {
-          setIsParticipantsModalOpen(false)
-          setExamForParticipants(null)
-        }}
-        examId={examForParticipants?.id}
-        examTitle={examForParticipants?.title}
       />
     </div>
   )

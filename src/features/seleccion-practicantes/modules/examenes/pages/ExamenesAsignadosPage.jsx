@@ -1,11 +1,12 @@
-import { BookOpen, Clock, CheckCircle2, AlertCircle, Play, Eye } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { BookOpen, Clock, CheckCircle2, AlertCircle, Play, Eye, RotateCcw } from 'lucide-react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { get } from '../../../services/methods'
 import { useToast } from '@shared/components/Toast'
 import { Skeleton } from '../../../shared/components/Skeleton'
 import { EmptyState } from '@shared/components/EmptyState'
-import styles from './MisExamenesPage.module.css'
+import { ExamResultsModal } from '../components/ExamResultsModal'
+import styles from './ExamenesAsignadosPage.module.css'
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
@@ -27,18 +28,20 @@ const formatDateTime = (dateString) => {
   return `${day}/${month}/${year} ${hours}:${minutes}`
 }
 
-export function MisExamenesPage() {
+export function ExamenesAsignadosPage() {
   const navigate = useNavigate()
   const toast = useToast()
   const [loading, setLoading] = useState(true)
   const [examenes, setExamenes] = useState([])
+  const [resultsModalOpen, setResultsModalOpen] = useState(false)
+  const [selectedExam, setSelectedExam] = useState(null)
+  const isLoadingRef = useRef(false)
 
-  useEffect(() => {
-    loadExamenes()
-  }, [])
+  const loadExamenes = useCallback(async () => {
+    if (isLoadingRef.current) return
 
-  const loadExamenes = async () => {
     try {
+      isLoadingRef.current = true
       setLoading(true)
       const queryParams = new URLSearchParams()
       queryParams.append('upcoming', 'true')
@@ -52,19 +55,35 @@ export function MisExamenesPage() {
       setExamenes(examenesData)
     } catch (error) {
       console.error('Error al cargar exámenes:', error)
-      toast.error('Error al cargar tus exámenes')
+      toast.error('Error al cargar los exámenes asignados')
     } finally {
       setLoading(false)
+      isLoadingRef.current = false
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    loadExamenes()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleStartExam = (examId) => {
     navigate(`/seleccion-practicantes/examenes/${examId}/realizar`)
   }
 
-  const handleViewResults = (examId) => {
-    // TODO: Navegar a vista de resultados
-    toast.info('Vista de resultados próximamente')
+  const handleViewResults = (exam) => {
+    if (!exam) {
+      toast.error('No se pudo identificar el examen seleccionado')
+      return
+    }
+    setSelectedExam(exam)
+    setResultsModalOpen(true)
+  }
+
+  const handleCloseResultsModal = () => {
+    setResultsModalOpen(false)
+    setSelectedExam(null)
   }
 
   const getStatusBadge = (exam) => {
@@ -120,16 +139,16 @@ export function MisExamenesPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Mis Exámenes</h1>
-          <p className={styles.subtitle}>Exámenes asignados y completados</p>
+          <h1 className={styles.title}>Exámenes asignados</h1>
+          <p className={styles.subtitle}>Gestiona y rinde los exámenes que tienes pendientes</p>
         </div>
       </div>
 
       <div className={styles.content}>
         {examenes.length === 0 ? (
           <EmptyState
-            title="No tienes exámenes asignados"
-            message="Cuando te asignen un examen, aparecerá aquí."
+            title="Sin exámenes asignados"
+            message="Cuando te asignen un examen aparecerá en esta vista."
           />
         ) : (
           <div className={styles.examsList}>
@@ -177,27 +196,44 @@ export function MisExamenesPage() {
                 </div>
 
                 <div className={styles.examActions}>
-                  {exam.can_start && exam.status === 'assigned' && (
+                  {!exam.can_start && exam.status === 'assigned' && !exam.has_active_attempt && (
+                    <span className={styles.infoMessage}>
+                      Disponible a partir del {formatDateTime(exam.start_date)}
+                    </span>
+                  )}
+
+                  {exam.can_start && exam.status === 'assigned' && !exam.has_active_attempt && (
                     <button
                       onClick={() => handleStartExam(exam.id)}
                       className={styles.actionButtonPrimary}
                     >
                       <Play size={18} />
-                      Iniciar Examen
+                      Iniciar examen
                     </button>
                   )}
-                  {exam.has_active_attempt && (
+
+                  {(exam.status === 'started' || exam.has_active_attempt) && (
                     <button
                       onClick={() => handleStartExam(exam.id)}
                       className={styles.actionButtonPrimary}
                     >
                       <Play size={18} />
-                      Continuar Examen
+                      Continuar examen
+                    </button>
+                  )}
+
+                  {exam.can_start && exam.status === 'completed' && !exam.has_active_attempt && (
+                    <button
+                      onClick={() => handleStartExam(exam.id)}
+                      className={styles.actionButtonPrimary}
+                    >
+                      <RotateCcw size={18} />
+                      Iniciar otro intento
                     </button>
                   )}
                   {exam.status === 'completed' && (
                     <button
-                      onClick={() => handleViewResults(exam.id)}
+                      onClick={() => handleViewResults(exam)}
                       className={styles.actionButtonSecondary}
                     >
                       <Eye size={18} />
@@ -213,6 +249,11 @@ export function MisExamenesPage() {
           </div>
         )}
       </div>
+      <ExamResultsModal
+        isOpen={resultsModalOpen}
+        onClose={handleCloseResultsModal}
+        exam={selectedExam}
+      />
     </div>
   )
 }

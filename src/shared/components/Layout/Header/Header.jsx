@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Bell, User, Calendar, Clock, Users, Video, Loader2, BookOpen, Play } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useUserProfile } from '@shared/context/UserProfileContext'
+import dayjs from 'dayjs'
 import styles from './Header.module.css'
 
 export function Header() {
@@ -41,21 +42,35 @@ export function Header() {
       const endpoint = `meetings/my-meetings/?${queryParams.toString()}`
       const response = await get(endpoint)
       
-      const now = new Date()
+      const now = dayjs()
+      const today = now.format('YYYY-MM-DD')
+      
       const allItems = (response.results || []).filter((item) => {
         if (item.type === 'meeting') {
           if (!item.date || !item.time) return false
-          const [year, month, day] = item.date.split('-').map(Number)
+          // Combinar fecha y hora usando dayjs
+          // item.date viene como "2025-11-19" (YYYY-MM-DD)
+          // item.time viene como "20:05:00" (HH:mm:ss)
           const [hours, minutes] = item.time.substring(0, 5).split(':').map(Number)
-          const meetingDateTime = new Date(year, month - 1, day, hours, minutes)
-          return meetingDateTime > now
+          // Parsear la fecha y establecer la hora
+          const meetingDate = dayjs(item.date)
+          const meetingDateTime = meetingDate.hour(hours).minute(minutes).second(0).millisecond(0)
+          // Solo mostrar reuniones que aún no han pasado (comparación precisa con hora)
+          return meetingDateTime.isAfter(now)
         } else if (item.type === 'exam') {
           // Filtrar exámenes que aún no han expirado
           if (item.end_date) {
-            const endDate = new Date(item.end_date)
-            return endDate > now
+            // Parsear la fecha de fin (viene en formato ISO con timezone UTC: "2025-11-28T05:00:00+00:00")
+            // dayjs parsea correctamente las fechas ISO con timezone y las convierte a hora local
+            const endDate = dayjs(item.end_date)
+            // Obtener el final del día de la fecha de fin en hora local
+            const endOfDay = endDate.endOf('day')
+            // Comparar si el final del día de la fecha de fin es después de ahora
+            // Esto asegura que si el examen expira hoy, aún se muestre hasta el final del día
+            return endOfDay.isAfter(now)
           }
-          return true
+          // Si no hay fecha de fin, no mostrar (probablemente es un error de datos)
+          return false
         }
         return false
       })
@@ -197,41 +212,41 @@ export function Header() {
                         if (item.type === 'meeting') {
                           return (
                             <div key={item.id} className={styles.meetingItem}>
-                              <div className={styles.meetingIcon}>
-                                <Calendar size={16} />
-                              </div>
-                              <div className={styles.meetingInfo}>
+                          <div className={styles.meetingIcon}>
+                            <Calendar size={16} />
+                          </div>
+                          <div className={styles.meetingInfo}>
                                 <h4 className={styles.meetingTitle}>{item.title}</h4>
-                                <div className={styles.meetingDetails}>
-                                  <span className={styles.meetingDate}>
-                                    <Calendar size={12} />
+                            <div className={styles.meetingDetails}>
+                              <span className={styles.meetingDate}>
+                                <Calendar size={12} />
                                     {formatDate(item.date)}
-                                  </span>
-                                  <span className={styles.meetingTime}>
-                                    <Clock size={12} />
+                              </span>
+                              <span className={styles.meetingTime}>
+                                <Clock size={12} />
                                     {formatTime(item.time)}
-                                  </span>
+                              </span>
                                   {item.participants && item.participants.length > 0 && (
-                                    <span className={styles.meetingParticipants}>
-                                      <Users size={12} />
+                                <span className={styles.meetingParticipants}>
+                                  <Users size={12} />
                                       {item.participants.length}
-                                    </span>
-                                  )}
-                                </div>
-                                {item.meeting_link && (
-                                  <a
-                                    href={item.meeting_link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={styles.meetingLink}
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <Video size={12} />
-                                    Unirse a la reunión
-                                  </a>
-                                )}
-                              </div>
+                                </span>
+                              )}
                             </div>
+                                {item.meeting_link && (
+                              <a
+                                    href={item.meeting_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.meetingLink}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Video size={12} />
+                                Unirse a la reunión
+                              </a>
+                            )}
+                          </div>
+                        </div>
                           )
                         } else if (item.type === 'exam') {
                           return (

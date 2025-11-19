@@ -48,11 +48,23 @@ const menuItems = [
         path: '/seleccion-practicantes/evaluaciones/mis-evaluaciones',
         postulanteOnly: true, // Solo Postulante (Admin NO puede ver)
       },
+    ],
+  },
+  {
+    title: 'EXÁMENES',
+    items: [
       {
         icon: BookOpen,
-        label: 'Mis Exámenes',
-        path: '/seleccion-practicantes/examenes/mis-examenes',
-        postulanteOnly: true, // Solo Postulante (Admin NO puede ver)
+        label: 'Exámenes asignados',
+        path: '/seleccion-practicantes/examenes/asignados',
+        exact: true,
+      },
+      {
+        icon: BookOpen,
+        label: 'Gestión de Exámenes',
+        path: '/seleccion-practicantes/examenes',
+        adminOnly: true,
+        excludePaths: ['/seleccion-practicantes/examenes/asignados'],
       },
     ],
   },
@@ -101,12 +113,6 @@ const menuItems = [
         adminOnly: true, // Solo visible para administradores
       },
       {
-        icon: BookOpen,
-        label: 'Exámenes',
-        path: '/seleccion-practicantes/examenes',
-        adminOnly: true, // Solo Admin
-      },
-      {
         icon: Clock,
         label: 'Historial',
         path: '/seleccion-practicantes/historial',
@@ -133,6 +139,7 @@ export function Sidebar() {
     PRINCIPAL: true,
     POSTULANTE: true,
     RECLUTAMIENTO: true,
+    EXÁMENES: true,
     GESTIÓN: true,
     CUENTA: true,
   })
@@ -173,14 +180,26 @@ export function Sidebar() {
     }))
   }
 
-  const isActive = (path) => {
+const isActive = (path, { exact = false, excludePaths = [] } = {}) => {
     if (path === '/seleccion-practicantes') {
       return (
         location.pathname === '/seleccion-practicantes' ||
         location.pathname === '/seleccion-practicantes/'
       )
     }
-    return location.pathname === path || location.pathname.startsWith(path + '/')
+  if (exact) {
+    return location.pathname === path
+  }
+  const matches =
+    location.pathname === path || location.pathname.startsWith(path + '/')
+
+  if (!matches) return false
+
+  if (excludePaths.some((excludedPath) => location.pathname.startsWith(excludedPath))) {
+    return false
+  }
+
+  return true
   }
 
   // Filtrar items según permisos
@@ -238,7 +257,10 @@ export function Sidebar() {
               <div className={styles.sectionItems}>
                 {section.items.map((item) => {
                   const Icon = item.icon
-                  const active = isActive(item.path)
+                  const active = isActive(item.path, {
+                    exact: item.exact,
+                    excludePaths: item.excludePaths || [],
+                  })
 
                   return (
                     <button

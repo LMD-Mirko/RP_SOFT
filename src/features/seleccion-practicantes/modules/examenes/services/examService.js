@@ -68,6 +68,34 @@ export const getExamById = async (examId) => {
 }
 
 /**
+ * Obtiene la vista de examen para usuarios asignados
+ * @param {string} examId - ID del examen (UUID)
+ * @returns {Promise} Datos del examen visibles para postulantes/admin asignados
+ */
+export const getExamView = async (examId) => {
+  try {
+    return await get(`exams/${examId}/view/`)
+  } catch (error) {
+    console.error('Error al obtener vista de examen:', error)
+    throw error
+  }
+}
+
+/**
+ * Obtiene el intento activo (si existe) junto con respuestas guardadas
+ * @param {string} examId
+ * @returns {Promise} { active_attempt, answers }
+ */
+export const getExamActiveAttempt = async (examId) => {
+  try {
+    return await get(`exams/${examId}/active-attempt/`)
+  } catch (error) {
+    console.error('Error al obtener intento activo del examen:', error)
+    throw error
+  }
+}
+
+/**
  * Obtiene usuarios disponibles para asignar exámenes
  * @returns {Promise} Lista de usuarios disponibles
  */

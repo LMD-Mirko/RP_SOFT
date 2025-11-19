@@ -1,5 +1,5 @@
 import { ArrowLeft, Plus, FileJson } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { PreguntaCard } from '../components/PreguntaCard'
 import { QuestionModal } from '../components/QuestionModal'
@@ -43,15 +43,13 @@ export function GestionExamenPage() {
   const [selectedQuestionForOption, setSelectedQuestionForOption] = useState(null)
   const [isSaving, setIsSaving] = useState(false)
   const [deleteOptionQuestion, setDeleteOptionQuestion] = useState(null)
+  const isLoadingRef = useRef(false)
 
-  useEffect(() => {
-    loadData()
-  }, [examId])
-
-  const loadData = async () => {
-    if (!examId) return
+  const loadData = useCallback(async () => {
+    if (!examId || isLoadingRef.current) return
 
     try {
+      isLoadingRef.current = true
       setLoading(true)
       const examData = await getExamById(examId)
 
@@ -72,8 +70,15 @@ export function GestionExamenPage() {
       }
     } finally {
       setLoading(false)
+      isLoadingRef.current = false
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examId])
+
+  useEffect(() => {
+    loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examId])
 
   const handleCreateQuestion = () => {
     setSelectedQuestion(null)
