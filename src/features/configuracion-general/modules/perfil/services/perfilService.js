@@ -2,9 +2,9 @@
  * Servicio para gestionar el perfil del usuario autenticado
  */
 
-import { get, post, patch } from '../../../services/methods';
-import { BASE_URL } from '../../../services/baseUrl';
-import { getAccessToken } from '../../../shared/utils/cookieHelper';
+import { get, post, patch } from '../../../../seleccion-practicantes/services/methods';
+import { BASE_URL } from '../../../../seleccion-practicantes/services/baseUrl';
+import { getAccessToken } from '../../../../seleccion-practicantes/shared/utils/cookieHelper';
 
 /**
  * Obtiene la URL completa de la foto de perfil

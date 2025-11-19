@@ -10,7 +10,7 @@ import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { PhotoUploadModal } from '../components/PhotoUploadModal'
 import { ChangePasswordModal } from '../components/ChangePasswordModal'
 import { ChangeEmailModal } from '../components/ChangeEmailModal'
-import { Skeleton } from '../../../shared/components/Skeleton'
+import { Skeleton } from '../../../../seleccion-practicantes/shared/components/Skeleton'
 import styles from './PerfilPage.module.css'
 
 export function PerfilPage() {

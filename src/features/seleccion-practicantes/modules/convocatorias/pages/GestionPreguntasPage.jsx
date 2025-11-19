@@ -1,9 +1,10 @@
-import { ArrowLeft, Plus, Loader2 } from 'lucide-react'
+import { ArrowLeft, Plus, Loader2, FileJson } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { PreguntaCard } from '../components/PreguntaCard'
 import { QuestionModal } from '../components/QuestionModal'
 import { OptionModal } from '../components/OptionModal'
+import { CreateEvaluationFromJsonModal } from '../components/CreateEvaluationFromJsonModal'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import {
   getEvaluacionByType,
@@ -42,6 +43,7 @@ export function GestionPreguntasPage() {
   const [optionModalOpen, setOptionModalOpen] = useState(false)
   const [deleteQuestionModalOpen, setDeleteQuestionModalOpen] = useState(false)
   const [deleteOptionModalOpen, setDeleteOptionModalOpen] = useState(false)
+  const [isJsonModalOpen, setIsJsonModalOpen] = useState(false)
 
   // Estados para edición
   const [selectedQuestion, setSelectedQuestion] = useState(null)
@@ -254,6 +256,19 @@ export function GestionPreguntasPage() {
     navigate(`/seleccion-practicantes/convocatorias/${jobPostingId}/encuestas`)
   }
 
+  const handleOpenJsonModal = () => {
+    setIsJsonModalOpen(true)
+  }
+
+  const handleJsonModalSuccess = () => {
+    // Recargar datos después de crear la evaluación
+    loadData()
+  }
+
+  const handleCloseJsonModal = () => {
+    setIsJsonModalOpen(false)
+  }
+
   if (loading) {
     return (
       <div className={styles.container}>
@@ -301,9 +316,15 @@ export function GestionPreguntasPage() {
             </p>
           </div>
         </div>
-        <Button onClick={handleCreateQuestion} icon={Plus} variant="primary">
-          Crear Nueva Pregunta
-        </Button>
+        <div className={styles.headerActions}>
+          <button onClick={handleOpenJsonModal} className={styles.jsonButton}>
+            <FileJson size={18} />
+            Crear desde JSON
+          </button>
+          <Button onClick={handleCreateQuestion} icon={Plus} variant="primary">
+            Crear Nueva Pregunta
+          </Button>
+        </div>
       </div>
 
       {/* Content */}
@@ -395,6 +416,15 @@ export function GestionPreguntasPage() {
         cancelText="Cancelar"
         type="danger"
         isLoading={isSaving}
+      />
+
+      {/* JSON Modal */}
+      <CreateEvaluationFromJsonModal
+        isOpen={isJsonModalOpen}
+        onClose={handleCloseJsonModal}
+        jobPostingId={parseInt(jobPostingId)}
+        evaluationType={evaluationType}
+        onSuccess={handleJsonModalSuccess}
       />
     </div>
   )

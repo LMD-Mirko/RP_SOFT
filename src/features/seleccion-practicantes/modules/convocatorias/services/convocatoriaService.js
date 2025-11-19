@@ -220,3 +220,17 @@ export const deleteOption = async (optionId) => {
   }
 };
 
+/**
+ * Crea o actualiza una evaluación completa desde JSON
+ * @param {Object} jsonData - Datos JSON con evaluation y questions
+ * @returns {Promise} Resultado con la evaluación creada/actualizada y estadísticas
+ */
+export const createEvaluationFromJson = async (jsonData) => {
+  try {
+    return await post('evaluations/create-from-json/', jsonData);
+  } catch (error) {
+    console.error('Error al crear evaluación desde JSON:', error);
+    throw error;
+  }
+};
+

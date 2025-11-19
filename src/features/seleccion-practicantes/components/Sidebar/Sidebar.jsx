@@ -8,14 +8,9 @@ import {
   CheckCircle,
   Clock,
   Settings,
-  User,
-  Users,
-  Shield,
   GraduationCap,
-  FileType,
   ChevronDown,
   ChevronRight,
-  MessageSquare,
   Download,
   Award,
 } from 'lucide-react'
@@ -81,27 +76,9 @@ const menuItems = [
         path: '/seleccion-practicantes/historial',
       },
       {
-        icon: Users,
-        label: 'Usuarios',
-        path: '/seleccion-practicantes/usuarios',
-        adminOnly: true, // Solo visible para administradores
-      },
-      {
-        icon: Shield,
-        label: 'Roles',
-        path: '/seleccion-practicantes/roles',
-        adminOnly: true, // Solo visible para administradores
-      },
-      {
         icon: GraduationCap,
         label: 'Especialidades',
         path: '/seleccion-practicantes/especialidades',
-        adminOnly: true, // Solo visible para administradores
-      },
-      {
-        icon: FileType,
-        label: 'Tipos de Documento',
-        path: '/seleccion-practicantes/tipos-documento',
         adminOnly: true, // Solo visible para administradores
       },
       {
@@ -118,11 +95,6 @@ const menuItems = [
   {
     title: 'CUENTA',
     items: [
-      {
-        icon: User,
-        label: 'Mi Perfil',
-        path: '/seleccion-practicantes/perfil',
-      },
       {
         icon: Settings,
         label: 'Configuración',

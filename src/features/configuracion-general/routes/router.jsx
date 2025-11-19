@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { PlaceholderSection } from '../pages/PlaceholderSection'
-import { GestionUsuariosPage } from '../modules'
+import { RolesPage, PerfilPage, UsuariosPage, TiposDocumentoPage } from '../modules'
 
 export function ModuleRouter() {
   return (
@@ -18,15 +18,10 @@ export function ModuleRouter() {
             />
           }
         />
-        <Route path="global/usuarios" element={<GestionUsuariosPage />} />
+        <Route path="global/usuarios" element={<UsuariosPage />} />
         <Route
           path="global/roles"
-          element={
-            <PlaceholderSection
-              title="Roles y permisos"
-              description="Define las responsabilidades y capacidades de cada rol."
-            />
-          }
+          element={<RolesPage />}
         />
         <Route
           path="global/especialidades"
@@ -39,21 +34,11 @@ export function ModuleRouter() {
         />
         <Route
           path="global/tipos-documento"
-          element={
-            <PlaceholderSection
-              title="Tipos de documento"
-              description="Gestiona los tipos de documento aceptados por la plataforma."
-            />
-          }
+          element={<TiposDocumentoPage />}
         />
         <Route
           path="global/perfil"
-          element={
-            <PlaceholderSection
-              title="Mi perfil"
-              description="Actualiza tu información personal y preferencias de cuenta."
-            />
-          }
+          element={<PerfilPage />}
         />
 
         <Route path="*" element={<Navigate to="global/general" replace />} />

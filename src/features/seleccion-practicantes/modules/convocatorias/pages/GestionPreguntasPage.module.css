@@ -16,6 +16,43 @@
   animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.headerActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.jsonButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+  color: #065f46;
+  border: 1px solid #10b981;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  height: fit-content;
+}
+
+.jsonButton:hover {
+  background: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(167, 243, 208, 0.4);
+  border-color: #059669;
+}
+
+.jsonButton:active {
+  transform: translateY(0);
+  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+}
+
 @keyframes fadeInDown {
   from {
     opacity: 0;

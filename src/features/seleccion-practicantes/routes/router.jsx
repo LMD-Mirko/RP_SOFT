@@ -18,11 +18,7 @@ import { EvaluacionPage, ResultadosEvaluacionPage, MisEvaluacionesPage } from '.
 import { HistorialPage } from '../modules/historial/pages'
 import { PostulacionPage } from '../modules/Practicante-Form/pages'
 import { SeleccionarConvocatoriaPage } from '../modules/Practicante-Form/pages/SeleccionarConvocatoriaPage'
-import { PerfilPage } from '../modules/perfil/pages'
-import { UsuariosPage } from '../modules/usuarios/pages'
-import { RolesPage } from '../modules/roles/pages'
 import { EspecialidadesPage } from '../modules/especialidades/pages'
-import { TiposDocumentoPage } from '../modules/tipos-documento/pages'
 import { RequireRole } from './RequireRole'
 import { TranscripcionesPage } from '@features/transcripcion-reuniones'
 
@@ -112,22 +108,6 @@ export function ModuleRouter() {
           element={<HistorialPage />}
         />
         <Route
-          path="usuarios"
-          element={
-            <RequireRole requireAdmin={true}>
-              <UsuariosPage />
-            </RequireRole>
-          }
-        />
-        <Route
-          path="roles"
-          element={
-            <RequireRole requireAdmin={true}>
-              <RolesPage />
-            </RequireRole>
-          }
-        />
-        <Route
           path="especialidades"
           element={
             <RequireRole requireAdmin={true}>
@@ -135,24 +115,10 @@ export function ModuleRouter() {
             </RequireRole>
           }
         />
-        <Route
-          path="tipos-documento"
-          element={
-            <RequireRole requireAdmin={true}>
-              <TiposDocumentoPage />
-            </RequireRole>
-          }
-        />
         {/* Transcripción: enlaza a la vista del módulo transcripcion-reuniones */}
         <Route
           path="transcripciones"
           element={<TranscripcionesPage />}
-        />
-        
-        {/* Rutas de Cuenta */}
-        <Route
-          path="perfil"
-          element={<PerfilPage />}
         />
         <Route
           path="configuracion"

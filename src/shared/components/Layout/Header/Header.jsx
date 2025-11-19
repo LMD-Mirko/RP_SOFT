@@ -234,7 +234,7 @@ export function Header() {
           <button
             className={styles.avatarButton}
             aria-label="Usuario"
-            onClick={() => navigate('/seleccion-practicantes/perfil')}
+            onClick={() => navigate('/configuracion/global/perfil')}
           >
             <div className={styles.avatar}>
               {profileImageUrl ? (
