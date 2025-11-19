@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Clock, CheckCircle2, AlertCircle, Save } from 'lucide-react'
+import { Clock, CheckCircle2, AlertCircle, Save, FileText, CheckCircle } from 'lucide-react'
 import { Button } from '@shared/components/Button'
 import { ConfirmModal } from '@shared/components/ConfirmModal'
 import { Skeleton } from '../../../../shared/components/Skeleton'
@@ -25,7 +25,6 @@ export function EvaluacionEmbedded({
   const [evaluacion, setEvaluacion] = useState(null)
   const [intento, setIntento] = useState(null)
   const [respuestas, setRespuestas] = useState({})
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [lastSaveTime, setLastSaveTime] = useState(null)
@@ -47,7 +46,8 @@ export function EvaluacionEmbedded({
           if (startResult.evaluation_id) {
             // Cargar la evaluación
             const evalData = await evaluacionService.obtenerEvaluacionView(startResult.evaluation_id)
-            setEvaluacion(evalData)
+            // La API devuelve { evaluation: {...}, questions: [...] }
+            setEvaluacion(evalData.evaluation ? evalData : { evaluation: evalData, questions: evalData.questions || [] })
             
             // Intentar cargar intento activo
             try {
@@ -58,9 +58,11 @@ export function EvaluacionEmbedded({
               if (attemptResult.answers && Array.isArray(attemptResult.answers)) {
                 const respuestasMap = {}
                 attemptResult.answers.forEach((answer) => {
-                  respuestasMap[answer.question_id] = {
-                    answer_option_id: answer.answer_option_id,
-                    text_answer: answer.text_answer,
+                  // Los IDs pueden venir como string o número, mantener como string (UUID)
+                  const questionId = String(answer.question_id)
+                  respuestasMap[questionId] = {
+                    selected_option_id: String(answer.selected_option_id || answer.answer_option_id || ''),
+                    text_answer: answer.text_answer || '',
                   }
                 })
                 setRespuestas(respuestasMap)
@@ -76,7 +78,8 @@ export function EvaluacionEmbedded({
         } else if (evaluationId) {
           // Cargar evaluación directamente
           const evalData = await evaluacionService.obtenerEvaluacionView(evaluationId)
-          setEvaluacion(evalData)
+          // La API devuelve { evaluation: {...}, questions: [...] }
+          setEvaluacion(evalData.evaluation ? evalData : { evaluation: evalData, questions: evalData.questions || [] })
           
           // Intentar cargar intento activo
           try {
@@ -87,9 +90,11 @@ export function EvaluacionEmbedded({
             if (attemptResult.answers && Array.isArray(attemptResult.answers)) {
               const respuestasMap = {}
               attemptResult.answers.forEach((answer) => {
-                respuestasMap[answer.question_id] = {
-                  answer_option_id: answer.answer_option_id,
-                  text_answer: answer.text_answer,
+                // Los IDs pueden venir como string o número, mantener como string
+                const questionId = String(answer.question_id)
+                respuestasMap[questionId] = {
+                  selected_option_id: String(answer.selected_option_id || answer.answer_option_id || ''),
+                  text_answer: answer.text_answer || '',
                 }
               })
               setRespuestas(respuestasMap)
@@ -123,11 +128,10 @@ export function EvaluacionEmbedded({
     const autoSaveInterval = setInterval(async () => {
       if (intento?.id && Object.keys(respuestas).length > 0) {
         try {
-          const answers = Object.entries(respuestas).map(([questionId, answer]) => ({
-            question_id: questionId,
-            answer_option_id: answer.answer_option_id,
-            text_answer: answer.text_answer,
-          }))
+        const answers = Object.entries(respuestas).map(([questionId, answer]) => ({
+          question_id: questionId, // Mantener como string (UUID)
+          selected_option_id: answer.selected_option_id, // Mantener como string (UUID)
+        }))
 
           await evaluacionService.guardarRespuestasBatch(intento.id, { answers })
           setLastSaveTime(new Date())
@@ -141,21 +145,20 @@ export function EvaluacionEmbedded({
   }, [intento?.id, respuestas])
 
   const handleAnswerChange = useCallback(
-    (questionId, answerOptionId, textAnswer) => {
+    (questionId, selectedOptionId, textAnswer) => {
       setRespuestas((prev) => ({
         ...prev,
         [questionId]: {
-          answer_option_id: answerOptionId,
+          selected_option_id: selectedOptionId,
           text_answer: textAnswer,
         },
       }))
 
       // Guardar inmediatamente si hay intento
-      if (intento?.id) {
+      if (intento?.id && selectedOptionId) {
         evaluacionService.guardarRespuesta(intento.id, {
-          question_id: questionId,
-          answer_option_id: answerOptionId,
-          text_answer: textAnswer,
+          question_id: questionId, // Mantener como string (UUID)
+          selected_option_id: selectedOptionId, // Mantener como string (UUID)
         }).catch((error) => {
           console.error('Error al guardar respuesta:', error)
         })
@@ -164,21 +167,7 @@ export function EvaluacionEmbedded({
     [intento?.id]
   )
 
-  const handleNext = () => {
-    if (currentQuestionIndex < (evaluacion?.questions?.length || 0) - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1)
-    }
-  }
-
-  const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => prev - 1)
-    }
-  }
-
-  const handleGoToQuestion = (index) => {
-    setCurrentQuestionIndex(index)
-  }
+  // Ya no necesitamos navegación entre preguntas, todas se muestran a la vez
 
   const handleSubmit = async () => {
     if (!intento?.id) {
@@ -189,11 +178,12 @@ export function EvaluacionEmbedded({
     setIsSubmitting(true)
     try {
       // Guardar todas las respuestas antes de calificar
-      const answers = Object.entries(respuestas).map(([questionId, answer]) => ({
-        question_id: questionId,
-        answer_option_id: answer.answer_option_id,
-        text_answer: answer.text_answer,
-      }))
+      const answers = Object.entries(respuestas)
+        .filter(([_, answer]) => answer.selected_option_id) // Solo incluir respuestas con opción seleccionada
+        .map(([questionId, answer]) => ({
+          question_id: questionId, // Mantener como string (UUID)
+          selected_option_id: answer.selected_option_id, // Mantener como string (UUID)
+        }))
 
       if (answers.length > 0) {
         await evaluacionService.guardarRespuestasBatch(intento.id, { answers })
@@ -258,37 +248,35 @@ export function EvaluacionEmbedded({
     )
   }
 
-  const preguntas = evaluacion.questions || []
-  const currentQuestion = preguntas[currentQuestionIndex]
+  const preguntas = evaluacion.questions || evaluacion.evaluation?.questions || []
+  const evaluationData = evaluacion.evaluation || evaluacion
   const totalQuestions = preguntas.length
   const answeredQuestions = Object.keys(respuestas).length
 
+  // Debug: Verificar estructura de datos
+  if (preguntas.length > 0 && process.env.NODE_ENV === 'development') {
+    console.log('[EvaluacionEmbedded] Preguntas recibidas:', {
+      total: preguntas.length,
+      primera_pregunta: {
+        id: preguntas[0].id,
+        text: preguntas[0].text,
+        options: preguntas[0].options || preguntas[0].answer_options,
+        options_count: (preguntas[0].options || preguntas[0].answer_options || []).length
+      }
+    })
+  }
+
   return (
     <div className={styles.container}>
-      {/* Header */}
-      <div className={styles.header}>
-        <div>
-          <h3 className={styles.title}>{evaluacion.title}</h3>
-          {evaluacion.description && (
-            <p className={styles.description}>{evaluacion.description}</p>
-          )}
-        </div>
-        {intento?.expires_at && (
-          <EvaluacionTimer
-            expiresAt={intento.expires_at}
-            onExpire={handleExpire}
-            timeLimitMinutes={intento.time_limit_minutes}
-          />
-        )}
-      </div>
-
       {/* Progress Bar */}
       <div className={styles.progressSection}>
         <div className={styles.progressInfo}>
-          <span>
-            Pregunta {currentQuestionIndex + 1} de {totalQuestions}
+          <span className={styles.progressInfoItem}>
+            <FileText size={16} />
+            Total: {totalQuestions} preguntas
           </span>
-          <span>
+          <span className={styles.progressInfoItem}>
+            <CheckCircle size={16} />
             {answeredQuestions} de {totalQuestions} respondidas
           </span>
         </div>
@@ -296,43 +284,35 @@ export function EvaluacionEmbedded({
           <div
             className={styles.progressFill}
             style={{
-              width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%`,
+              width: `${(answeredQuestions / totalQuestions) * 100}%`,
             }}
           />
         </div>
       </div>
 
-      {/* Questions Navigation */}
-      {totalQuestions > 1 && (
-        <div className={styles.questionsNav}>
+      {/* All Questions - Estilo Blackboard */}
+      {preguntas.length > 0 ? (
+        <div className={styles.allQuestionsContainer}>
           {preguntas.map((pregunta, index) => {
-            const isAnswered = respuestas[pregunta.id] !== undefined
-            const isCurrent = index === currentQuestionIndex
-
+            // Asegurar que el ID de la pregunta se use como string para buscar respuestas
+            const questionIdString = String(pregunta.id)
             return (
-              <button
-                key={pregunta.id}
-                className={`${styles.questionNavItem} ${
-                  isCurrent ? styles.questionNavItemActive : ''
-                } ${isAnswered ? styles.questionNavItemAnswered : ''}`}
-                onClick={() => handleGoToQuestion(index)}
-              >
-                {index + 1}
-              </button>
+              <div key={pregunta.id} className={styles.questionWrapper}>
+                <PreguntaCard
+                  pregunta={pregunta}
+                  respuestaActual={respuestas[questionIdString]}
+                  onAnswerChange={handleAnswerChange}
+                  disabled={isSubmitting}
+                />
+              </div>
             )
           })}
         </div>
-      )}
-
-      {/* Current Question */}
-      {currentQuestion && (
-        <div className={styles.questionSection}>
-          <PreguntaCard
-            pregunta={currentQuestion}
-            respuestaActual={respuestas[currentQuestion.id]}
-            onAnswerChange={handleAnswerChange}
-            disabled={isSubmitting}
-          />
+      ) : (
+        <div className={styles.noEvaluation}>
+          <AlertCircle size={48} />
+          <h3>No hay preguntas disponibles</h3>
+          <p>Esta evaluación no tiene preguntas configuradas.</p>
         </div>
       )}
 
@@ -341,38 +321,22 @@ export function EvaluacionEmbedded({
         <div className={styles.actionsLeft}>
           {lastSaveTime && (
             <span className={styles.saveIndicator}>
-              <Save size={14} />
-              Guardado: {lastSaveTime.toLocaleTimeString()}
+              <Save size={16} />
+              <span>Guardado: {lastSaveTime.toLocaleTimeString()}</span>
             </span>
           )}
         </div>
         <div className={styles.actionsRight}>
           <Button
-            variant="secondary"
-            onClick={handlePrevious}
-            disabled={currentQuestionIndex === 0 || isSubmitting}
+            variant="primary"
+            onClick={() => setShowConfirmModal(true)}
+            disabled={isSubmitting || answeredQuestions === 0 || answeredQuestions < totalQuestions}
+            loading={isSubmitting}
+            className={styles.finalizeButton}
           >
-            Anterior
+            <CheckCircle2 size={20} />
+            <span>Finalizar Evaluación</span>
           </Button>
-          {currentQuestionIndex < totalQuestions - 1 ? (
-            <Button
-              variant="primary"
-              onClick={handleNext}
-              disabled={isSubmitting}
-            >
-              Siguiente
-            </Button>
-          ) : (
-            <Button
-              variant="primary"
-              onClick={() => setShowConfirmModal(true)}
-              disabled={isSubmitting || answeredQuestions === 0}
-              loading={isSubmitting}
-            >
-              <CheckCircle2 size={18} />
-              Finalizar Evaluación
-            </Button>
-          )}
         </div>
       </div>
 
@@ -382,10 +346,10 @@ export function EvaluacionEmbedded({
         onClose={() => setShowConfirmModal(false)}
         onConfirm={handleSubmit}
         title="Finalizar Evaluación"
-        message={`¿Estás seguro de que deseas finalizar la evaluación? Has respondido ${answeredQuestions} de ${totalQuestions} preguntas.`}
+        message={`¿Estás seguro de que deseas finalizar la evaluación? Has respondido ${answeredQuestions} de ${totalQuestions} preguntas.${answeredQuestions < totalQuestions ? ' Asegúrate de responder todas las preguntas antes de finalizar.' : ''}`}
         confirmText="Sí, Finalizar"
         cancelText="Cancelar"
-        type="warning"
+        type={answeredQuestions < totalQuestions ? "warning" : "info"}
       />
     </div>
   )

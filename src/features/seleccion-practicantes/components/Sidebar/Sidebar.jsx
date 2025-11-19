@@ -8,16 +8,13 @@ import {
   CheckCircle,
   Clock,
   Settings,
-  User,
-  Users,
-  Shield,
   GraduationCap,
-  FileType,
   ChevronDown,
   ChevronRight,
-  MessageSquare,
   Download,
   Award,
+  Users,
+  BookOpen,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
@@ -37,27 +34,42 @@ const menuItems = [
     ],
   },
   {
+    title: 'POSTULANTE',
+    items: [
+      {
+        icon: FileText,
+        label: 'Ver CV/s',
+        path: '/seleccion-practicantes/cvs',
+        postulanteOnly: true, // Solo Postulante (Admin NO puede ver)
+      },
+      {
+        icon: Award,
+        label: 'Mis Evaluaciones',
+        path: '/seleccion-practicantes/evaluaciones/mis-evaluaciones',
+        postulanteOnly: true, // Solo Postulante (Admin NO puede ver)
+      },
+      {
+        icon: BookOpen,
+        label: 'Mis Exámenes',
+        path: '/seleccion-practicantes/examenes/mis-examenes',
+        postulanteOnly: true, // Solo Postulante (Admin NO puede ver)
+      },
+    ],
+  },
+  {
     title: 'RECLUTAMIENTO',
     items: [
       {
         icon: Calendar,
         label: 'Convocatorias',
         path: '/seleccion-practicantes/convocatorias',
+        adminOnly: true, // Solo Admin
       },
       {
         icon: FolderOpen,
         label: 'Postulantes',
         path: '/seleccion-practicantes/postulantes',
-      },
-      {
-        icon: FileText,
-        label: 'Ver CV/s',
-        path: '/seleccion-practicantes/cvs',
-      },
-      {
-        icon: Award,
-        label: 'Mis Evaluaciones',
-        path: '/seleccion-practicantes/evaluaciones/mis-evaluaciones',
+        adminOnly: true, // Solo Admin
       },
     ],
   },
@@ -71,25 +83,15 @@ const menuItems = [
         adminOnly: true,
       },
       {
-        icon: Calendar,
-        label: 'Calendario',
-        path: '/seleccion-practicantes/calendario',
-      },
-      {
-        icon: Clock,
-        label: 'Historial',
-        path: '/seleccion-practicantes/historial',
-      },
-      {
         icon: Users,
-        label: 'Usuarios',
-        path: '/seleccion-practicantes/usuarios',
-        adminOnly: true, // Solo visible para administradores
+        label: 'Gestión de Reuniones',
+        path: '/seleccion-practicantes/calendario',
+        adminOnly: true, // Solo Admin (Postulante NO puede ver)
       },
       {
-        icon: Shield,
-        label: 'Roles',
-        path: '/seleccion-practicantes/roles',
+        icon: Download,
+        label: 'Gestión de CVs',
+        path: '/seleccion-practicantes/cvs-admin',
         adminOnly: true, // Solo visible para administradores
       },
       {
@@ -99,30 +101,22 @@ const menuItems = [
         adminOnly: true, // Solo visible para administradores
       },
       {
-        icon: FileType,
-        label: 'Tipos de Documento',
-        path: '/seleccion-practicantes/tipos-documento',
-        adminOnly: true, // Solo visible para administradores
+        icon: BookOpen,
+        label: 'Exámenes',
+        path: '/seleccion-practicantes/examenes',
+        adminOnly: true, // Solo Admin
       },
       {
-        icon: Download,
-        label: 'Gestión de CVs',
-        path: '/seleccion-practicantes/cvs-admin',
-        adminOnly: true, // Solo visible para administradores
+        icon: Clock,
+        label: 'Historial',
+        path: '/seleccion-practicantes/historial',
+        adminOnly: true, // Solo Admin (Postulante NO puede ver)
       },
     ],
   },
-
-  // Se elimina la sección de Transcripción aquí; vive en su propio módulo
-
   {
     title: 'CUENTA',
     items: [
-      {
-        icon: User,
-        label: 'Mi Perfil',
-        path: '/seleccion-practicantes/perfil',
-      },
       {
         icon: Settings,
         label: 'Configuración',
@@ -137,9 +131,9 @@ export function Sidebar() {
   const navigate = useNavigate()
   const [expandedSections, setExpandedSections] = useState({
     PRINCIPAL: true,
+    POSTULANTE: true,
     RECLUTAMIENTO: true,
     GESTIÓN: true,
-    TRANSCRIPCIÓN: true,
     CUENTA: true,
   })
 
@@ -164,6 +158,14 @@ export function Sidebar() {
     return userInfo.role_id === 2 || userInfo.is_admin === true || userInfo.role_slug === 'admin'
   }
 
+  // Verificar si el usuario es postulante
+  const isPostulante = () => {
+    const userInfo = getUserInfo()
+    if (!userInfo) return false
+    // Verificar por role_id (1 = Postulante) o por is_postulante
+    return userInfo.role_id === 1 || userInfo.is_postulante === true || userInfo.role_slug === 'postulante'
+  }
+
   const toggleSection = (title) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -184,11 +186,25 @@ export function Sidebar() {
   // Filtrar items según permisos
   const filterMenuItems = () => {
     const userIsAdmin = isAdmin()
+    const userIsPostulante = isPostulante()
+    
     return menuItems.map((section) => ({
       ...section,
       items: section.items.filter((item) => {
         // Si el item requiere admin y el usuario no es admin, ocultarlo
         if (item.adminOnly && !userIsAdmin) {
+          return false
+        }
+        // Si el item es solo para postulantes y el usuario no es postulante, ocultarlo
+        if (item.postulanteOnly && !userIsPostulante) {
+          return false
+        }
+        // Si el item es solo para postulantes y el usuario es admin, ocultarlo (Admin NO puede ver)
+        if (item.postulanteOnly && userIsAdmin) {
+          return false
+        }
+        // Si el item requiere admin y el usuario es postulante, ocultarlo
+        if (item.adminOnly && userIsPostulante) {
           return false
         }
         return true

@@ -1,0 +1,2 @@
+export { EvaluacionCard } from './EvaluacionCard'
+

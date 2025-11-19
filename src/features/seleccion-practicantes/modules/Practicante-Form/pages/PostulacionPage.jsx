@@ -12,13 +12,13 @@ import { useToast } from '@shared/components/Toast'
 import styles from './PostulacionPage.module.css'
 
 const STEPS = [
-  { id: 1, label: 'Datos Personales', component: DatosPersonalesStep },
-  { id: 2, label: 'Perfil', component: PerfilStep },
-  { id: 3, label: 'Técnica', component: TecnicaStep },
-  { id: 4, label: 'Psicológia', component: PsicologiaStep },
-  { id: 5, label: 'Motivación', component: MotivacionStep },
-  { id: 6, label: 'CV', component: CVStep },
-  { id: 7, label: 'Confirmación', component: ConfirmacionStep },
+  { id: 1, label: 'Datos Personales', component: DatosPersonalesStep, evaluationType: null },
+  { id: 2, label: 'Perfil', component: PerfilStep, evaluationType: 'profile' },
+  { id: 3, label: 'Técnica', component: TecnicaStep, evaluationType: 'technical' },
+  { id: 4, label: 'Psicológia', component: PsicologiaStep, evaluationType: 'psychological' },
+  { id: 5, label: 'Motivación', component: MotivacionStep, evaluationType: 'motivation' },
+  { id: 6, label: 'CV', component: CVStep, evaluationType: null },
+  { id: 7, label: 'Confirmación', component: ConfirmacionStep, evaluationType: null },
 ]
 
 export function PostulacionPage() {
@@ -30,11 +30,14 @@ export function PostulacionPage() {
     convocatoriaId, 
     postulacionId,
     personalData,
+    postulanteStatus,
+    evaluationsStatus,
     postularse, 
     guardarDatosPersonales, 
     subirCV,
     iniciarEvaluacion,
     obtenerDatosPersonales,
+    obtenerEstadoPostulante,
     guardarEncuestaPerfil,
     guardarEncuestaPsicologica,
     guardarEncuestaMotivacion,
@@ -90,6 +93,25 @@ export function PostulacionPage() {
     // CV
     cvFile: null,
   })
+
+  // Cargar datos personales primero para obtener job_posting_id si no hay convocatoriaId en URL
+  useEffect(() => {
+    if (!convocatoriaId) {
+      obtenerDatosPersonales().then(data => {
+        // Si hay job_posting_id en los datos personales, usarlo
+        if (data?.job_posting_id) {
+          // El hook ya actualiza convocatoriaId automáticamente
+        }
+      })
+    }
+  }, [])
+
+  // Cargar estado del postulante cuando hay convocatoriaId
+  useEffect(() => {
+    if (convocatoriaId) {
+      obtenerEstadoPostulante(convocatoriaId)
+    }
+  }, [convocatoriaId])
 
   // Cargar datos personales (GET siempre retorna 200 OK con datos del User)
   useEffect(() => {
@@ -165,56 +187,18 @@ export function PostulacionPage() {
     if (currentStep === 1) {
       try {
         await guardarDatosPersonales({ ...formData, ...stepData });
+        // Recargar estado del postulante después de guardar datos personales
+        if (convocatoriaId) {
+          await obtenerEstadoPostulante(convocatoriaId);
+        }
       } catch (error) {
         // El error ya se maneja en el hook
         return; // No avanzar si hay error
       }
     }
     
-    // Si es el paso 2 (Perfil), guardar encuesta de perfil
-    if (currentStep === 2) {
-      try {
-        await guardarEncuestaPerfil({
-          area_interes: stepData.areaInteres,
-          experiencia_previa: stepData.experienciaPrevia,
-          nivel_compromiso: stepData.nivelCompromiso,
-        });
-      } catch (error) {
-        // El error ya se maneja en el hook
-        return; // No avanzar si hay error
-      }
-    }
-
-    // Si es el paso 3 (Técnica), la evaluación se maneja dentro del componente
-    // El componente EvaluacionEmbedded llama a onNext cuando se completa
-    
-    // Si es el paso 4 (Psicología), guardar encuesta psicológica
-    if (currentStep === 4) {
-      try {
-        await guardarEncuestaPsicologica({
-          trabajo_equipo: stepData.trabajoEquipo,
-          manejo_conflictos: stepData.manejoConflictos,
-          actitud_desafios: stepData.actitudDesafios,
-        });
-      } catch (error) {
-        // El error ya se maneja en el hook
-        return; // No avanzar si hay error
-      }
-    }
-
-    // Si es el paso 5 (Motivación), guardar encuesta de motivación
-    if (currentStep === 5) {
-      try {
-        await guardarEncuestaMotivacion({
-          motivacion: stepData.motivacion,
-          expectativas: stepData.expectativas,
-          participacion_proyectos: stepData.participacionProyectos,
-        });
-      } catch (error) {
-        // El error ya se maneja en el hook
-        return; // No avanzar si hay error
-      }
-    }
+    // Los pasos 2-5 (evaluaciones) se manejan dentro de sus componentes
+    // EvaluacionEmbedded llama a onNext cuando se completa la evaluación
     
     // Si es el paso 6 (CV), subir el archivo
     if (currentStep === 6 && stepData.cvFile) {
@@ -296,6 +280,14 @@ export function PostulacionPage() {
           convocatoriaId={convocatoriaId}
           userFields={userFields}
           personalData={personalData}
+          evaluationId={STEPS[currentStep - 1].evaluationType ? evaluationsStatus[STEPS[currentStep - 1].evaluationType]?.evaluation_id : null}
+          evaluationStatus={STEPS[currentStep - 1].evaluationType ? evaluationsStatus[STEPS[currentStep - 1].evaluationType] : null}
+          onEvaluationComplete={async () => {
+            // Recargar estado después de completar evaluación
+            if (convocatoriaId) {
+              await obtenerEstadoPostulante(convocatoriaId);
+            }
+          }}
         />
       </div>
     </div>

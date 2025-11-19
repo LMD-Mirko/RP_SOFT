@@ -90,7 +90,7 @@ const menuItems = [
       {
         icon: Settings,
         label: 'Configuración',
-        path: '/configuracion',
+        path: '/configuracion/global/general',
       },
     ],
   },

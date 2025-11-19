@@ -9,6 +9,30 @@ import { useToast } from '@shared/components/Toast'
 import { Skeleton } from '../../../../shared/components/Skeleton'
 import styles from './ListaEvaluacionesPage.module.css'
 
+// Mapear título de evaluación a evaluation_type
+const getEvaluationTypeFromTitle = (title) => {
+  if (!title) return null
+  
+  const titleLower = title.toLowerCase()
+  
+  // Orden de verificación: más específico primero
+  if (titleLower.includes('perfil') || titleLower.includes('encuesta')) {
+    return 'profile'
+  }
+  if (titleLower.includes('psicológica') || titleLower.includes('psicologica') || titleLower.includes('psicológico') || titleLower.includes('psicologico') || titleLower.includes('psicologia')) {
+    return 'psychological'
+  }
+  if (titleLower.includes('motivación') || titleLower.includes('motivacion') || titleLower.includes('motivacion')) {
+    return 'motivation'
+  }
+  // Técnica debe ir al final porque puede aparecer en otros contextos
+  if (titleLower.includes('técnica') || titleLower.includes('tecnica') || titleLower.includes('técnico') || titleLower.includes('tecnico')) {
+    return 'technical'
+  }
+  
+  return null
+}
+
 const mapEvaluacionFromAPI = (apiData) => {
   return {
     id: apiData.id,
@@ -16,6 +40,7 @@ const mapEvaluacionFromAPI = (apiData) => {
     description: apiData.description || '',
     jobPosting: apiData.job_posting?.title || apiData.job_posting_id || 'N/A',
     jobPostingId: apiData.job_posting_id,
+    evaluationType: apiData.evaluation_type || getEvaluationTypeFromTitle(apiData.title),
     createdAt: apiData.created_at,
     updatedAt: apiData.updated_at,
     _apiData: apiData,
@@ -183,7 +208,13 @@ export function ListaEvaluacionesPage() {
                     <Table.Cell align="center">
                       <div className={styles.actions}>
                         <button
-                          onClick={() => navigate(`${evaluacion.id}/preguntas`)}
+                          onClick={() => {
+                            if (evaluacion.jobPostingId && evaluacion.evaluationType) {
+                              navigate(`/seleccion-practicantes/convocatorias/${evaluacion.jobPostingId}/encuestas/${evaluacion.evaluationType}`)
+                            } else {
+                              toast.error('No se puede navegar: faltan datos de la evaluación')
+                            }
+                          }}
                           className={styles.actionButton}
                           title="Gestionar Preguntas"
                         >
