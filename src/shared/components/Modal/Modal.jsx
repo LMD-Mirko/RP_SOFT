@@ -53,6 +53,7 @@ export function Modal({
   const isFullscreen = size === 'fullscreen'
 
   const overlayStyle = zIndex ? { zIndex } : {}
+  const modalStyle = zIndex ? { zIndex: zIndex + 1 } : {}
 
   const modalContent = (
     <div 
@@ -60,7 +61,10 @@ export function Modal({
       onClick={handleOverlayClick}
       style={overlayStyle}
     >
-      <div className={clsx(styles.modal, styles[size], useTopAlignment && styles.modalTop, !rounded && styles.square, className)}>
+      <div 
+        className={clsx(styles.modal, styles[size], useTopAlignment && styles.modalTop, !rounded && styles.square, className)}
+        style={modalStyle}
+      >
         {/* Header */}
         {(title || showCloseButton) && (
           <div className={styles.header}>
