@@ -190,10 +190,6 @@ export function ModuleRouter() {
           path="transcripciones"
           element={<TranscripcionesPage />}
         />
-        <Route
-          path="configuracion"
-          element={<div><h2>Configuración</h2></div>}
-        />
       </Route>
     </Routes>
   )

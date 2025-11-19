@@ -111,3 +111,16 @@ export const getAverageProgress = async (jobPostingId = null) => {
   }
 };
 
+/**
+ * Obtiene el dashboard completo del postulante
+ * @returns {Promise} Dashboard del postulante con progreso, exámenes, evaluaciones, etc.
+ */
+export const getPostulantDashboard = async () => {
+  try {
+    return await get('dashboard/postulant/');
+  } catch (error) {
+    console.error('Error al obtener dashboard del postulante:', error);
+    throw error;
+  }
+};
+

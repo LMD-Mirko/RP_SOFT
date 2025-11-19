@@ -45,10 +45,12 @@ export function EvaluacionCard({ evaluationType, evaluation, onManage, index = 0
 
       <div className={styles.content}>
         <h3 className={styles.title}>{config.title}</h3>
-        {exists && evaluation?.evaluation ? (
+        {exists ? (
           <>
-            {evaluation.evaluation.description && (
-              <p className={styles.description}>{evaluation.evaluation.description}</p>
+            {evaluation.description ? (
+              <p className={styles.description}>{evaluation.description}</p>
+            ) : (
+              <p className={styles.emptyText}>Esta evaluación aún no ha sido configurada</p>
             )}
             <div className={styles.stats}>
               <div className={styles.statItem}>
@@ -56,16 +58,16 @@ export function EvaluacionCard({ evaluationType, evaluation, onManage, index = 0
                 <span
                   className={clsx(
                     styles.statValue,
-                    evaluation.evaluation.is_active ? styles.active : styles.inactive
+                    evaluation.is_active ? styles.active : styles.inactive
                   )}
                 >
-                  {evaluation.evaluation.is_active ? 'Activa' : 'Inactiva'}
+                  {evaluation.is_active ? 'Activa' : 'Inactiva'}
                 </span>
               </div>
-              {evaluation.evaluation.passing_score && (
+              {evaluation.passing_score && (
                 <div className={styles.statItem}>
                   <span className={styles.statLabel}>Puntaje Mínimo</span>
-                  <span className={styles.statValue}>{evaluation.evaluation.passing_score}%</span>
+                  <span className={styles.statValue}>{evaluation.passing_score}%</span>
                 </div>
               )}
             </div>

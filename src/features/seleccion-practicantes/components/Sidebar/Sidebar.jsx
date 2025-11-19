@@ -7,7 +7,6 @@ import {
   FileText,
   CheckCircle,
   Clock,
-  Settings,
   GraduationCap,
   ChevronDown,
   ChevronRight,
@@ -120,16 +119,6 @@ const menuItems = [
       },
     ],
   },
-  {
-    title: 'CUENTA',
-    items: [
-      {
-        icon: Settings,
-        label: 'Configuración',
-        path: '/seleccion-practicantes/configuracion',
-      },
-    ],
-  },
 ]
 
 export function Sidebar() {
@@ -141,7 +130,6 @@ export function Sidebar() {
     RECLUTAMIENTO: true,
     EXÁMENES: true,
     GESTIÓN: true,
-    CUENTA: true,
   })
 
   // Obtener información del usuario desde localStorage
