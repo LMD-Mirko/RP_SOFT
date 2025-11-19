@@ -41,13 +41,14 @@
     width: 80px;
     height: 80px;
     margin: 0 auto 1.5rem;
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    border-radius: 50%;
+    background: linear-gradient(135deg, #60a5fa 0%, #7c3aed 100%);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #059669;
-    animation: pulse 2s ease-in-out infinite;
+    color: white;
+    box-shadow: 0 8px 30px rgba(124,58,237,0.2);
+    animation: float 3s ease-in-out infinite;
 }
 
 @keyframes pulse {
@@ -64,10 +65,13 @@
 
 .confirmationTitle {
     font-size: 2rem;
-    font-weight: 700;
-    color: #111827;
+    font-weight: 800;
     margin: 0 0 1rem;
     font-family: 'Be Vietnam Pro', sans-serif;
+    background: linear-gradient(90deg, #0ea5e9 0%, #6366f1 50%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .confirmationText {
@@ -135,4 +139,10 @@
     .summaryGrid {
         grid-template-columns: 1fr;
     }
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
 }

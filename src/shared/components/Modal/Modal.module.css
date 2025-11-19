@@ -8,10 +8,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 99999;
   padding: 1rem;
   animation: fadeIn 0.3s ease-out;
   backdrop-filter: blur(8px);
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
 }
 
 .overlayTop {
@@ -32,7 +35,7 @@
 .modal {
   background-color: white;
   border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
   width: 100%;
   max-height: 90vh;
   overflow: hidden;
@@ -40,6 +43,10 @@
   font-family: 'Be Vietnam Pro', sans-serif;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+  position: relative;
+  z-index: 100000;
 }
 
 .square {
@@ -74,7 +81,7 @@
 
 /* Tamaños */
 .sm {
-  max-width: 400px;
+  max-width: 398px;
 }
 
 .md {
@@ -110,10 +117,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
+  padding: 1.75rem 2rem;
   background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
   border-bottom: 1px solid #e5e7eb;
   flex-shrink: 0;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
 }
 
 .title {
@@ -130,12 +138,15 @@
   border: none;
   color: #6b7280;
   cursor: pointer;
-  padding: 0.625rem;
+  padding: 0.5rem;
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
 }
 
 .closeButton:hover {
@@ -144,23 +155,40 @@
   transform: rotate(90deg);
 }
 
+.closeButton:active {
+  transform: rotate(90deg) scale(0.95);
+  background-color: #e5e7eb;
+}
+
 .content {
   overflow-y: auto;
   flex: 1;
   padding: 0;
+  background-color: #ffffff;
+}
+
+.content > form {
+  padding: 2rem;
 }
 
 .body {
   padding: 2rem;
+  background-color: #ffffff;
+}
+
+.content {
+  background-color: #ffffff;
 }
 
 .footer {
   padding: 1.5rem 2rem;
   border-top: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
   display: flex;
   gap: 1rem;
   flex-shrink: 0;
+  justify-content: flex-end;
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 768px) {

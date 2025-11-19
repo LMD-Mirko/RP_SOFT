@@ -52,13 +52,14 @@ const ConveniosConstanciasIndex = lazy(() =>
   import('@features/convenios-constancias').then((m) => ({ default: m.ConveniosConstanciasIndex }))
 )
 
+const ConfiguracionGeneralIndex = lazy(() =>
+  import('@features/configuracion-general').then((m) => ({ default: m.ConfiguracionGeneralIndex }))
+)
+
 // Lazy loading del Dashboard
 const DashboardPage = lazy(() =>
   import('@features/seleccion-practicantes/modules/dashboard/pages').then((m) => ({ default: m.DashboardPage }))
 )
-
-// Placeholders
-const Configuracion = () => null
 
 /**
  * Router Principal
@@ -180,7 +181,14 @@ export function Router() {
           />
 
 
-          <Route path="/configuracion" element={<Configuracion />} />
+          <Route
+            path="/configuracion/*"
+            element={
+              <Suspense fallback={null}>
+                <ConfiguracionGeneralIndex />
+              </Suspense>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

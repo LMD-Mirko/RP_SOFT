@@ -39,6 +39,16 @@ const httpClient = axios.create({
 // Variable para evitar múltiples refresh simultáneos
 let isRefreshing = false;
 let failedQueue = [];
+// Bandera para indicar que estamos en proceso de logout
+let isLoggingOut = false;
+
+/**
+ * Verifica si estamos en proceso de logout
+ * @returns {boolean} true si estamos en proceso de logout
+ */
+export const getIsLoggingOut = () => {
+  return isLoggingOut;
+};
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
@@ -118,6 +128,15 @@ httpClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Si estamos en proceso de logout, suprimir todos los errores
+    if (isLoggingOut) {
+      // Crear un error silencioso que no se mostrará
+      const silentError = new Error('Logout en progreso');
+      silentError.isLogoutError = true;
+      silentError.silent = true;
+      return Promise.reject(silentError);
+    }
+
     // Manejar error de usuario inactivo
     if (error.response?.data?.code === 'user_inactive' || 
         (error.response?.data?.detail && error.response.data.detail.includes('inactive'))) {
@@ -139,7 +158,7 @@ httpClient.interceptors.response.use(
     }
 
     // Si el error es 401 y no es una petición de refresh
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isLoggingOut) {
       if (isRefreshing) {
         // Si ya se está refrescando, esperar en la cola
         return new Promise((resolve, reject) => {
@@ -246,6 +265,15 @@ const executeRequest = async (method, endpoint, data, options = {}) => {
     });
     return response.data;
   } catch (error) {
+    // Si estamos en proceso de logout, suprimir el error
+    if (error.isLogoutError || error.silent || isLoggingOut) {
+      // Crear un error silencioso que no se mostrará
+      const silentError = new Error('Logout en progreso');
+      silentError.silent = true;
+      silentError.isLogoutError = true;
+      throw silentError;
+    }
+
     // Si el error ya fue procesado por el interceptor (user_inactive), re-lanzarlo
     if (error.code === 'user_inactive') {
       throw error;
@@ -278,6 +306,13 @@ const executeRequest = async (method, endpoint, data, options = {}) => {
 
     throw new Error(error.message || 'Error al realizar la petición');
   }
+};
+
+/**
+ * Marca que estamos en proceso de logout para suprimir errores
+ */
+export const setLoggingOut = (value) => {
+  isLoggingOut = value;
 };
 
 /**

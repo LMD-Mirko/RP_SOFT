@@ -24,6 +24,9 @@ export const useAuth = () => {
     try {
       const response = await loginService(credentials);
       
+      // Limpiar marca de logout si existe
+      sessionStorage.removeItem('rpsoft_logging_out')
+      
       // Guardar tokens en cookies
       if (response.tokens) {
         const accessToken = response.tokens.access;
@@ -95,6 +98,9 @@ export const useAuth = () => {
     try {
       const response = await registerService(userData);
       
+      // Limpiar marca de logout si existe
+      sessionStorage.removeItem('rpsoft_logging_out')
+      
       // Guardar tokens en cookies
       if (response.tokens) {
         const accessToken = response.tokens.access;
@@ -156,13 +162,62 @@ export const useAuth = () => {
   };
 
   /**
-   * Cierra la sesión del usuario
+   * Cierra la sesión del usuario y limpia todo el almacenamiento
    */
   const logout = () => {
+    // Limpiar tokens de cookies
     clearAuthTokens();
-    localStorage.removeItem('authToken');
-    sessionStorage.removeItem('authToken');
-    localStorage.removeItem('rpsoft_user');
+    
+    // Limpiar todas las cookies
+    const cookies = document.cookie.split(';')
+    const domain = window.location.hostname
+    const paths = ['/', '/seleccion-practicantes', '/configuracion', '/agente-integrador']
+    
+    cookies.forEach(cookie => {
+      const eqPos = cookie.indexOf('=')
+      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
+      
+      if (name) {
+        const expiration = 'expires=Thu, 01 Jan 1970 00:00:00 UTC'
+        paths.forEach(path => {
+          document.cookie = `${name}=; ${expiration}; path=${path};`
+          document.cookie = `${name}=; ${expiration}; path=${path}; domain=${domain};`
+          document.cookie = `${name}=; ${expiration}; path=${path}; domain=.${domain};`
+          document.cookie = `${name}=; ${expiration}; path=${path}; SameSite=Strict;`
+          document.cookie = `${name}=; ${expiration}; path=${path}; SameSite=Lax;`
+          document.cookie = `${name}=; ${expiration}; path=${path}; SameSite=None; Secure;`
+        })
+      }
+    })
+
+    // Limpiar localStorage
+    try {
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('rpsoft_user')
+      localStorage.removeItem('rpsoft_selection_data')
+      localStorage.removeItem('rpsoft_current_step')
+      
+      // Limpiar todos los intentos de exámenes almacenados
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && (key.startsWith('exam_attempt_') || key.startsWith('rpsoft_') || key.startsWith('auth'))) {
+          keysToRemove.push(key)
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key))
+    } catch (error) {
+      console.error('Error al limpiar localStorage:', error)
+    }
+
+    // Limpiar sessionStorage
+    try {
+      sessionStorage.removeItem('authToken')
+      sessionStorage.clear()
+    } catch (error) {
+      console.error('Error al limpiar sessionStorage:', error)
+    }
+
     navigate('/');
   };
 

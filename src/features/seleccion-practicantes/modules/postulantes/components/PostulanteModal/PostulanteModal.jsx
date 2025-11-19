@@ -1,55 +1,66 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { User, Mail, FileText, Calendar, CreditCard, Phone, MapPin, Cake } from 'lucide-react'
 import { Modal } from '@shared/components/Modal'
 import { Input } from '@shared/components/Input'
 import { Select } from '@shared/components/Select'
-import { DatePicker } from '@shared/components/DatePicker'
 import { Button } from '@shared/components/Button'
+import { PopoverCalendar, parsePartialDate } from '@shared/components/Calendar/CustomCalendar'
+import dayjs from 'dayjs'
 import styles from './PostulanteModal.module.css'
-
-const etapasOptions = [
-  { value: 'Formulario', label: 'Formulario' },
-  { value: 'Prueba Técnica', label: 'Prueba Técnica' },
-  { value: 'Entrevista', label: 'Entrevista' },
-  { value: 'Evaluación', label: 'Evaluación' },
-]
-
-const estadosOptions = [
-  { value: 'Pendiente', label: 'Pendiente' },
-  { value: 'En Progreso', label: 'En Progreso' },
-  { value: 'Completado', label: 'Completado' },
-]
-
-export function PostulanteModal({ isOpen, onClose, onSave, postulante = null }) {
-  const [formData, setFormData] = useState({
-    nombre: '',
-    correo: '',
-    dni: '',
+            <Input
+              id="fechaNacimiento"
+              placeholder="DD-MM-YYYY"
+              value={inputFechaNacimiento}
+              onChange={(e) => handleInputFechaNacimientoChange(e.target.value)}
+              onBlur={handleInputFechaNacimientoBlur}
+              onFocus={() => setOpenFechaNacimiento(true)}
+              ref={btnFechaNacimientoRef}
+              icon={Cake}
+              style={{ backgroundColor: '#fbfdff', color: '#0f172a', borderColor: '#eef2ff' }}
+            />
+            <PopoverCalendar
+              open={openFechaNacimiento}
+              anchorEl={btnFechaNacimientoRef.current}
+              initialValue={previewFechaNacimiento ?? (formData.fechaNacimiento ? dayjs(formData.fechaNacimiento) : null)}
+              onClose={() => setOpenFechaNacimiento(false)}
+              onSelect={(d) => {
+                const date = d ? d.toDate() : null
+                handleDateNacimientoChange(date)
+                setInputFechaNacimiento(d ? d.format('DD-MM-YYYY') : '')
+                setPreviewFechaNacimiento(null)
+              }}
+              title="Fecha de Nacimiento"
+            />
     telefono: '',
     direccion: '',
     fechaNacimiento: null,
     etapa: '',
     estado: '',
     fecha: null,
-  })
-
-  useEffect(() => {
-    if (postulante) {
-      setFormData({
-        nombre: postulante.nombre || '',
-        correo: postulante.correo || '',
-        dni: postulante.dni || '',
-        telefono: postulante.telefono || '',
-        direccion: postulante.direccion || '',
-        fechaNacimiento: postulante.fechaNacimiento ? new Date(postulante.fechaNacimiento) : null,
-        etapa: postulante.etapa || '',
-        estado: postulante.estado || '',
-        fecha: postulante.fecha ? new Date(postulante.fecha) : null,
-      })
-    } else {
-      setFormData({
-        nombre: '',
-        correo: '',
+            <Input
+              id="fechaRegistro"
+              placeholder="DD-MM-YYYY"
+              value={inputFechaRegistro}
+              onChange={(e) => handleInputFechaRegistroChange(e.target.value)}
+              onBlur={handleInputFechaRegistroBlur}
+              onFocus={() => setOpenFecha(true)}
+              ref={btnFechaRef}
+              icon={Calendar}
+              style={{ backgroundColor: '#fbfdff', color: '#0f172a', borderColor: '#eef2ff' }}
+            />
+            <PopoverCalendar
+              open={openFecha}
+              anchorEl={btnFechaRef.current}
+              initialValue={previewFechaRegistro ?? (formData.fecha ? dayjs(formData.fecha) : null)}
+              onClose={() => setOpenFecha(false)}
+              onSelect={(d) => {
+                const date = d ? d.toDate() : null
+                handleDateChange(date)
+                setInputFechaRegistro(d ? d.format('DD-MM-YYYY') : '')
+                setPreviewFechaRegistro(null)
+              }}
+              title="Fecha de Registro"
+            />
         dni: '',
         telefono: '',
         direccion: '',
@@ -72,6 +83,54 @@ export function PostulanteModal({ isOpen, onClose, onSave, postulante = null }) 
 
   const handleDateNacimientoChange = (date) => {
     setFormData((prev) => ({ ...prev, fechaNacimiento: date }))
+  }
+
+  const [openFechaNacimiento, setOpenFechaNacimiento] = useState(false)
+  const [openFecha, setOpenFecha] = useState(false)
+  const btnFechaNacimientoRef = useRef(null)
+  const btnFechaRef = useRef(null)
+  const [inputFechaNacimiento, setInputFechaNacimiento] = useState('')
+  const [inputFechaRegistro, setInputFechaRegistro] = useState('')
+  const [previewFechaNacimiento, setPreviewFechaNacimiento] = useState(null)
+  const [previewFechaRegistro, setPreviewFechaRegistro] = useState(null)
+
+  useEffect(() => {
+    setInputFechaNacimiento(formData.fechaNacimiento ? dayjs(formData.fechaNacimiento).format('DD-MM-YYYY') : '')
+    setInputFechaRegistro(formData.fecha ? dayjs(formData.fecha).format('DD-MM-YYYY') : '')
+  }, [formData.fechaNacimiento, formData.fecha])
+
+  const handleInputFechaNacimientoBlur = () => {
+    if (!inputFechaNacimiento) {
+      handleDateNacimientoChange(null)
+      return
+    }
+    const parsed = dayjs(inputFechaNacimiento, 'DD-MM-YYYY', true)
+    if (parsed.isValid()) {
+      handleDateNacimientoChange(parsed.toDate())
+    }
+  }
+
+  const handleInputFechaNacimientoChange = (val) => {
+    setInputFechaNacimiento(val)
+    const p = parsePartialDate(val)
+    setPreviewFechaNacimiento(p)
+  }
+
+  const handleInputFechaRegistroBlur = () => {
+    if (!inputFechaRegistro) {
+      handleDateChange(null)
+      return
+    }
+    const parsed = dayjs(inputFechaRegistro, 'DD-MM-YYYY', true)
+    if (parsed.isValid()) {
+      handleDateChange(parsed.toDate())
+    }
+  }
+
+  const handleInputFechaRegistroChange = (val) => {
+    setInputFechaRegistro(val)
+    const p = parsePartialDate(val)
+    setPreviewFechaRegistro(p)
   }
 
   const handleSubmit = (e) => {
@@ -147,11 +206,28 @@ export function PostulanteModal({ isOpen, onClose, onSave, postulante = null }) 
             <label htmlFor="fechaNacimiento" className={styles.label}>
               Fecha de Nacimiento
             </label>
-            <DatePicker
-              selected={formData.fechaNacimiento}
-              onChange={handleDateNacimientoChange}
-              placeholder="Seleccionar fecha"
-              maxDate={new Date()}
+            <Input
+              id="fechaNacimiento"
+              placeholder="DD-MM-YYYY"
+              value={inputFechaNacimiento}
+              onChange={(e) => setInputFechaNacimiento(e.target.value)}
+              onBlur={handleInputFechaNacimientoBlur}
+              onFocus={() => setOpenFechaNacimiento(true)}
+              ref={btnFechaNacimientoRef}
+              icon={Cake}
+              style={{ backgroundColor: '#fbfdff', color: '#0f172a', borderColor: '#eef2ff' }}
+            />
+            <PopoverCalendar
+              open={openFechaNacimiento}
+              anchorEl={btnFechaNacimientoRef.current}
+              initialValue={formData.fechaNacimiento ? dayjs(formData.fechaNacimiento) : null}
+              onClose={() => setOpenFechaNacimiento(false)}
+              onSelect={(d) => {
+                const date = d ? d.toDate() : null
+                handleDateNacimientoChange(date)
+                setInputFechaNacimiento(d ? d.format('DD-MM-YYYY') : '')
+              }}
+              title="Fecha de Nacimiento"
             />
           </div>
 
@@ -159,11 +235,28 @@ export function PostulanteModal({ isOpen, onClose, onSave, postulante = null }) 
             <label htmlFor="fecha" className={styles.label}>
               Fecha de Registro *
             </label>
-            <DatePicker
-              selected={formData.fecha}
-              onChange={handleDateChange}
-              placeholder="Seleccionar fecha"
-              maxDate={new Date()}
+            <Input
+              id="fechaRegistro"
+              placeholder="DD-MM-YYYY"
+              value={inputFechaRegistro}
+              onChange={(e) => setInputFechaRegistro(e.target.value)}
+              onBlur={handleInputFechaRegistroBlur}
+              onFocus={() => setOpenFecha(true)}
+              ref={btnFechaRef}
+              icon={Calendar}
+              style={{ backgroundColor: '#fbfdff', color: '#0f172a', borderColor: '#eef2ff' }}
+            />
+            <PopoverCalendar
+              open={openFecha}
+              anchorEl={btnFechaRef.current}
+              initialValue={formData.fecha ? dayjs(formData.fecha) : null}
+              onClose={() => setOpenFecha(false)}
+              onSelect={(d) => {
+                const date = d ? d.toDate() : null
+                handleDateChange(date)
+                setInputFechaRegistro(d ? d.format('DD-MM-YYYY') : '')
+              }}
+              title="Fecha de Registro"
             />
           </div>
         </div>

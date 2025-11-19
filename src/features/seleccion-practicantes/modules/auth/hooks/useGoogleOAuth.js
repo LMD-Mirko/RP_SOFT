@@ -38,6 +38,9 @@ export const useGoogleOAuth = () => {
         provider_id: googleData.provider_id,
       });
 
+      // Limpiar marca de logout si existe
+      sessionStorage.removeItem('rpsoft_logging_out')
+
       // 3. Guardar tokens en cookies
       if (response.tokens) {
         const accessToken = response.tokens.access;
@@ -142,6 +145,9 @@ export const useGoogleOAuth = () => {
         username: username,
         role_id: roleId,
       });
+
+      // Limpiar marca de logout si existe
+      sessionStorage.removeItem('rpsoft_logging_out')
 
       if (response.tokens) {
         const accessToken = response.tokens.access;

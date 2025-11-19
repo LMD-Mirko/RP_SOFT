@@ -1,2 +1,2 @@
-export * from './evaluacionService';
+export * from './evaluacionService'
 

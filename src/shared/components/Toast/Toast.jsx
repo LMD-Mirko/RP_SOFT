@@ -10,6 +10,15 @@ export function ToastProvider({ children }) {
   const toastIdCounter = useRef(0)
 
   const addToast = useCallback((message, type = 'info', duration = 4000, title) => {
+    // Si estamos en proceso de logout, no mostrar toasts de error
+    if (type === 'error') {
+      // Verificar si hay una marca en sessionStorage que indique que estamos en logout
+      const isLoggingOut = sessionStorage.getItem('rpsoft_logging_out') === 'true'
+      if (isLoggingOut) {
+        return null // No mostrar toast durante logout
+      }
+    }
+    
     // Generar ID único combinando timestamp con contador
     const id = `${Date.now()}-${++toastIdCounter.current}`
     const newToast = { id, message, type, duration, title }

@@ -80,7 +80,7 @@ export function ParticipantsModal({ isOpen, onClose, selectedParticipants = [], 
       onClose={onClose}
       title="Seleccionar Participantes"
       size="md"
-      zIndex={1001}
+      zIndex={100001}
     >
       <div className={styles.content}>
         <Input

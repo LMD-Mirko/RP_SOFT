@@ -7,16 +7,13 @@ import {
   FileText,
   CheckCircle,
   Clock,
-  Settings,
-  User,
-  Users,
-  Shield,
   GraduationCap,
-  FileType,
   ChevronDown,
   ChevronRight,
-  MessageSquare,
   Download,
+  Award,
+  Users,
+  BookOpen,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
@@ -36,22 +33,54 @@ const menuItems = [
     ],
   },
   {
+    title: 'POSTULANTE',
+    items: [
+      {
+        icon: FileText,
+        label: 'Ver CV/s',
+        path: '/seleccion-practicantes/cvs',
+        postulanteOnly: true, // Solo Postulante (Admin NO puede ver)
+      },
+      {
+        icon: Award,
+        label: 'Mis Evaluaciones',
+        path: '/seleccion-practicantes/evaluaciones/mis-evaluaciones',
+        postulanteOnly: true, // Solo Postulante (Admin NO puede ver)
+      },
+    ],
+  },
+  {
+    title: 'EXÁMENES',
+    items: [
+      {
+        icon: BookOpen,
+        label: 'Exámenes asignados',
+        path: '/seleccion-practicantes/examenes/asignados',
+        exact: true,
+      },
+      {
+        icon: BookOpen,
+        label: 'Gestión de Exámenes',
+        path: '/seleccion-practicantes/examenes',
+        adminOnly: true,
+        excludePaths: ['/seleccion-practicantes/examenes/asignados'],
+      },
+    ],
+  },
+  {
     title: 'RECLUTAMIENTO',
     items: [
       {
         icon: Calendar,
         label: 'Convocatorias',
         path: '/seleccion-practicantes/convocatorias',
+        adminOnly: true, // Solo Admin
       },
       {
         icon: FolderOpen,
         label: 'Postulantes',
         path: '/seleccion-practicantes/postulantes',
-      },
-      {
-        icon: FileText,
-        label: 'Ver CV/s',
-        path: '/seleccion-practicantes/cvs',
+        adminOnly: true, // Solo Admin
       },
     ],
   },
@@ -60,29 +89,20 @@ const menuItems = [
     items: [
       {
         icon: CheckCircle,
-        label: 'Evaluaciones',
+        label: 'Evaluaciones Técnicas',
         path: '/seleccion-practicantes/evaluaciones',
-      },
-      {
-        icon: Calendar,
-        label: 'Calendario',
-        path: '/seleccion-practicantes/calendario',
-      },
-      {
-        icon: Clock,
-        label: 'Historial',
-        path: '/seleccion-practicantes/historial',
+        adminOnly: true,
       },
       {
         icon: Users,
-        label: 'Usuarios',
-        path: '/seleccion-practicantes/usuarios',
-        adminOnly: true, // Solo visible para administradores
+        label: 'Gestión de Reuniones',
+        path: '/seleccion-practicantes/calendario',
+        adminOnly: true, // Solo Admin (Postulante NO puede ver)
       },
       {
-        icon: Shield,
-        label: 'Roles',
-        path: '/seleccion-practicantes/roles',
+        icon: Download,
+        label: 'Gestión de CVs',
+        path: '/seleccion-practicantes/cvs-admin',
         adminOnly: true, // Solo visible para administradores
       },
       {
@@ -92,34 +112,10 @@ const menuItems = [
         adminOnly: true, // Solo visible para administradores
       },
       {
-        icon: FileType,
-        label: 'Tipos de Documento',
-        path: '/seleccion-practicantes/tipos-documento',
-        adminOnly: true, // Solo visible para administradores
-      },
-      {
-        icon: Download,
-        label: 'Gestión de CVs',
-        path: '/seleccion-practicantes/cvs-admin',
-        adminOnly: true, // Solo visible para administradores
-      },
-    ],
-  },
-
-  // Se elimina la sección de Transcripción aquí; vive en su propio módulo
-
-  {
-    title: 'CUENTA',
-    items: [
-      {
-        icon: User,
-        label: 'Mi Perfil',
-        path: '/seleccion-practicantes/perfil',
-      },
-      {
-        icon: Settings,
-        label: 'Configuración',
-        path: '/seleccion-practicantes/configuracion',
+        icon: Clock,
+        label: 'Historial',
+        path: '/seleccion-practicantes/historial',
+        adminOnly: true, // Solo Admin (Postulante NO puede ver)
       },
     ],
   },
@@ -130,10 +126,10 @@ export function Sidebar() {
   const navigate = useNavigate()
   const [expandedSections, setExpandedSections] = useState({
     PRINCIPAL: true,
+    POSTULANTE: true,
     RECLUTAMIENTO: true,
+    EXÁMENES: true,
     GESTIÓN: true,
-    TRANSCRIPCIÓN: true,
-    CUENTA: true,
   })
 
   // Obtener información del usuario desde localStorage
@@ -157,6 +153,14 @@ export function Sidebar() {
     return userInfo.role_id === 2 || userInfo.is_admin === true || userInfo.role_slug === 'admin'
   }
 
+  // Verificar si el usuario es postulante
+  const isPostulante = () => {
+    const userInfo = getUserInfo()
+    if (!userInfo) return false
+    // Verificar por role_id (1 = Postulante) o por is_postulante
+    return userInfo.role_id === 1 || userInfo.is_postulante === true || userInfo.role_slug === 'postulante'
+  }
+
   const toggleSection = (title) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -164,24 +168,50 @@ export function Sidebar() {
     }))
   }
 
-  const isActive = (path) => {
+const isActive = (path, { exact = false, excludePaths = [] } = {}) => {
     if (path === '/seleccion-practicantes') {
       return (
         location.pathname === '/seleccion-practicantes' ||
         location.pathname === '/seleccion-practicantes/'
       )
     }
-    return location.pathname === path || location.pathname.startsWith(path + '/')
+  if (exact) {
+    return location.pathname === path
+  }
+  const matches =
+    location.pathname === path || location.pathname.startsWith(path + '/')
+
+  if (!matches) return false
+
+  if (excludePaths.some((excludedPath) => location.pathname.startsWith(excludedPath))) {
+    return false
+  }
+
+  return true
   }
 
   // Filtrar items según permisos
   const filterMenuItems = () => {
     const userIsAdmin = isAdmin()
+    const userIsPostulante = isPostulante()
+    
     return menuItems.map((section) => ({
       ...section,
       items: section.items.filter((item) => {
         // Si el item requiere admin y el usuario no es admin, ocultarlo
         if (item.adminOnly && !userIsAdmin) {
+          return false
+        }
+        // Si el item es solo para postulantes y el usuario no es postulante, ocultarlo
+        if (item.postulanteOnly && !userIsPostulante) {
+          return false
+        }
+        // Si el item es solo para postulantes y el usuario es admin, ocultarlo (Admin NO puede ver)
+        if (item.postulanteOnly && userIsAdmin) {
+          return false
+        }
+        // Si el item requiere admin y el usuario es postulante, ocultarlo
+        if (item.adminOnly && userIsPostulante) {
           return false
         }
         return true
@@ -215,7 +245,10 @@ export function Sidebar() {
               <div className={styles.sectionItems}>
                 {section.items.map((item) => {
                   const Icon = item.icon
-                  const active = isActive(item.path)
+                  const active = isActive(item.path, {
+                    exact: item.exact,
+                    excludePaths: item.excludePaths || [],
+                  })
 
                   return (
                     <button
