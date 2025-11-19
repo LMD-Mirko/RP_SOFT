@@ -1,11 +1,14 @@
 import { BookOpen, Clock, Award, CheckCircle, Calendar } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Modal } from '@shared/components/Modal'
-import { DatePicker } from '@shared/components/DatePicker'
 import { Input } from '@shared/components/Input'
 import { Textarea } from '@shared/components/Textarea'
 import { Button } from '@shared/components/Button'
 import styles from './ExamModal.module.css'
+import { PopoverCalendar, parsePartialDate } from '@shared/components/Calendar/CustomCalendar'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+dayjs.extend(customParseFormat)
 
 export function ExamModal({ isOpen, onClose, onSave, exam = null, isLoading = false }) {
   const [formData, setFormData] = useState({
@@ -64,6 +67,50 @@ export function ExamModal({ isOpen, onClose, onSave, exam = null, isLoading = fa
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }))
     }
+  }
+
+  const [openStartDate, setOpenStartDate] = useState(false)
+  const [openEndDate, setOpenEndDate] = useState(false)
+  const startBtnRef = useRef(null)
+  const endBtnRef = useRef(null)
+  const [inputStartDate, setInputStartDate] = useState('')
+  const [inputEndDate, setInputEndDate] = useState('')
+  const [previewStartDate, setPreviewStartDate] = useState(null)
+  const [previewEndDate, setPreviewEndDate] = useState(null)
+
+  useEffect(() => {
+    setInputStartDate(formData.start_date ? dayjs(formData.start_date).format('DD-MM-YYYY') : '')
+    setInputEndDate(formData.end_date ? dayjs(formData.end_date).format('DD-MM-YYYY') : '')
+  }, [formData.start_date, formData.end_date])
+
+  const handleInputStartBlur = () => {
+    if (!inputStartDate) {
+      handleDateChange('start_date', null)
+      return
+    }
+    const parsed = dayjs(inputStartDate, 'DD-MM-YYYY', true)
+    if (parsed.isValid()) handleDateChange('start_date', parsed.toDate())
+  }
+
+  const handleInputStartChange = (val) => {
+    setInputStartDate(val)
+    const p = parsePartialDate(val)
+    setPreviewStartDate(p)
+  }
+
+  const handleInputEndBlur = () => {
+    if (!inputEndDate) {
+      handleDateChange('end_date', null)
+      return
+    }
+    const parsed = dayjs(inputEndDate, 'DD-MM-YYYY', true)
+    if (parsed.isValid()) handleDateChange('end_date', parsed.toDate())
+  }
+
+  const handleInputEndChange = (val) => {
+    setInputEndDate(val)
+    const p = parsePartialDate(val)
+    setPreviewEndDate(p)
   }
 
   const validate = () => {
@@ -172,12 +219,28 @@ export function ExamModal({ isOpen, onClose, onSave, exam = null, isLoading = fa
             <label htmlFor="start_date" className={styles.label}>
               Fecha Inicio *
             </label>
-            <DatePicker
-              selected={formData.start_date}
-              onChange={(date) => handleDateChange('start_date', date)}
-              placeholder="Seleccionar fecha de inicio"
-              minDate={new Date()}
-              maxDate={formData.end_date}
+            <Input
+              id="start_date"
+              placeholder="DD-MM-YYYY"
+              value={inputStartDate}
+              onChange={(e) => handleInputStartChange(e.target.value)}
+              onBlur={handleInputStartBlur}
+              onFocus={() => setOpenStartDate(true)}
+              ref={startBtnRef}
+              icon={Calendar}
+              style={{ backgroundColor: '#fbfdff', color: '#0f172a', borderColor: '#eef2ff' }}
+            />
+            <PopoverCalendar
+              open={openStartDate}
+              anchorEl={startBtnRef.current}
+              initialValue={previewStartDate ?? (formData.start_date ? dayjs(formData.start_date) : null)}
+              onClose={() => setOpenStartDate(false)}
+              onSelect={(d) => {
+                handleDateChange('start_date', d ? d.toDate() : null)
+                setInputStartDate(d ? d.format('DD-MM-YYYY') : '')
+                setPreviewStartDate(null)
+              }}
+              title="Fecha Inicio"
             />
             {errors.start_date && (
               <span className={styles.errorText}>{errors.start_date}</span>
@@ -188,11 +251,28 @@ export function ExamModal({ isOpen, onClose, onSave, exam = null, isLoading = fa
             <label htmlFor="end_date" className={styles.label}>
               Fecha Fin *
             </label>
-            <DatePicker
-              selected={formData.end_date}
-              onChange={(date) => handleDateChange('end_date', date)}
-              placeholder="Seleccionar fecha de fin"
-              minDate={formData.start_date || new Date()}
+            <Input
+              id="end_date"
+              placeholder="DD-MM-YYYY"
+              value={inputEndDate}
+              onChange={(e) => handleInputEndChange(e.target.value)}
+              onBlur={handleInputEndBlur}
+              onFocus={() => setOpenEndDate(true)}
+              ref={endBtnRef}
+              icon={Calendar}
+              style={{ backgroundColor: '#fbfdff', color: '#0f172a', borderColor: '#eef2ff' }}
+            />
+            <PopoverCalendar
+              open={openEndDate}
+              anchorEl={endBtnRef.current}
+              initialValue={previewEndDate ?? (formData.end_date ? dayjs(formData.end_date) : null)}
+              onClose={() => setOpenEndDate(false)}
+              onSelect={(d) => {
+                handleDateChange('end_date', d ? d.toDate() : null)
+                setInputEndDate(d ? d.format('DD-MM-YYYY') : '')
+                setPreviewEndDate(null)
+              }}
+              title="Fecha Fin"
             />
             {errors.end_date && (
               <span className={styles.errorText}>{errors.end_date}</span>

@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Clock, CheckCircle2, AlertCircle, Save, FileText, CheckCircle } from 'lucide-react'
+import { Clock, CheckCircle2, AlertCircle, Save, FileText, CheckCircle, Info } from 'lucide-react'
+import clsx from 'clsx'
 import { Button } from '@shared/components/Button'
-import { ConfirmModal } from '@shared/components/ConfirmModal'
+import { Modal } from '@shared/components/Modal'
+import confirmStyles from '@shared/components/ConfirmModal/ConfirmModal.module.css'
 import { Skeleton } from '../../../../shared/components/Skeleton'
 import { EvaluacionTimer } from '../../../evaluaciones-postulante/components/EvaluacionTimer'
 import { PreguntaCard } from '../../../evaluaciones-postulante/components/PreguntaCard'
@@ -340,17 +342,52 @@ export function EvaluacionEmbedded({
         </div>
       </div>
 
-      {/* Confirm Modal */}
-      <ConfirmModal
+      {/* Confirm Modal (local) - centrado para no tapar el header */}
+      <Modal
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
-        onConfirm={handleSubmit}
-        title="Finalizar Evaluación"
-        message={`¿Estás seguro de que deseas finalizar la evaluación? Has respondido ${answeredQuestions} de ${totalQuestions} preguntas.${answeredQuestions < totalQuestions ? ' Asegúrate de responder todas las preguntas antes de finalizar.' : ''}`}
-        confirmText="Sí, Finalizar"
-        cancelText="Cancelar"
-        type={answeredQuestions < totalQuestions ? "warning" : "info"}
-      />
+        onCloseComplete={null}
+        size="sm"
+        closeOnOverlayClick={!isSubmitting}
+        showCloseButton={false}
+        title={null}
+        centered={true}
+      >
+        <div className={confirmStyles.content}>
+          <div className={clsx(confirmStyles.iconContainer, confirmStyles[`icon_${answeredQuestions < totalQuestions ? 'warning' : 'info'}`])}>
+            <div className={confirmStyles.iconWrapper}>
+              {answeredQuestions < totalQuestions ? <AlertCircle size={24} /> : <Info size={24} />}
+            </div>
+          </div>
+
+          <div className={confirmStyles.textContainer}>
+            <h3 className={confirmStyles.title}>Finalizar Evaluación</h3>
+            <p className={confirmStyles.message}>{`¿Estás seguro de que deseas finalizar la evaluación? Has respondido ${answeredQuestions} de ${totalQuestions} preguntas.${answeredQuestions < totalQuestions ? ' Asegúrate de responder todas las preguntas antes de finalizar.' : ''}`}</p>
+          </div>
+
+          <div className={confirmStyles.actions}>
+            <Button
+              variant="secondary"
+              onClick={() => setShowConfirmModal(false)}
+              disabled={isSubmitting}
+              fullWidth
+              className={confirmStyles.cancelButton}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              loading={isSubmitting}
+              fullWidth
+              className={clsx(confirmStyles.confirmButton, confirmStyles[`confirmButton_${answeredQuestions < totalQuestions ? 'warning' : 'info'}`])}
+            >
+              Sí, Finalizar
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

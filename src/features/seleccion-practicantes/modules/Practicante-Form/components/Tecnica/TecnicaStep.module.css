@@ -37,19 +37,23 @@
 }
 
 .stepTitle {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #111827;
+    font-size: 1.9rem;
+    font-weight: 800;
     margin: 0 0 0.5rem;
     font-family: 'Be Vietnam Pro', sans-serif;
     letter-spacing: -0.02em;
+    /* Modern gradient title */
+    background: linear-gradient(90deg, #0ea5e9 0%, #6366f1 50%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .stepSubtitle {
-    font-size: 0.9375rem;
-    color: #6b7280;
+    font-size: 1rem;
+    color: #475569;
     margin: 0;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 /* Form */
@@ -237,6 +241,9 @@
 
 .icon {
     color: #3b82f6;
+    background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(99,102,241,0.08));
+    padding: 0.5rem;
+    border-radius: 0.75rem;
 }
 
 .content {
