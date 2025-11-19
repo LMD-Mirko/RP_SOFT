@@ -12,6 +12,7 @@ const alertsData = [
     iconColor: '#eab308',
     bgColor: '#fefce8',
     borderColor: '#fde047',
+    titleColor: '#a16207',
     actionText: 'Ver detalles'
   },
   {
@@ -24,6 +25,7 @@ const alertsData = [
     iconColor: '#ef4444',
     bgColor: '#fef2f2',
     borderColor: '#fca5a5',
+    titleColor: '#1e293b',
     actionText: 'Ver detalles'
   },
   {
@@ -36,6 +38,7 @@ const alertsData = [
     iconColor: '#f97316',
     bgColor: '#fff7ed',
     borderColor: '#fdba74',
+    titleColor: '#c2410c',
     actionText: 'Ver detalles'
   }
 ]
@@ -61,7 +64,7 @@ export function AlertCards() {
                   <Icon size={20} />
                 </div>
                 <div className={styles.alertHeaderContent}>
-                  <div className={styles.alertTitle}>{alert.title}</div>
+                  <div className={styles.alertTitle} style={{ color: alert.titleColor }}>{alert.title}</div>
                   <div className={styles.alertCount}>{alert.count}</div>
                 </div>
                 <button className={styles.moreButton}>›</button>
@@ -72,7 +75,15 @@ export function AlertCards() {
                   <div key={index} className={styles.personTag}>• {person}</div>
                 ))}
               </div>
-              <button className={styles.alertAction}>{alert.actionText}</button>
+              <button 
+                className={styles.alertAction}
+                style={{ 
+                  borderColor: alert.borderColor,
+                  color: alert.titleColor
+                }}
+              >
+                {alert.actionText}
+              </button>
             </div>
           )
         })}

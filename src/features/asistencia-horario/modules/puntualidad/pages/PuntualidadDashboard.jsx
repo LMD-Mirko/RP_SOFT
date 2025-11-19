@@ -1,10 +1,12 @@
 import { useState } from "react";
 import {
   Users,
+  UsersRound,
   UserCheck,
   GraduationCap,
   FileCheck,
   FileX,
+  UserX,
   Clock,
   Info,
   AlertTriangle,
@@ -55,60 +57,75 @@ export default function App() {
 
       {activeTab === "vista" && (
         <>
-          <div className="header-update">
-            <span>
-              Última actualización: <strong>7:45 a.m.</strong>
-            </span>
+          <div className="resume-header">
+            <h2 className="resume-title">Resumen de Asistencia Hoy</h2>
+            <div className="header-update">
+              <span>
+                Última actualización: <strong>7:45 a.m.</strong>
+              </span>
+            </div>
           </div>
 
           {/* === Resumen de Asistencia === */}
           <section className="grid-resume">
             <div className="card">
-              <div className="card-icon blue"><Users size={22} /></div>
-              <h3>Deben Asistir Hoy</h3>
-              <div className="big">128</div>
-              <p className="note">Excluye los que tienen clases</p>
+              <div className="card-content">
+                <h3>Deben Asistir Hoy</h3>
+                <div className="big">128</div>
+                <p className="note">Excluye los que tienen clases</p>
+              </div>
+              <div className="card-icon blue"><UsersRound size={36} /></div>
             </div>
 
             <div className="card">
-              <div className="card-icon green"><UserCheck size={22} /></div>
-              <h3>Presentes</h3>
-              <div className="big">118 <span className="small">(92%)</span></div>
-              <p className="note">&nbsp;</p>
+              <div className="card-content">
+                <h3>Presentes</h3>
+                <div className="big">118 <span className="small">(92%)</span></div>
+                <p className="note">&nbsp;</p>
+              </div>
+              <div className="card-icon green"><UserCheck size={36} /></div>
             </div>
 
             <div className="card">
-              <div className="card-icon purple"><GraduationCap size={22} /></div>
-              <h3>Con Clases Hoy</h3>
-              <div className="big">24</div>
-              <p className="note">Auto-excluidos del registro</p>
+              <div className="card-content">
+                <h3>Con Clases Hoy</h3>
+                <div className="big">24</div>
+                <p className="note">Auto-excluidos del registro</p>
+              </div>
+              <div className="card-icon purple"><GraduationCap size={36} /></div>
             </div>
 
             <div className="card">
-              <div className="card-icon orange"><FileCheck size={22} /></div>
-              <h3>Ausentes Justificados</h3>
-              <div className="big">6</div>
-              <p className="note">Con ticket aprobado</p>
+              <div className="card-content">
+                <h3>Ausentes Justificados</h3>
+                <div className="big">6</div>
+                <p className="note">Con ticket aprobado</p>
+              </div>
+              <div className="card-icon orange"><UserX size={36} /></div>
             </div>
 
             <div className="card">
-              <div className="card-icon red"><FileX size={22} /></div>
-              <h3>Ausentes Sin Justificar</h3>
-              <div className="big">4</div>
-              <p className="note">Requieren atención</p>
+              <div className="card-content">
+                <h3>Ausentes Sin Justificar</h3>
+                <div className="big">4</div>
+                <p className="note">Requieren atención</p>
+              </div>
+              <div className="card-icon red"><AlertTriangle size={36} /></div>
             </div>
 
             <div className="card">
-              <div className="card-icon yellow"><Clock size={22} /></div>
-              <h3>Tardanzas</h3>
-              <div className="big">8</div>
-              <p className="note">Llegaron después de 8:05</p>
+              <div className="card-content">
+                <h3>Tardanzas</h3>
+                <div className="big">8</div>
+                <p className="note">Llegaron después de 8:05</p>
+              </div>
+              <div className="card-icon yellow"><Clock size={36} /></div>
             </div>
           </section>
 
           {/* === Autoexclusión === */}
           <div className="auto">
-            <div className="auto-icon"><Info size={22} /></div>
+            <div className="auto-icon"><UsersRound size={22} /></div>
             <div>
               <h4>Auto-exclusión diaria activada</h4>
               <p>
@@ -116,7 +133,6 @@ export default function App() {
                 excluyendo a los 24 que tienen clases programadas en su calendario.
               </p>
             </div>
-            <div className="auto-status"><Activity size={16} /> Sistema activo</div>
           </div>
 
           {/* === Alertas === */}
@@ -126,8 +142,10 @@ export default function App() {
             <div className="alerts-grid">
               <div className="alert yellow">
                 <div className="alert-header">
-                  <div className="icon-wrap yellow"><AlertTriangle size={20} /></div>
-                  <h3>Tardanza potencial detectada</h3>
+                  <div className="alert-header-left">
+                    <div className="icon-wrap yellow"><AlertTriangle size={20} /></div>
+                    <h3>Tardanza potencial detectada</h3>
+                  </div>
                   <div className="count">3</div>
                 </div>
                 <p className="time">8:05 a.m. • Gracia de 5 minutos aplicada</p>
@@ -141,8 +159,10 @@ export default function App() {
 
               <div className="alert red">
                 <div className="alert-header">
-                  <div className="icon-wrap red"><AlertOctagon size={20} /></div>
-                  <h3>Ausencias sin clase registrada</h3>
+                  <div className="alert-header-left">
+                    <div className="icon-wrap red"><AlertTriangle size={20} /></div>
+                    <h3>Ausencias sin clase registrada</h3>
+                  </div>
                   <div className="count">2</div>
                 </div>
                 <p className="time">8:30 a.m. • No tienen clases programadas hoy</p>
@@ -155,8 +175,10 @@ export default function App() {
 
               <div className="alert orange">
                 <div className="alert-header">
-                  <div className="icon-wrap orange"><ShieldAlert size={20} /></div>
-                  <h3>Practicantes en riesgo</h3>
+                  <div className="alert-header-left">
+                    <div className="icon-wrap orange"><ShieldAlert size={20} /></div>
+                    <h3>Practicantes en riesgo</h3>
+                  </div>
                   <div className="count">1</div>
                 </div>
                 <p className="time">9:15 a.m. • 3er ticket del mes alcanzado</p>

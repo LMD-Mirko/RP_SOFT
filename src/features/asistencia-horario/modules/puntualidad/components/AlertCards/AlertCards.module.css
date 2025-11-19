@@ -19,10 +19,11 @@
 .alertCard {
   border: 1px solid;
   border-radius: 12px;
-  padding: 16px;
+  padding: 20px;
+  min-height: 240px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
   animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -72,7 +73,6 @@
 .alertTitle {
   font-size: 13px;
   font-weight: 600;
-  color: #0f172a;
   margin-bottom: 2px;
 }
 
@@ -122,11 +122,10 @@
 .alertAction {
   padding: 8px 12px;
   background: white;
-  border: 1px solid #cbd5e0;
+  border: 1px solid;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
-  color: #475569;
   cursor: pointer;
   transition: all 0.2s ease;
 }
