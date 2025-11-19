@@ -17,14 +17,23 @@ export const usePostulacion = () => {
   const [convocatoriaId, setConvocatoriaId] = useState(null);
   const [postulacionId, setPostulacionId] = useState(null);
   const [personalData, setPersonalData] = useState(null);
+  const [postulanteStatus, setPostulanteStatus] = useState(null);
+  const [evaluationsStatus, setEvaluationsStatus] = useState({});
 
-  // Obtener convocatoriaId de la URL
+  // Obtener convocatoriaId de la URL o de los datos personales
   useEffect(() => {
     const id = searchParams.get('convocatoria');
     if (id) {
       setConvocatoriaId(parseInt(id));
     }
   }, [searchParams]);
+
+  // Si no hay convocatoriaId en la URL, intentar obtenerlo de los datos personales
+  useEffect(() => {
+    if (!convocatoriaId && personalData?.job_posting_id) {
+      setConvocatoriaId(personalData.job_posting_id);
+    }
+  }, [personalData, convocatoriaId]);
 
   /**
    * Postularse a una convocatoria
@@ -160,12 +169,19 @@ export const usePostulacion = () => {
    * NOTA: El GET siempre retorna 200 OK, incluso si no hay datos completos
    * Los datos básicos vienen del User (siempre existen)
    * Los datos específicos del postulante pueden ser null
+   * IMPORTANTE: Ahora también devuelve job_posting_id de la convocatoria activa
    */
   const obtenerDatosPersonales = async () => {
     setLoading(true);
     try {
       const result = await postulacionService.obtenerDatosPersonales();
       setPersonalData(result);
+      
+      // Si hay job_posting_id en los datos personales y no hay convocatoriaId, usarlo
+      if (result?.job_posting_id && !convocatoriaId) {
+        setConvocatoriaId(result.job_posting_id);
+      }
+      
       return result;
     } catch (error) {
       // Esto no debería pasar, pero por si acaso
@@ -227,16 +243,53 @@ export const usePostulacion = () => {
     }
   };
 
+  /**
+   * Obtener estado del postulante para una convocatoria
+   * Incluye el estado de todas las evaluaciones y sus evaluation_id
+   */
+  const obtenerEstadoPostulante = async (jobPostingId) => {
+    setLoading(true);
+    try {
+      const status = await postulacionService.obtenerEstadoPostulante(jobPostingId);
+      setPostulanteStatus(status);
+      
+      // Extraer evaluation_id de cada tipo de evaluación
+      if (status?.evaluations_status) {
+        const evaluationsMap = {};
+        status.evaluations_status.forEach((evalStatus) => {
+          evaluationsMap[evalStatus.evaluation_type] = {
+            evaluation_id: evalStatus.evaluation_id,
+            status: evalStatus.status,
+            passed: evalStatus.passed,
+            attempts_count: evalStatus.attempts_count,
+            max_attempts: evalStatus.max_attempts,
+          };
+        });
+        setEvaluationsStatus(evaluationsMap);
+      }
+      
+      return status;
+    } catch (error) {
+      console.error('Error al obtener estado del postulante:', error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     convocatoriaId,
     postulacionId,
     personalData,
+    postulanteStatus,
+    evaluationsStatus,
     postularse,
     guardarDatosPersonales,
     subirCV,
     iniciarEvaluacion,
     obtenerDatosPersonales,
+    obtenerEstadoPostulante,
     guardarEncuestaPerfil,
     guardarEncuestaPsicologica,
     guardarEncuestaMotivacion,

@@ -15,22 +15,27 @@ export function PreguntaCard({
   disabled = false,
 }) {
   const [selectedOption, setSelectedOption] = useState(
-    respuestaActual?.answer_option_id || null
+    respuestaActual?.selected_option_id || respuestaActual?.answer_option_id || null
   )
   const [textAnswer, setTextAnswer] = useState(
     respuestaActual?.text_answer || ''
   )
 
   useEffect(() => {
-    setSelectedOption(respuestaActual?.answer_option_id || null)
+    // Asegurar que los IDs se manejen como strings (UUIDs)
+    const optionId = respuestaActual?.selected_option_id || respuestaActual?.answer_option_id
+    setSelectedOption(optionId ? String(optionId) : null)
     setTextAnswer(respuestaActual?.text_answer || '')
   }, [respuestaActual])
 
   const handleOptionSelect = (optionId) => {
     if (disabled) return
-    setSelectedOption(optionId)
+    // Asegurar que el ID se mantenga como string (UUID)
+    const optionIdString = String(optionId)
+    const questionIdString = String(pregunta.id)
+    setSelectedOption(optionIdString)
     if (onAnswerChange) {
-      onAnswerChange(pregunta.id, optionId, null)
+      onAnswerChange(questionIdString, optionIdString, null)
     }
   }
 
@@ -38,20 +43,36 @@ export function PreguntaCard({
     if (disabled) return
     setTextAnswer(value)
     if (onAnswerChange) {
-      onAnswerChange(pregunta.id, null, value)
+      // Asegurar que el ID de la pregunta se mantenga como string (UUID)
+      const questionIdString = String(pregunta.id)
+      onAnswerChange(questionIdString, null, value)
     }
   }
 
   const getOptionStatus = (option) => {
     if (!showResults) return null
     
-    const isSelected = selectedOption === option.id
+    // Comparar IDs como strings para asegurar coincidencia con UUIDs
+    const isSelected = selectedOption === String(option.id)
     const isCorrect = option.is_correct
     
     if (isSelected && isCorrect) return 'correct'
     if (isSelected && !isCorrect) return 'incorrect'
     if (!isSelected && isCorrect) return 'should-be-selected'
     return null
+  }
+
+  // La API puede devolver 'options' o 'answer_options'
+  const opciones = pregunta.options || pregunta.answer_options || []
+
+  // Debug: Verificar estructura de pregunta
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[PreguntaCard] Pregunta recibida:', {
+      id: pregunta.id,
+      text: pregunta.text,
+      options: opciones,
+      options_count: opciones.length
+    })
   }
 
   return (
@@ -90,15 +111,19 @@ export function PreguntaCard({
 
       <p className={styles.preguntaText}>{pregunta.text}</p>
 
-      {/* Opción Múltiple o Verdadero/Falso */}
-      {(pregunta.question_type === 'multiple_choice' ||
-        pregunta.question_type === 'true_false') &&
-        pregunta.answer_options &&
-        pregunta.answer_options.length > 0 && (
+      {/* Opciones de Respuesta */}
+      {opciones.length > 0 && (
+        <div className={styles.opcionesContainer}>
+          <div className={styles.opcionesHeader}>
+            <span className={styles.opcionesTitle}>
+              OPCIONES DE RESPUESTA ({opciones.length})
+            </span>
+          </div>
           <div className={styles.opcionesList}>
-            {pregunta.answer_options.map((opcion) => {
+            {opciones.map((opcion, index) => {
               const status = getOptionStatus(opcion)
-              const isSelected = selectedOption === opcion.id
+              // Comparar IDs como strings para asegurar coincidencia con UUIDs
+              const isSelected = selectedOption === String(opcion.id)
 
               return (
                 <div
@@ -108,12 +133,14 @@ export function PreguntaCard({
                   } ${status ? styles[`opcion${status.charAt(0).toUpperCase() + status.slice(1).replace(/-([a-z])/g, (g) => g[1].toUpperCase())}`] : ''}`}
                   onClick={() => handleOptionSelect(opcion.id)}
                 >
+                  <div className={styles.opcionSidebar} />
                   <div className={styles.opcionContent}>
+                    <span className={styles.opcionNumber}>{index + 1}.</span>
                     <div className={styles.opcionRadio}>
                       {isSelected ? (
-                        <CheckCircle2 size={20} />
+                        <CheckCircle2 size={20} className={styles.radioIcon} />
                       ) : (
-                        <Circle size={20} />
+                        <Circle size={20} className={styles.radioIcon} />
                       )}
                     </div>
                     <span className={styles.opcionText}>{opcion.text}</span>
@@ -139,7 +166,8 @@ export function PreguntaCard({
               )
             })}
           </div>
-        )}
+        </div>
+      )}
 
       {/* Respuesta Corta */}
       {pregunta.question_type === 'short_answer' && (

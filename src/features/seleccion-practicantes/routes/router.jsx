@@ -8,7 +8,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { Dashboard } from '../pages/Dashboard'
-import { ConvocatoriasPage } from '../modules/convocatorias/pages'
+import { ConvocatoriasPage, GestionEncuestasPage, GestionPreguntasPage } from '../modules/convocatorias/pages'
 import { PostulantesPage } from '../modules/postulantes/pages'
 import { CVsPage } from '../modules/cv/pages'
 import { CVsAdminPage } from '../modules/cvs-admin/pages'
@@ -46,6 +46,22 @@ export function ModuleRouter() {
         <Route
           path="convocatorias"
           element={<ConvocatoriasPage />}
+        />
+        <Route
+          path="convocatorias/:jobPostingId/encuestas"
+          element={
+            <RequireRole requireAdmin={true}>
+              <GestionEncuestasPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="convocatorias/:jobPostingId/encuestas/:evaluationType"
+          element={
+            <RequireRole requireAdmin={true}>
+              <GestionPreguntasPage />
+            </RequireRole>
+          }
         />
         <Route
           path="postulantes"

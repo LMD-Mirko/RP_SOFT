@@ -101,3 +101,23 @@ export const guardarEncuestaMotivacion = async (surveyData) => {
   }
 };
 
+/**
+ * Obtiene el estado del postulante para una convocatoria
+ * Incluye el estado de todas las evaluaciones y sus evaluation_id
+ * @param {number} jobPostingId - ID de la convocatoria
+ * @returns {Promise} Estado del postulante con evaluations_status
+ */
+export const obtenerEstadoPostulante = async (jobPostingId) => {
+  try {
+    const response = await get(`postulants/?job_posting_id=${jobPostingId}`);
+    // El endpoint devuelve { results: [...] }, tomar el primero
+    if (response.results && response.results.length > 0) {
+      return response.results[0];
+    }
+    return null;
+  } catch (error) {
+    console.error('Error al obtener estado del postulante:', error);
+    throw error;
+  }
+};
+

@@ -93,6 +93,10 @@ export function ConvocatoriasPage() {
     navigate(`/seleccion-practicantes/postulantes?convocatoria=${convocatoria.id}`)
   }
 
+  const handleManageEvaluations = (convocatoria) => {
+    navigate(`/seleccion-practicantes/convocatorias/${convocatoria.id}/encuestas`)
+  }
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -131,6 +135,7 @@ export function ConvocatoriasPage() {
                 convocatoria={convocatoria}
                 onEdit={handleEdit}
                 onViewApplicants={handleViewApplicants}
+                onManageEvaluations={handleManageEvaluations}
                 index={index}
               />
             ))}
