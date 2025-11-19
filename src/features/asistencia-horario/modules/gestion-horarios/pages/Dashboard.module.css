@@ -1,5 +1,5 @@
 .dashboard {
-  padding: 1.5rem;
+  padding: 0 32px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -26,7 +26,7 @@
 }
 
 .titleSection h1 {
-  font-size: 1.875rem;
+  font-size: 36px;
   font-weight: 700;
   color: #111827;
   margin: 0 0 0.25rem 0;

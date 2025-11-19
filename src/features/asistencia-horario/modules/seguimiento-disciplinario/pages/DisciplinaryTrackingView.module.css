@@ -10,9 +10,9 @@
 }
 
 .container {
-  max-width:1100px;
+  max-width:1400px;
   margin:28px auto;
-  padding:20px;
+  padding:0 32px;
   background:var(--bg);
   border-radius:10px;
   box-shadow:0 6px 18px rgba(16,24,40,0.06);
@@ -43,7 +43,7 @@
 
 .title {
   margin:0;
-  font-size:20px;
+  font-size:36px;
   font-weight:600;
 }
 

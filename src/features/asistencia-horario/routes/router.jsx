@@ -5,7 +5,6 @@
 
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { Dashboard } from '../pages/Dashboard'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
 import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
@@ -26,7 +25,7 @@ export function ModuleRouter() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<Dashboard />} />
+        <Route index element={<Botintegrative />} />
 
         {/* Rutas de Monitoreo */}
         <Route
