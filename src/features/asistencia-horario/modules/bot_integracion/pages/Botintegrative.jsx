@@ -89,44 +89,50 @@ export function Botintegrative() {
           <h1 className={styles.title}>Bot & Integración</h1>
           <p className={styles.subtitle}>Gestión y monitoreo del bot de Discord en los 5 servidores</p>
         </div>
-        <div className={styles.statusBadgeWrapper}>
-          <span className={styles.activeDot}></span>
-          Activo
-        </div>
       </header>
 
       {/* --- Resumen Global --- */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Resumen Global</h2>
-        <div className={styles.summaryGrid}>
-          {summaryData.map(item => (
-            <div key={item.id} className={styles.summaryCard}>
-              <div className={`${styles.summaryIcon} ${styles[item.color]}`}>
-                {item.icon}
-              </div>
-              <div className={styles.summaryContent}>
-                <div className={styles.summaryValue}>{item.value}</div>
-                <div className={styles.summaryLabel}>{item.label}</div>
-              </div>
+        <div className={styles.sectionContainer}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Resumen Global</h2>
+            <div className={styles.statusBadgeWrapper}>
+              <span className={styles.activeDot}></span>
+              Activo
             </div>
-          ))}
+          </div>
+          <div className={styles.summaryGrid}>
+            {summaryData.map(item => (
+              <div key={item.id} className={styles.summaryCard}>
+                <div className={`${styles.summaryIcon} ${styles[item.color]}`}>
+                  {item.icon}
+                </div>
+                <div className={styles.summaryContent}>
+                  <div className={styles.summaryValue}>{item.value}</div>
+                  <div className={styles.summaryLabel}>{item.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* --- Estado en Tiempo Real --- */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Estado del Bot en Tiempo Real</h2>
-        <div className={styles.statusGrid}>
-          {statusData.map(item => (
-            <div key={item.id} className={`${styles.statusCard} ${styles[item.color]}`}>
-              <div className={styles.statusHeader}>
-                {item.icon}
-                <span>{item.label}</span>
-                <span className={styles.statusBadge}>{item.badge}</span>
+        <div className={styles.sectionContainer}>
+          <h2 className={styles.sectionTitle}>Estado del Bot en Tiempo Real</h2>
+          <div className={styles.statusGrid}>
+            {statusData.map(item => (
+              <div key={item.id} className={`${styles.statusCard} ${styles[item.color]}`}>
+                <div className={styles.statusHeader}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                  <span className={styles.statusBadge}>{item.badge}</span>
+                </div>
+                <div className={styles.statusValue}>{item.value}</div>
               </div>
-              <div className={styles.statusValue}>{item.value}</div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
