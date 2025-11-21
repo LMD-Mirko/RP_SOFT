@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Clock, CheckCircle2, AlertCircle, Save, FileText, CheckCircle, Info } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@shared/components/Button'
@@ -30,6 +30,10 @@ export function EvaluacionEmbedded({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [lastSaveTime, setLastSaveTime] = useState(null)
+  
+  // Ref para controlar si ya se está cargando o ya se cargó
+  const loadingRef = useRef(false)
+  const loadedRef = useRef({ evaluationId: null, convocatoriaId: null })
 
   // Cargar evaluación e intento
   useEffect(() => {
@@ -39,7 +43,16 @@ export function EvaluacionEmbedded({
         return
       }
 
+      // Evitar peticiones duplicadas: verificar si ya se está cargando o ya se cargó con estos mismos IDs
+      const currentKey = `${evaluationId || ''}_${convocatoriaId || ''}`
+      const loadedKey = `${loadedRef.current.evaluationId || ''}_${loadedRef.current.convocatoriaId || ''}`
+      
+      if (loadingRef.current || currentKey === loadedKey) {
+        return
+      }
+
       try {
+        loadingRef.current = true
         setLoading(true)
         
         // Si hay convocatoriaId pero no evaluationId, iniciar evaluación
@@ -76,6 +89,8 @@ export function EvaluacionEmbedded({
                 setIntento(newAttempt)
               }
             }
+            // Marcar como cargado después de cargar exitosamente
+            loadedRef.current = { evaluationId: startResult.evaluation_id, convocatoriaId }
           }
         } else if (evaluationId) {
           // Cargar evaluación directamente
@@ -108,12 +123,17 @@ export function EvaluacionEmbedded({
               setIntento(newAttempt)
             }
           }
+          // Marcar como cargado después de cargar exitosamente
+          loadedRef.current = { evaluationId, convocatoriaId }
         }
       } catch (error) {
         console.error('Error al cargar evaluación:', error)
         toast.error('Error al cargar la evaluación')
+        // Resetear el flag de carga en caso de error para permitir reintentos
+        loadedRef.current = { evaluationId: null, convocatoriaId: null }
       } finally {
         setLoading(false)
+        loadingRef.current = false
       }
     }
 
