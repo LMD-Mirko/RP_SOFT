@@ -121,27 +121,7 @@
   animation: headerSlideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.modalHeader::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #ffffff, #a0a0a0, #ffffff);
-  background-size: 200% 100%;
-  animation: shimmerHeader 3s linear infinite;
-}
 
-@keyframes shimmerHeader {
-  0% {
-    background-position: 200% 0;
-  }
-
-  100% {
-    background-position: -200% 0;
-  }
-}
 
 @keyframes headerSlideDown {
   from {
