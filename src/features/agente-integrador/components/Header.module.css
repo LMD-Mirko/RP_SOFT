@@ -4,7 +4,8 @@
   left: 0;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: 20px;
   z-index: 1000;
   pointer-events: none;
 }
@@ -44,8 +45,7 @@
   pointer-events: auto;
   position: absolute;
   top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -62,12 +62,12 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-8px);
+    transform: translateY(-8px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -86,10 +86,9 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  background-color: #1a1a1a;
-  color: white;
-  border: 1px solid #333;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  color: #000000;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -97,15 +96,12 @@
 
 .dropdownItem:hover {
   background-color: #000000;
-  border-color: #666;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: white;
 }
 
 .dropdownItemActive {
   background-color: #000000;
-  border-color: #fff;
-  box-shadow: inset 0 0 0 1px #444;
+  color: white;
 }
 
 .itemContent {
@@ -121,12 +117,12 @@
 
 .itemTitle {
   font-weight: 600;
-  color: #ffffff;
   font-size: 13px;
+  color: inherit;
 }
 
 .checkmark {
-  color: #ffffff;
   font-size: 14px;
   font-weight: bold;
+  color: inherit;
 }
