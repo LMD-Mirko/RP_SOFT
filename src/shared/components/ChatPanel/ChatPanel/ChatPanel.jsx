@@ -27,6 +27,23 @@ export function ChatPanel() {
   const buttonRef = useRef(null)
   const inputContainerRef = useRef(null)
 
+  const greetings = [
+    `${userName}, ¿listo para empezar?`,
+    `Hola, ${userName}`,
+    `¿Qué tal, ${userName}?`,
+    `Bienvenido de nuevo, ${userName}`,
+    `${userName}, ¿en qué puedo ayudarte hoy?`,
+    `¡Hola! ${userName}, empecemos`,
+    `${userName}, ¿cómo va todo?`,
+    `${userName}, te estaba esperando`,
+    `¿Listo para trabajar, ${userName}?`,
+    `${userName}, comencemos el día`
+  ]
+
+  const [currentGreeting] = useState(() => {
+    return greetings[Math.floor(Math.random() * greetings.length)]
+  })
+
   const placeholders = [
     'Cuantos practicantes han sido seleccionados hoy',
     'Cual fue el tema principal de la reunión de hoy',
@@ -401,7 +418,7 @@ export function ChatPanel() {
         {showGreeting ? (
           <div className={styles.greetingContainer}>
             <div className={styles.greeting}>
-              <h1 className={styles.greetingText}>Hola, {userName}</h1>
+              <h1 className={styles.greetingText}>{currentGreeting}</h1>
             </div>
             {renderInputBar()}
           </div>
