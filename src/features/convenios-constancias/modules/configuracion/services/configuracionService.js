@@ -188,7 +188,7 @@ function mergeConfig(defaultConfig, userConfig) {
   const merged = { ...defaultConfig }
   
   for (const key in userConfig) {
-    if (userConfig.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(userConfig, key)) {
       if (
         typeof userConfig[key] === 'object' &&
         userConfig[key] !== null &&
