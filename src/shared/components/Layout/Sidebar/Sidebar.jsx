@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronRight,
   QrCode,
+  Database,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
@@ -82,6 +83,11 @@ const menuItems = [
         label: 'Generador QR',
         path: '/generador-qr',
       },
+      {
+        icon: Database,
+        label: 'Sistema Datasets',
+        path: '/sistema-datasets',
+      },
     ],
   },
   {
@@ -120,24 +126,24 @@ export function Sidebar() {
     if (isChatOpen) {
       return path === '/agente-integrador'
     }
-    
+
     if (path === '/dashboard') {
       return location.pathname === '/dashboard'
     }
-    
+
     if (path === '/agente-integrador') {
       return false
     }
-    
+
     // Generador QR no debe marcarse como activo (solo abre un modal)
     if (path === '/generador-qr') {
       return false
     }
-    
+
     if (path === '/') {
       return (location.pathname === '/' || location.pathname === '') && !isChatOpen
     }
-    
+
     return location.pathname.startsWith(path) && location.pathname !== '/'
   }
 
@@ -195,7 +201,7 @@ export function Sidebar() {
 
       <SidebarFooter />
 
-      <QRGeneratorModal 
+      <QRGeneratorModal
         isOpen={showQRModal}
         onClose={() => setShowQRModal(false)}
       />

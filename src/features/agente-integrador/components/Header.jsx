@@ -5,9 +5,9 @@ export default function Header() {
     <header>
       <div className="logo">🤖</div>
       <div>
-        <h1>Agente IA 2025 + Web Search</h1>
+        <h1>AGENTE Integrador 1.0</h1>
         <p className="lead">
-          🌐 Gemini 2.5 + búsqueda web en tiempo real para información actualizada
+          🤖 Asistente inteligente con búsqueda web en tiempo real
         </p>
       </div>
     </header>

@@ -19,6 +19,28 @@
   padding: 1rem 0;
   box-sizing: border-box;
   width: 100%;
+
+  /* Scrollbar Negro - Override global */
+  scrollbar-width: thin;
+  scrollbar-color: #1a1a1a #f1f1f1;
+}
+
+.nav::-webkit-scrollbar {
+  width: 8px;
+}
+
+.nav::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.nav::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.nav::-webkit-scrollbar-thumb:hover {
+  background: #000000;
 }
 
 .section {
