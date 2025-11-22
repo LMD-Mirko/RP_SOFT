@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronRight,
   QrCode,
+  ArrowUpRight,
   Database,
 } from 'lucide-react'
 import clsx from 'clsx'
@@ -173,6 +174,7 @@ export function Sidebar() {
                   const active = isActive(item.path)
                   const isAgenteIntegrador = item.path === '/agente-integrador'
                   const isGeneradorQR = item.path === '/generador-qr'
+                  const isSistemaDatasets = item.path === '/sistema-datasets'
 
                   return (
                     <button
@@ -186,10 +188,13 @@ export function Sidebar() {
                           navigate(item.path)
                         }
                       }}
-                      className={clsx(styles.menuItem, active && styles.active)}
+                      className={clsx(styles.menuItem, active && styles.active, isSistemaDatasets && styles.datasetsItem)}
                     >
                       <Icon size={20} className={styles.menuIcon} />
                       <span className={styles.menuLabel}>{item.label}</span>
+                      {isSistemaDatasets && (
+                        <ArrowUpRight size={16} className={styles.arrowIcon} />
+                      )}
                     </button>
                   )
                 })}
