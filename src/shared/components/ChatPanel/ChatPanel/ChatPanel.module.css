@@ -69,22 +69,9 @@
   flex-shrink: 0;
   animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   position: relative;
-  padding: 1.5rem 2.5rem;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  box-shadow:
-    0 8px 30px rgba(0, 0, 0, 0.06),
-    0 2px 6px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.greeting:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.08),
-    0 3px 10px rgba(0, 0, 0, 0.05);
-}
 
 .greetingText {
   font-size: 2rem;
