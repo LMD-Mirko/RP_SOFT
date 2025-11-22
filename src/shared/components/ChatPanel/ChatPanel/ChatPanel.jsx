@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { Plus, Mic, Send, FileText, FileSpreadsheet, Copy, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
 import { ChatSidebar } from '../ChatSidebar/ChatSidebar'
+import Header from '@features/agente-integrador/components/Header'
 import styles from './ChatPanel.module.css'
 
 export function ChatPanel() {
@@ -130,7 +131,7 @@ export function ChatPanel() {
       event.preventDefault()
       handleSend()
     }
-    
+
     if (event.key === 'Tab' && !input.trim()) {
       event.preventDefault()
       const currentPlaceholder = placeholders[placeholderIndex]
@@ -189,7 +190,7 @@ export function ChatPanel() {
     }
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
-    
+
     recognition.lang = 'es-ES'
     recognition.continuous = false
     recognition.interimResults = false
@@ -208,7 +209,7 @@ export function ChatPanel() {
     recognition.onerror = (event) => {
       console.error('Error de reconocimiento de voz:', event.error)
       setIsRecording(false)
-      
+
       if (event.error === 'not-allowed') {
         alert('Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.')
       } else if (event.error === 'no-speech') {
@@ -318,8 +319,8 @@ export function ChatPanel() {
         </button>
 
         {showMenu && (
-          <div 
-            ref={menuRef} 
+          <div
+            ref={menuRef}
             className={clsx(
               styles.fileMenu,
               menuPosition === 'bottom' && styles.fileMenuBottom
@@ -390,6 +391,7 @@ export function ChatPanel() {
     <div
       className={clsx(styles.chatPanel, isSidebarCollapsed && styles.chatPanelCollapsed)}
     >
+      <Header />
       <div
         className={clsx(
           styles.chatMainContent,
