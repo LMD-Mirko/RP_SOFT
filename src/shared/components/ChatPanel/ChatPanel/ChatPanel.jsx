@@ -17,6 +17,7 @@ export function ChatPanel() {
   const [isRecording, setIsRecording] = useState(false)
   const [messageFeedback, setMessageFeedback] = useState({}) // { messageIndex: 'like' | 'dislike' }
   const [copiedIndex, setCopiedIndex] = useState(null)
+  const [selectedAgent, setSelectedAgent] = useState('integrador')
 
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
@@ -44,20 +45,59 @@ export function ChatPanel() {
     return greetings[Math.floor(Math.random() * greetings.length)]
   })
 
-  const placeholders = [
-    'Cuantos practicantes han sido seleccionados hoy',
-    'Cual fue el tema principal de la reunión de hoy',
-    'Que tareas se han terminado ayer en el proyecto AV1',
-    'Quienes han faltado hoy',
-    'Quien tiene mas nota en el mes de diciembre',
-    'A quien debo de firmar su convenio',
-    'Cuantos practicantes son en total',
-    'Cual fue el tema principal en el daily de hoy',
-    'Que tareas se han retrasado o están con tardanza',
-    'De Luis cual es su horario semanal',
-    'Quien tiene la menor nota de febrero',
-    'Que convenios terminan en diciembre'
-  ]
+  const agentPlaceholders = {
+    integrador: [
+      'Cuantos practicantes han sido seleccionados hoy',
+      'Cual fue el tema principal de la reunión de hoy',
+      'Que tareas se han terminado ayer en el proyecto AV1',
+      'Quienes han faltado hoy',
+      'Quien tiene mas nota en el mes de diciembre'
+    ],
+    seleccion: [
+      '¿Cuántos practicantes postularon a la convocatoria de noviembre?',
+      'Muéstrame los candidatos que aprobaron la entrevista técnica',
+      '¿Qué practicantes están pendientes de evaluación final?',
+      'Genera un resumen del proceso de selección de marketing',
+      'Envía notificación al practicante Juan Pérez con el resultado'
+    ],
+    transcripcion: [
+      'Muéstrame la transcripción de la reunión del 10 de octubre',
+      'Descarga el resumen en PDF de la reunión de ventas',
+      '¿Qué temas se trataron en la reunión con el cliente ABC?',
+      'Genera un resumen corto de la reunión de ayer',
+      'Analiza el sentimiento general de la última reunión'
+    ],
+    tareas: [
+      'Muéstrame las tareas pendientes de esta semana',
+      'Asigna la tarea de diseño a Ana',
+      'Genera un reporte de tareas completadas por equipo',
+      'Envía recordatorio a los miembros con tareas vencidas',
+      'Crea una tarea para revisar el informe de marketing'
+    ],
+    asistencia: [
+      '¿Quiénes marcaron asistencia hoy?',
+      'Muéstrame el historial de asistencia de Ana en octubre',
+      'Registra entrada del practicante Luis Ramos a las 8:15',
+      'Genera reporte semanal de puntualidad',
+      '¿Cuántas tardanzas hubo esta semana?'
+    ],
+    evaluacion: [
+      'Inicia la evaluación 360 de Carlos Méndez',
+      'Muéstrame los resultados de la evaluación de Ana',
+      'Genera comparativa entre las evaluaciones de 2024 y 2025',
+      'Obtén promedio general del equipo de ventas',
+      'Descarga el informe PDF de la última evaluación'
+    ],
+    convenios: [
+      'Genera una constancia de prácticas para el estudiante Luis Ramos',
+      'Muéstrame todos los convenios activos del mes de noviembre',
+      'Valida si el convenio CP-452 pertenece a la carrera de ingeniería',
+      '¿Qué convenios vencen en los próximos 30 días?',
+      'Genera la constancia de prácticas en arquitectura microservicios'
+    ]
+  }
+
+  const placeholders = agentPlaceholders[selectedAgent] || agentPlaceholders.integrador
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -111,13 +151,13 @@ export function ChatPanel() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setPlaceholderIndex((prev) => (prev + 1) % 12)
+      setPlaceholderIndex((prev) => (prev + 1) % placeholders.length)
     }, 5000)
 
     return () => {
       clearInterval(interval)
     }
-  }, [])
+  }, [placeholders.length])
 
   const handleSend = () => {
     const trimmed = input.trim()
@@ -408,7 +448,7 @@ export function ChatPanel() {
     <div
       className={clsx(styles.chatPanel, isSidebarCollapsed && styles.chatPanelCollapsed)}
     >
-      <Header />
+      <Header selectedAgent={selectedAgent} onAgentChange={setSelectedAgent} />
       <div
         className={clsx(
           styles.chatMainContent,

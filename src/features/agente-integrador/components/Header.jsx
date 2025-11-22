@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown } from 'lucide-react';
 import styles from './Header.module.css';
 
-export default function Header() {
+export default function Header({ selectedAgent = 'integrador', onAgentChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -16,7 +16,7 @@ export default function Header() {
     { id: 'convenios', title: 'AGENTE CONVENIOS CONSTANCIAS' },
   ];
 
-  const [selectedAgent, setSelectedAgent] = useState('integrador');
+  const currentAgent = agents.find(agent => agent.id === selectedAgent) || agents[0];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -34,13 +34,20 @@ export default function Header() {
     };
   }, [isOpen]);
 
+  const handleAgentSelect = (agentId) => {
+    if (onAgentChange) {
+      onAgentChange(agentId);
+    }
+    setIsOpen(false);
+  };
+
   return (
     <div className={styles.headerContainer} ref={dropdownRef}>
       <button
         className={styles.modelSelector}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className={styles.modelText}>AGENTE INTEGRADOR</span>
+        <span className={styles.modelText}>{currentAgent.title}</span>
         <ChevronDown
           size={16}
           className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
@@ -54,10 +61,7 @@ export default function Header() {
             <div
               key={agent.id}
               className={`${styles.dropdownItem} ${selectedAgent === agent.id ? styles.dropdownItemActive : ''}`}
-              onClick={() => {
-                setSelectedAgent(agent.id);
-                setIsOpen(false);
-              }}
+              onClick={() => handleAgentSelect(agent.id)}
             >
               <div className={styles.itemContent}>
                 <div className={styles.itemHeader}>
