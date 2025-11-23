@@ -3,7 +3,11 @@
  * Centraliza la configuración de la API y manejo de errores
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+import { getEnvVar } from '@shared/utils/envConfig'
+
+// En desarrollo, getEnvVar devuelve '/api' para usar el proxy de Vite
+// En producción, usa la URL configurada o el valor por defecto
+const API_BASE_URL = getEnvVar('VITE_API_BASE_URL', import.meta.env.DEV ? '/api' : 'http://localhost:8000/api')
 
 /**
  * Clase de error personalizada para errores de API

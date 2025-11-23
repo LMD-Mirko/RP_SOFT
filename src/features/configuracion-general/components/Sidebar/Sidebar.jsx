@@ -9,6 +9,7 @@ import {
   User,
   ChevronDown,
   ChevronRight,
+  Key,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './Sidebar.module.css'
@@ -25,6 +26,12 @@ const configMenuItems = [
         icon: Settings,
         label: 'General',
         path: '/configuracion/global/general',
+        adminOnly: true,
+      },
+      {
+        icon: Key,
+        label: 'Variables de Entorno',
+        path: '/configuracion/global/variables-entorno',
         adminOnly: true,
       },
       {

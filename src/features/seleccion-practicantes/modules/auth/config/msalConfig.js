@@ -3,21 +3,23 @@
  * Configuración para OAuth con Microsoft Azure AD
  */
 
+import { getEnvVar } from '@shared/utils/envConfig'
+
 /**
  * Configuración de MSAL
- * Estas variables deben configurarse en el archivo .env
+ * Estas variables pueden configurarse desde la interfaz de administración
  */
 export const msalConfig = {
   auth: {
     // Client ID de la aplicación registrada en Azure AD
-    clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID || '',
+    clientId: getEnvVar('VITE_MICROSOFT_CLIENT_ID', ''),
     // Tenant ID (puede ser 'common' para multi-tenant o un tenant específico)
-    authority: import.meta.env.VITE_MICROSOFT_AUTHORITY || 'https://login.microsoftonline.com/common',
+    authority: getEnvVar('VITE_MICROSOFT_AUTHORITY', 'https://login.microsoftonline.com/common'),
     // URI de redirección después de la autenticación
     // IMPORTANTE: Este URI debe coincidir EXACTAMENTE con el configurado en Azure AD
     // Si VITE_MICROSOFT_REDIRECT_URI está configurado, se usa ese valor exacto
     // Si no, se construye automáticamente desde window.location.origin
-    redirectUri: import.meta.env.VITE_MICROSOFT_REDIRECT_URI || 
+    redirectUri: getEnvVar('VITE_MICROSOFT_REDIRECT_URI') || 
       (typeof window !== 'undefined' ? window.location.origin : ''),
   },
   cache: {

@@ -93,15 +93,17 @@ export function SidebarFooter() {
     setShowAnimation(true)
     
     // Marcar que estamos en proceso de logout para suprimir errores de peticiones
+    // Esto debe hacerse ANTES de cualquier otra operación
     setLoggingOut(true)
     // También marcar en sessionStorage para que Toast pueda verificar
     sessionStorage.setItem('rpsoft_logging_out', 'true')
     
     try {
+      // PASO 1: Obtener el refreshToken ANTES de eliminar cualquier cookie
       const refreshToken = getRefreshToken()
       
+      // PASO 2: Cerrar sesión en el servidor PRIMERO (mientras los tokens aún existen)
       if (refreshToken) {
-        // Intentar invalidar el token en el servidor
         try {
           await logoutService(refreshToken)
           toast.success('Sesión cerrada correctamente', 3000, 'Cerrar Sesión')
@@ -112,7 +114,10 @@ export function SidebarFooter() {
         }
       }
 
-      // Limpiar todas las cookies
+      // PASO 3: Esperar un momento para asegurar que todas las peticiones del logout se completen
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      // PASO 4: SOLO DESPUÉS de cerrar sesión en el servidor, limpiar las cookies
       clearAuthTokens()
       
       // Limpiar todas las cookies manualmente (por si hay otras)
@@ -165,11 +170,11 @@ export function SidebarFooter() {
         console.error('Error al limpiar localStorage:', error)
       }
 
-      // Limpiar todo sessionStorage
+      // Limpiar todo sessionStorage (pero mantener la bandera de logout hasta la redirección)
       try {
         sessionStorage.removeItem('authToken')
-        // Limpiar todo sessionStorage
-        sessionStorage.clear()
+        // NO limpiar sessionStorage completamente aquí, solo después de la redirección
+        // sessionStorage.clear()
       } catch (error) {
         console.error('Error al limpiar sessionStorage:', error)
       }
@@ -191,10 +196,11 @@ export function SidebarFooter() {
     sessionStorage.setItem('rpsoft_logging_out', 'true')
     // Redirigir al login después de que la animación termine
     navigate('/')
-    // Limpiar la bandera después de un breve delay
+    // Limpiar todo después de un breve delay (después de la redirección)
     setTimeout(() => {
       setLoggingOut(false)
-      sessionStorage.removeItem('rpsoft_logging_out')
+      // Limpiar completamente sessionStorage después de la redirección
+      sessionStorage.clear()
     }, 1000)
   }
 

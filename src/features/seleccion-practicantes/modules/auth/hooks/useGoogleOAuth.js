@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { oauthLogin, oauthRegister, getUserRole } from '../services/authService';
 import { setAuthTokens } from '../../../shared/utils/cookieHelper';
 import { redirectByRole } from '../utils/redirectByRole';
+import { getEnvVar } from '@shared/utils/envConfig';
 
 /**
  * Hook para manejar OAuth con Google
@@ -234,10 +235,10 @@ export const useGoogleOAuth = () => {
  */
 const loginWithGoogle = async () => {
   return new Promise((resolve, reject) => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const clientId = getEnvVar('VITE_GOOGLE_CLIENT_ID');
     
     if (!clientId) {
-      reject(new Error('VITE_GOOGLE_CLIENT_ID no está configurado en el archivo .env'));
+      reject(new Error('VITE_GOOGLE_CLIENT_ID no está configurado. Configúralo en Variables de Entorno.'));
       return;
     }
 
