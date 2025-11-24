@@ -792,9 +792,10 @@ export function SprintBoard() {
                   <Share2 size={18} className={styles.shareIcon} /> Compartir
                 </Button>
                 <Button
-                  variant="primary"
+                  variant="dark"
                   onClick={() => setOpenColumnId(columns?.[0]?.id || null)}
-                  className={`${styles.actionBtn} ${styles.addColumnButton}`}
+                  className={`${styles.actionBtn} ${styles.addColumnButton} text-white bg-black hover:bg-neutral-800 focus:ring-black`}
+                  style={{ color: "#fff" }}
                 >
                   <Plus size={18} className={styles.addColumnIcon} /> Agregar
                   Tarea
