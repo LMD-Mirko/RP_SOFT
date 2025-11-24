@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { DatosPersonalesStep } from '../components/DatosPersonales'
 import { PerfilStep } from '../components/Perfil'
@@ -94,87 +94,114 @@ export function PostulacionPage() {
     cvFile: null,
   })
 
-  // Cargar datos personales primero para obtener job_posting_id si no hay convocatoriaId en URL
+  // Refs para controlar peticiones duplicadas
+  const personalDataLoadingRef = useRef(false)
+  const personalDataLoadedRef = useRef(false)
+  const postulanteStatusLoadingRef = useRef(false)
+  const postulanteStatusLoadedRef = useRef(null) // Guardar el convocatoriaId para el que se cargó
+
+  // Cargar datos personales una sola vez al montar
   useEffect(() => {
-    if (!convocatoriaId) {
-      obtenerDatosPersonales().then(data => {
-        // Si hay job_posting_id en los datos personales, usarlo
-        if (data?.job_posting_id) {
-          // El hook ya actualiza convocatoriaId automáticamente
-        }
-      })
-    }
-  }, [])
-
-  // Cargar estado del postulante cuando hay convocatoriaId
-  useEffect(() => {
-    if (convocatoriaId) {
-      obtenerEstadoPostulante(convocatoriaId)
-    }
-  }, [convocatoriaId])
-
-  // Cargar datos personales (GET siempre retorna 200 OK con datos del User)
-  useEffect(() => {
-    if (currentStep === 1) {
-      obtenerDatosPersonales().then(data => {
-        if (data) {
-          // Mapear nivel de experiencia del API al formato del formulario
-          const experienceLevelMap = {
-            'beginner': 'principiante',
-            'intermediate': 'intermedio',
-            'advanced': 'avanzado',
-            'principiante': 'principiante',
-            'intermedio': 'intermedio',
-            'avanzado': 'avanzado'
-          };
-
-          // Mapear datos de la API al formato del formulario
-          // La API devuelve: name, paternal_lastname, maternal_lastname (del User)
-          const nombres = data.name || '';
-          const apellidos = [data.paternal_lastname, data.maternal_lastname].filter(Boolean).join(' ');
-
-          // Identificar qué campos vienen del User (son de solo lectura)
-          setUserFields({
-            name: !!data.name,
-            paternal_lastname: !!data.paternal_lastname,
-            maternal_lastname: !!data.maternal_lastname,
-            document_number: !!data.document_number,
-            phone: !!data.phone,
-            district_id: !!data.district_id,
-          });
-
-          // Obtener nombre del distrito (puede venir como objeto o string)
-          const districtName = typeof data.district === 'object' 
-            ? data.district?.name 
-            : data.district;
-
-          setFormData(prev => ({
-            ...prev,
-            // Campos del User (vienen pre-llenados, son de solo lectura)
-            nombres: nombres || prev.nombres || '',
-            apellidos: apellidos || prev.apellidos || '',
-            dni: data.document_number || prev.dni || '',
-            telefono: data.phone ? data.phone.replace(/^\+51/, '') : prev.telefono || '',
-            // Si la ubicación viene del User, solo guardar el nombre (NO selectedData para no pre-llenar CascadeSelect)
-            distrito: districtName || prev.distrito || '',
-            selectedData: data.district_id ? null : (prev.selectedData || null), // NO pre-llenar si viene del User
-            
-            // Campos específicos del postulante (editables, pueden ser null)
-            fechaNacimiento: data.birth_date || prev.fechaNacimiento || '',
-            direccion: data.address || prev.direccion || '',
-            especialidadId: data.specialty_id || data.specialty?.id || prev.especialidadId || '',
-            carrera: data.career || prev.carrera || '',
-            semestre: data.semester || prev.semestre || '',
-            nivelExperiencia: experienceLevelMap[data.experience_level] || prev.nivelExperiencia || 'principiante',
-          }));
-        }
-      }).catch(error => {
-        // El GET siempre debería retornar datos, pero por si acaso
-        console.error('Error al obtener datos personales:', error);
-      });
+    // Solo cargar si no se ha cargado y no se está cargando
+    if (!personalDataLoadedRef.current && !personalDataLoadingRef.current) {
+      personalDataLoadingRef.current = true
+      obtenerDatosPersonales()
+        .then(data => {
+          personalDataLoadedRef.current = true
+          // Si hay job_posting_id en los datos personales, el hook ya actualiza convocatoriaId automáticamente
+        })
+        .catch(error => {
+          console.error('Error al obtener datos personales:', error)
+          personalDataLoadedRef.current = false // Permitir reintento en caso de error
+        })
+        .finally(() => {
+          personalDataLoadingRef.current = false
+        })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStep]);
+  }, []) // Solo ejecutar una vez al montar
+
+  // Cargar estado del postulante cuando hay convocatoriaId (solo una vez por convocatoriaId)
+  useEffect(() => {
+    if (convocatoriaId && !postulanteStatusLoadingRef.current) {
+      // Verificar si ya se cargó para este convocatoriaId
+      if (postulanteStatusLoadedRef.current !== convocatoriaId) {
+        postulanteStatusLoadingRef.current = true
+        obtenerEstadoPostulante(convocatoriaId)
+          .then(() => {
+            postulanteStatusLoadedRef.current = convocatoriaId
+          })
+          .catch(error => {
+            console.error('Error al obtener estado del postulante:', error)
+            postulanteStatusLoadedRef.current = null // Permitir reintento en caso de error
+          })
+          .finally(() => {
+            postulanteStatusLoadingRef.current = false
+          })
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [convocatoriaId]) // Solo ejecutar cuando cambia convocatoriaId
+
+  // Cargar datos personales en el formulario solo cuando se está en el paso 1 y ya se cargaron los datos
+  useEffect(() => {
+    if (currentStep === 1 && personalData && !personalDataLoadingRef.current) {
+      // Usar personalData del hook en lugar de hacer otra petición
+      const data = personalData
+      if (data) {
+        // Mapear nivel de experiencia del API al formato del formulario
+        const experienceLevelMap = {
+          'beginner': 'principiante',
+          'intermediate': 'intermedio',
+          'advanced': 'avanzado',
+          'principiante': 'principiante',
+          'intermedio': 'intermedio',
+          'avanzado': 'avanzado'
+        };
+
+        // Mapear datos de la API al formato del formulario
+        // La API devuelve: name, paternal_lastname, maternal_lastname (del User)
+        const nombres = data.name || '';
+        const apellidos = [data.paternal_lastname, data.maternal_lastname].filter(Boolean).join(' ');
+
+        // Identificar qué campos vienen del User (son de solo lectura)
+        setUserFields({
+          name: !!data.name,
+          paternal_lastname: !!data.paternal_lastname,
+          maternal_lastname: !!data.maternal_lastname,
+          document_number: !!data.document_number,
+          phone: !!data.phone,
+          district_id: !!data.district_id,
+        });
+
+        // Obtener nombre del distrito (puede venir como objeto o string)
+        const districtName = typeof data.district === 'object' 
+          ? data.district?.name 
+          : data.district;
+
+        setFormData(prev => ({
+          ...prev,
+          // Campos del User (vienen pre-llenados, son de solo lectura)
+          nombres: nombres || prev.nombres || '',
+          apellidos: apellidos || prev.apellidos || '',
+          dni: data.document_number || prev.dni || '',
+          telefono: data.phone ? data.phone.replace(/^\+51/, '') : prev.telefono || '',
+          // Si la ubicación viene del User, solo guardar el nombre (NO selectedData para no pre-llenar CascadeSelect)
+          distrito: districtName || prev.distrito || '',
+          selectedData: data.district_id ? null : (prev.selectedData || null), // NO pre-llenar si viene del User
+          
+          // Campos específicos del postulante (editables, pueden ser null)
+          fechaNacimiento: data.birth_date || prev.fechaNacimiento || '',
+          direccion: data.address || prev.direccion || '',
+          especialidadId: data.specialty_id || data.specialty?.id || prev.especialidadId || '',
+          carrera: data.career || prev.carrera || '',
+          semestre: data.semester || prev.semestre || '',
+          nivelExperiencia: experienceLevelMap[data.experience_level] || prev.nivelExperiencia || 'principiante',
+        }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, personalData]);
 
   const updateFormData = (stepData) => {
     setFormData(prev => ({ ...prev, ...stepData }))
@@ -187,9 +214,16 @@ export function PostulacionPage() {
     if (currentStep === 1) {
       try {
         await guardarDatosPersonales({ ...formData, ...stepData });
-        // Recargar estado del postulante después de guardar datos personales
-        if (convocatoriaId) {
-          await obtenerEstadoPostulante(convocatoriaId);
+        // Recargar estado del postulante después de guardar datos personales (solo si no se está cargando)
+        if (convocatoriaId && !postulanteStatusLoadingRef.current) {
+          postulanteStatusLoadingRef.current = true
+          await obtenerEstadoPostulante(convocatoriaId)
+            .then(() => {
+              postulanteStatusLoadedRef.current = convocatoriaId
+            })
+            .finally(() => {
+              postulanteStatusLoadingRef.current = false
+            })
         }
       } catch (error) {
         // El error ya se maneja en el hook
@@ -283,9 +317,16 @@ export function PostulacionPage() {
           evaluationId={STEPS[currentStep - 1].evaluationType ? evaluationsStatus[STEPS[currentStep - 1].evaluationType]?.evaluation_id : null}
           evaluationStatus={STEPS[currentStep - 1].evaluationType ? evaluationsStatus[STEPS[currentStep - 1].evaluationType] : null}
           onEvaluationComplete={async () => {
-            // Recargar estado después de completar evaluación
-            if (convocatoriaId) {
-              await obtenerEstadoPostulante(convocatoriaId);
+            // Recargar estado después de completar evaluación (solo si no se está cargando)
+            if (convocatoriaId && !postulanteStatusLoadingRef.current) {
+              postulanteStatusLoadingRef.current = true
+              await obtenerEstadoPostulante(convocatoriaId)
+                .then(() => {
+                  postulanteStatusLoadedRef.current = convocatoriaId
+                })
+                .finally(() => {
+                  postulanteStatusLoadingRef.current = false
+                })
             }
           }}
         />

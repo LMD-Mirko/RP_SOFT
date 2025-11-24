@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { PlaceholderSection } from '../pages/PlaceholderSection'
-import { RolesPage, PerfilPage, UsuariosPage, TiposDocumentoPage } from '../modules'
+import { RolesPage, PerfilPage, UsuariosPage, TiposDocumentoPage, VariablesEntornoPage } from '../modules'
 
 export function ModuleRouter() {
   return (
@@ -17,6 +17,10 @@ export function ModuleRouter() {
               description="Administra la información base del sistema."
             />
           }
+        />
+        <Route
+          path="global/variables-entorno"
+          element={<VariablesEntornoPage />}
         />
         <Route path="global/usuarios" element={<UsuariosPage />} />
         <Route
