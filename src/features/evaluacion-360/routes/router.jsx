@@ -10,6 +10,7 @@ import { Evaluacion360Page } from '../modules/evaluacion-360/pages'
 import { EvaluacionTecnicaPage } from '../modules/evaluacion-tecnica/pages'
 import { Evaluacion360UsuarioPage } from '../modules/evaluacion-360-usuario/pages'
 import { Nota360UsuarioPage } from '../modules/nota-360-usuario/pages'
+import { NotaTecnicaUsuarioPage } from '../modules/nota-tecnica-usuario/pages'
 
 /**
  * Router del Módulo
@@ -44,8 +45,12 @@ export function ModuleRouter() {
           path="usuario/nota-360"
           element={<Nota360UsuarioPage />}
         />
+        {/* ← FALTA ESTA RUTA - AGREGALA */}
+        <Route
+          path="usuario/nota-tecnica"
+          element={<NotaTecnicaUsuarioPage />}
+        />
       </Route>
     </Routes>
   )
 }
-
