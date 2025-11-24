@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
 import { Select } from "../components/ui/Select"
 import { TemplateCard } from "../components/TemplateCard"
+import { TemplateModal } from "../components/TemplateModal"
 import { ImportModal } from "../components/ImportModal"
 import styles from "../styles/HistoryRepo.module.css"
 
@@ -15,11 +16,13 @@ export function HistoryRepo() {
     query, setQuery, categoria, setCategoria,
     etiqueta, setEtiqueta, proyecto, setProyecto,
     orden, setOrden,
-    toggleFavorito, duplicateTemplate, deleteTemplate, updateTemplate,
+    toggleFavorito, duplicateTemplate, deleteTemplate, updateTemplate, addTemplate,
   } = useHistoryRepo()
 
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false)
+  const [draft, setDraft] = useState({ title: '', desc: '', tag: '', proyecto: '' })
 
   return (
     <div className={styles.page}>
@@ -34,6 +37,9 @@ export function HistoryRepo() {
               </p>
             </div>
             <div className={styles.actions}>
+              <Button variant="primary" onClick={() => { setDraft({ title: '', desc: '', tag: '', proyecto: '' }); setCreateOpen(true) }}>
+                <Upload size={18} className={styles.iconLeft} /> Nuevo Historial
+              </Button>
               <Button variant="light" onClick={() => setImportOpen(true)}>
                 <Upload size={18} className={styles.iconLeft} /> Importar Plantillas
               </Button>
@@ -115,6 +121,20 @@ export function HistoryRepo() {
             )}
           </div>
           <ImportModal isOpen={importOpen} onClose={() => setImportOpen(false)} onImport={() => {}} />
+          <TemplateModal
+            isOpen={createOpen}
+            mode="edit"
+            tpl={draft}
+            onClose={() => setCreateOpen(false)}
+            onSave={(updates) => {
+              const code = `TPL-${Date.now().toString().slice(-6)}`
+              const nuevo = { code, clones: 0, favorito: false, ...updates }
+              if (typeof addTemplate === 'function') {
+                addTemplate(nuevo)
+              }
+              setCreateOpen(false)
+            }}
+          />
         </div>
       </div>
     </div>
