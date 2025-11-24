@@ -114,19 +114,13 @@
 
 /* Empty state */
 .empty {
-  padding: 4rem 2rem;
+  padding: 3.5rem 1.5rem;
   text-align: center;
-  color: #9ca3af;
+  background: #f9fafb;
 }
 
-.emptyIcon {
-  color: #d1d5db;
-  margin-bottom: 1rem;
-}
-
-.emptyText {
-  font-size: 1rem;
-  color: #6b7280;
+.emptyState {
+  width: 100%;
 }
 
 /* Responsive */

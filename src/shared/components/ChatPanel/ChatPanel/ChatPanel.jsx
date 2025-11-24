@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
-import { Plus, Mic, Send, FileText, FileSpreadsheet } from 'lucide-react'
+import { Plus, Mic, Send, FileText, FileSpreadsheet, Copy, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { useChatPanel } from '@shared/context/ChatPanelContext'
 import { ChatSidebar } from '../ChatSidebar/ChatSidebar'
+import Header from '@features/agente-integrador/components/Header'
 import styles from './ChatPanel.module.css'
 
 export function ChatPanel() {
@@ -14,6 +15,9 @@ export function ChatPanel() {
   const [menuPosition, setMenuPosition] = useState('top')
   const [placeholderIndex, setPlaceholderIndex] = useState(0)
   const [isRecording, setIsRecording] = useState(false)
+  const [messageFeedback, setMessageFeedback] = useState({}) // { messageIndex: 'like' | 'dislike' }
+  const [copiedIndex, setCopiedIndex] = useState(null)
+  const [selectedAgent, setSelectedAgent] = useState('integrador')
 
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
@@ -24,20 +28,76 @@ export function ChatPanel() {
   const buttonRef = useRef(null)
   const inputContainerRef = useRef(null)
 
-  const placeholders = [
-    'Cuantos practicantes han sido seleccionados hoy',
-    'Cual fue el tema principal de la reunión de hoy',
-    'Que tareas se han terminado ayer en el proyecto AV1',
-    'Quienes han faltado hoy',
-    'Quien tiene mas nota en el mes de diciembre',
-    'A quien debo de firmar su convenio',
-    'Cuantos practicantes son en total',
-    'Cual fue el tema principal en el daily de hoy',
-    'Que tareas se han retrasado o están con tardanza',
-    'De Luis cual es su horario semanal',
-    'Quien tiene la menor nota de febrero',
-    'Que convenios terminan en diciembre'
+  const greetings = [
+    `${userName}, ¿listo para empezar?`,
+    `Hola, ${userName}`,
+    `¿Qué tal, ${userName}?`,
+    `Bienvenido de nuevo, ${userName}`,
+    `${userName}, ¿en qué puedo ayudarte hoy?`,
+    `¡Hola! ${userName}, empecemos`,
+    `${userName}, ¿cómo va todo?`,
+    `${userName}, te estaba esperando`,
+    `¿Listo para trabajar, ${userName}?`,
+    `${userName}, comencemos el día`
   ]
+
+  const [currentGreeting] = useState(() => {
+    return greetings[Math.floor(Math.random() * greetings.length)]
+  })
+
+  const agentPlaceholders = {
+    integrador: [
+      'Cuantos practicantes han sido seleccionados hoy',
+      'Cual fue el tema principal de la reunión de hoy',
+      'Que tareas se han terminado ayer en el proyecto AV1',
+      'Quienes han faltado hoy',
+      'Quien tiene mas nota en el mes de diciembre'
+    ],
+    seleccion: [
+      '¿Cuántos practicantes postularon a la convocatoria de noviembre?',
+      'Muéstrame los candidatos que aprobaron la entrevista técnica',
+      '¿Qué practicantes están pendientes de evaluación final?',
+      'Genera un resumen del proceso de selección de marketing',
+      'Envía notificación al practicante Juan Pérez con el resultado'
+    ],
+    transcripcion: [
+      'Muéstrame la transcripción de la reunión del 10 de octubre',
+      'Descarga el resumen en PDF de la reunión de ventas',
+      '¿Qué temas se trataron en la reunión con el cliente ABC?',
+      'Genera un resumen corto de la reunión de ayer',
+      'Analiza el sentimiento general de la última reunión'
+    ],
+    tareas: [
+      'Muéstrame las tareas pendientes de esta semana',
+      'Asigna la tarea de diseño a Ana',
+      'Genera un reporte de tareas completadas por equipo',
+      'Envía recordatorio a los miembros con tareas vencidas',
+      'Crea una tarea para revisar el informe de marketing'
+    ],
+    asistencia: [
+      '¿Quiénes marcaron asistencia hoy?',
+      'Muéstrame el historial de asistencia de Ana en octubre',
+      'Registra entrada del practicante Luis Ramos a las 8:15',
+      'Genera reporte semanal de puntualidad',
+      '¿Cuántas tardanzas hubo esta semana?'
+    ],
+    evaluacion: [
+      'Inicia la evaluación 360 de Carlos Méndez',
+      'Muéstrame los resultados de la evaluación de Ana',
+      'Genera comparativa entre las evaluaciones de 2024 y 2025',
+      'Obtén promedio general del equipo de ventas',
+      'Descarga el informe PDF de la última evaluación'
+    ],
+    convenios: [
+      'Genera una constancia de prácticas para el estudiante Luis Ramos',
+      'Muéstrame todos los convenios activos del mes de noviembre',
+      'Valida si el convenio CP-452 pertenece a la carrera de ingeniería',
+      '¿Qué convenios vencen en los próximos 30 días?',
+      'Genera la constancia de prácticas en arquitectura microservicios'
+    ]
+  }
+
+  const placeholders = agentPlaceholders[selectedAgent] || agentPlaceholders.integrador
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -91,13 +151,13 @@ export function ChatPanel() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setPlaceholderIndex((prev) => (prev + 1) % 12)
+      setPlaceholderIndex((prev) => (prev + 1) % placeholders.length)
     }, 5000)
 
     return () => {
       clearInterval(interval)
     }
-  }, [])
+  }, [placeholders.length])
 
   const handleSend = () => {
     const trimmed = input.trim()
@@ -113,6 +173,13 @@ export function ChatPanel() {
         ...prev,
         { text: 'Gracias por tu mensaje. ¿En qué más puedo ayudarte?', who: 'bot' },
       ])
+      // Resetear feedback para el nuevo mensaje del bot
+      setMessageFeedback(prev => {
+        const newFeedback = { ...prev }
+        const botMessageIndex = messages.length + 1
+        delete newFeedback[botMessageIndex]
+        return newFeedback
+      })
     }, 500)
   }
 
@@ -121,7 +188,7 @@ export function ChatPanel() {
       event.preventDefault()
       handleSend()
     }
-    
+
     if (event.key === 'Tab' && !input.trim()) {
       event.preventDefault()
       const currentPlaceholder = placeholders[placeholderIndex]
@@ -180,7 +247,7 @@ export function ChatPanel() {
     }
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
-    
+
     recognition.lang = 'es-ES'
     recognition.continuous = false
     recognition.interimResults = false
@@ -199,7 +266,7 @@ export function ChatPanel() {
     recognition.onerror = (event) => {
       console.error('Error de reconocimiento de voz:', event.error)
       setIsRecording(false)
-      
+
       if (event.error === 'not-allowed') {
         alert('Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.')
       } else if (event.error === 'no-speech') {
@@ -244,6 +311,35 @@ export function ChatPanel() {
       { text: chatTitle.replace('...', ''), who: 'user' },
       { text: response, who: 'bot' }
     ])
+    setMessageFeedback({})
+  }
+
+  const handleCopy = async (text, index) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedIndex(index)
+      setTimeout(() => setCopiedIndex(null), 2000)
+    } catch (err) {
+      console.error('Error al copiar:', err)
+    }
+  }
+
+  const handleLike = (index) => {
+    setMessageFeedback(prev => ({
+      ...prev,
+      [index]: prev[index] === 'like' ? null : 'like'
+    }))
+    // Aquí puedes agregar lógica para enviar el feedback al backend para entrenar el modelo
+    console.log('Like en mensaje', index, messages[index])
+  }
+
+  const handleDislike = (index) => {
+    setMessageFeedback(prev => ({
+      ...prev,
+      [index]: prev[index] === 'dislike' ? null : 'dislike'
+    }))
+    // Aquí puedes agregar lógica para enviar el feedback al backend para entrenar el modelo
+    console.log('Dislike en mensaje', index, messages[index])
   }
 
   const renderInputBar = () => (
@@ -280,8 +376,8 @@ export function ChatPanel() {
         </button>
 
         {showMenu && (
-          <div 
-            ref={menuRef} 
+          <div
+            ref={menuRef}
             className={clsx(
               styles.fileMenu,
               menuPosition === 'bottom' && styles.fileMenuBottom
@@ -352,6 +448,7 @@ export function ChatPanel() {
     <div
       className={clsx(styles.chatPanel, isSidebarCollapsed && styles.chatPanelCollapsed)}
     >
+      <Header selectedAgent={selectedAgent} onAgentChange={setSelectedAgent} />
       <div
         className={clsx(
           styles.chatMainContent,
@@ -361,26 +458,70 @@ export function ChatPanel() {
         {showGreeting ? (
           <div className={styles.greetingContainer}>
             <div className={styles.greeting}>
-              <h1 className={styles.greetingText}>Hola, {userName}</h1>
+              <h1 className={styles.greetingText}>{currentGreeting}</h1>
             </div>
             {renderInputBar()}
           </div>
         ) : (
           <>
             <div className={styles.chatMessages}>
-              {messages.map((msg, index) => (
-                <div
-                  key={`${msg.who}-${index}`}
-                  className={clsx(
-                    styles.message,
-                    msg.who === 'user' ? styles.messageUser : styles.messageBot,
-                  )}
-                >
-                  <div className={styles.messageBubble}>
-                    {msg.text}
+              {messages.map((msg, index) => {
+                const isBot = msg.who === 'bot'
+                const feedback = messageFeedback[index]
+                const isCopied = copiedIndex === index
+
+                return (
+                  <div
+                    key={`${msg.who}-${index}`}
+                    className={clsx(
+                      styles.message,
+                      msg.who === 'user' ? styles.messageUser : styles.messageBot,
+                    )}
+                  >
+                    <div className={styles.messageBubble}>
+                      {msg.text}
+                      {isBot && (
+                        <div className={styles.messageActions}>
+                          <button
+                            className={clsx(
+                              styles.actionButton,
+                              isCopied && styles.actionButtonActive
+                            )}
+                            onClick={() => handleCopy(msg.text, index)}
+                            title="Copiar mensaje"
+                            aria-label="Copiar mensaje"
+                          >
+                            <Copy size={16} />
+                            {isCopied && <span className={styles.copiedText}>Copiado</span>}
+                          </button>
+                          <button
+                            className={clsx(
+                              styles.actionButton,
+                              feedback === 'like' && styles.actionButtonActive
+                            )}
+                            onClick={() => handleLike(index)}
+                            title="Me gusta"
+                            aria-label="Me gusta"
+                          >
+                            <ThumbsUp size={16} />
+                          </button>
+                          <button
+                            className={clsx(
+                              styles.actionButton,
+                              feedback === 'dislike' && styles.actionButtonActive
+                            )}
+                            onClick={() => handleDislike(index)}
+                            title="No me gusta"
+                            aria-label="No me gusta"
+                          >
+                            <ThumbsDown size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
               <div ref={messagesEndRef} />
             </div>
             {renderInputBar()}

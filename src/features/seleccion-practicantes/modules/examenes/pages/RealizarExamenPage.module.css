@@ -1,6 +1,10 @@
+:global(body) {
+  background-color: #f2f5f3;
+}
+
 .container {
   padding: 2rem;
-  background-color: #f9fafb;
+  background-color: #f4f6f5;
   min-height: 90vh;
   font-family: 'Be Vietnam Pro', sans-serif;
   width: 93%;
@@ -36,9 +40,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.125rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-  color: #374151;
-  border: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #ffffff 0%, #f2f6f3 100%);
+  color: #324139;
+  border: 1px solid #dbe5df;
   border-radius: 0.625rem;
   font-size: 0.875rem;
   font-weight: 600;
@@ -51,8 +55,8 @@
 }
 
 .backButton:hover {
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  border-color: #d1d5db;
+  background: linear-gradient(135deg, #ecf3ef 0%, #dbe6df 100%);
+  border-color: #c3d6c9;
   transform: translateX(-4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -77,12 +81,12 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border: 1px solid #bfdbfe;
+  background: linear-gradient(135deg, #edf9f2 0%, #d3f0de 100%);
+  border: 1px solid #b4dfc7;
   border-radius: 0.625rem;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #1e40af;
+  color: #1f6f54;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
@@ -111,32 +115,102 @@
 .progress span {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #6b7280;
+  color: #586960;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 .progressBar {
   width: 100%;
   height: 8px;
-  background: #e5e7eb;
+  background: #dfe7e2;
   border-radius: 4px;
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(90deg, #6ec49e, #93c7b5);
   transition: width 0.3s ease;
 }
 
+.infoPanel {
+  margin-bottom: 1.5rem;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.infoCard {
+  background: #ffffff;
+  border: 1px solid #dfe7e2;
+  border-radius: 0.85rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  box-shadow: 0 12px 30px rgba(21, 40, 30, 0.08);
+}
+
+.infoCard p {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6a7c71;
+  font-weight: 600;
+}
+
+.infoCard strong {
+  font-size: 1rem;
+  color: #1f3529;
+  font-weight: 700;
+}
+
+.infoIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e7f6ed, #d7efe3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2f7c59;
+}
+
 .resultCard {
-  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f6faf7 100%);
   border-radius: 0.875rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dfe7e2;
+  box-shadow: 0 12px 32px rgba(39, 72, 59, 0.08);
   padding: 2rem;
   margin-bottom: 2rem;
   animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.emptyState {
+  padding: 2rem 0;
+}
+
+.emptyButton {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.75rem;
+  border-radius: 999px;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 15px 30px -15px rgba(15, 23, 42, 0.45);
+}
+
+.emptyButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 34px -15px rgba(15, 23, 42, 0.5);
 }
 
 .resultHeader {
@@ -179,15 +253,78 @@
 
 .resultLabel {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #5f6e64;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 .resultValue {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: #0f2f20;
   font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.retryContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #dfe7e2;
+  border-radius: 0.85rem;
+  background: #f1f7f3;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  margin-bottom: 2rem;
+}
+
+.retryTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #183326;
+}
+
+.retryHint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: #4b5b52;
+}
+
+.resultsPreview {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #dfe7e2;
+  background: linear-gradient(135deg, rgba(73, 173, 129, 0.08), rgba(223, 231, 226, 0.5));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  margin-bottom: 2rem;
+}
+
+.resultsPreview h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f2f20;
+}
+
+.resultsPreview p {
+  margin: 0.25rem 0 0;
+  color: #4b5b52;
+  font-size: 0.9rem;
+}
+
+.resultsPreviewIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px dashed #a7c7b6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2f7c59;
 }
 
 .content {
@@ -211,15 +348,15 @@
 .empty {
   text-align: center;
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f5f9f6 100%);
   border-radius: 0.875rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dfe7e2;
+  box-shadow: 0 4px 16px rgba(31, 79, 60, 0.08);
 }
 
 .emptyText {
   font-size: 1rem;
-  color: #6b7280;
+  color: #5f6e64;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
@@ -230,16 +367,16 @@
 }
 
 .questionCard {
-  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f6faf7 100%);
   border-radius: 0.875rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dfe7e2;
+  box-shadow: 0 6px 24px rgba(26, 47, 38, 0.08);
   padding: 1.75rem;
   transition: all 0.3s ease;
 }
 
 .questionCard:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 16px 30px rgba(26, 47, 38, 0.1);
 }
 
 .questionHeader {
@@ -251,8 +388,8 @@
 
 .questionNumber {
   padding: 0.375rem 0.875rem;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  color: #1e40af;
+  background: linear-gradient(135deg, #e5f7ef 0%, #d4eee2 100%);
+  color: #1f7a55;
   border-radius: 0.5rem;
   font-size: 0.75rem;
   font-weight: 700;
@@ -290,40 +427,40 @@
   gap: 0.75rem;
   padding: 1rem 1.25rem;
   background: #ffffff;
-  border: 2px solid #e5e7eb;
+  border: 2px solid #dfe7e2;
   border-radius: 0.625rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .optionItem:hover {
-  border-color: #3b82f6;
-  background: #eff6ff;
+  border-color: #7ac29f;
+  background: #f0fbf5;
 }
 
 .optionItem.optionSelected {
-  border-color: #3b82f6;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #49ad81;
+  background: linear-gradient(135deg, #e8faf2 0%, #d4eee2 100%);
 }
 
 .optionItem input[type="radio"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #3b82f6;
+  accent-color: #49ad81;
 }
 
 .optionText {
   flex: 1;
   font-size: 0.9375rem;
-  color: #374151;
+  color: #303f36;
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 .textAnswer {
   width: 100%;
   padding: 0.875rem 1.125rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid #dfe7e2;
   border-radius: 0.625rem;
   font-size: 0.9375rem;
   font-family: 'Be Vietnam Pro', sans-serif;
@@ -333,8 +470,8 @@
 
 .textAnswer:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #49ad81;
+  box-shadow: 0 0 0 3px rgba(73, 173, 129, 0.15);
 }
 
 .actions {
@@ -343,7 +480,7 @@
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #dfe7e2;
 }
 
 @media (max-width: 768px) {

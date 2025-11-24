@@ -10,14 +10,8 @@ export function InfoModal({ isOpen, onClose, item }) {
   const durationText = item.duration || '—'
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={null} showCloseButton={false} size="lg" centered>
+    <Modal isOpen={isOpen} onClose={onClose} title="Información" showCloseButton size="lg" centered>
       <div className={styles.container}>
-        <div className={styles.tag}>Información</div>
-        <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar">
-          <X size={22} />
-        </button>
-
-        <div className={styles.sectionTitle}>Información del archivo:</div>
 
         <div className={styles.field}>
           <div className={styles.label}>Nombre completo:</div>

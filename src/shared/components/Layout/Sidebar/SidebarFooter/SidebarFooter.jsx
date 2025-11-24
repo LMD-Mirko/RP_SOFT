@@ -5,6 +5,7 @@ import { useToast } from '@shared/components/Toast'
 import { useUserProfile } from '@shared/context/UserProfileContext'
 import { logout as logoutService } from '@features/seleccion-practicantes/modules/auth/services/authService'
 import { getRefreshToken, clearAuthTokens } from '@features/seleccion-practicantes/shared/utils/cookieHelper'
+import { setLoggingOut } from '@features/seleccion-practicantes/services/methods'
 import { LogoutAnimation } from './LogoutAnimation'
 import styles from './SidebarFooter.module.css'
 
@@ -91,43 +92,116 @@ export function SidebarFooter() {
     setIsLoggingOut(true)
     setShowAnimation(true)
     
+    // Marcar que estamos en proceso de logout para suprimir errores de peticiones
+    // Esto debe hacerse ANTES de cualquier otra operación
+    setLoggingOut(true)
+    // También marcar en sessionStorage para que Toast pueda verificar
+    sessionStorage.setItem('rpsoft_logging_out', 'true')
+    
     try {
+      // PASO 1: Obtener el refreshToken ANTES de eliminar cualquier cookie
       const refreshToken = getRefreshToken()
       
+      // PASO 2: Cerrar sesión en el servidor PRIMERO (mientras los tokens aún existen)
       if (refreshToken) {
-        // Intentar invalidar el token en el servidor
         try {
           await logoutService(refreshToken)
           toast.success('Sesión cerrada correctamente', 3000, 'Cerrar Sesión')
         } catch (error) {
           // Si falla el logout en el servidor, continuar con la limpieza local
+          // No mostrar error durante logout
           console.warn('Error al invalidar token en servidor:', error)
-          toast.warning('Sesión cerrada localmente', 3000, 'Cerrar Sesión')
         }
-      } else {
-        toast.info('Sesión cerrada', 3000, 'Cerrar Sesión')
       }
 
-      // Limpiar tokens y datos locales
+      // PASO 3: Esperar un momento para asegurar que todas las peticiones del logout se completen
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      // PASO 4: SOLO DESPUÉS de cerrar sesión en el servidor, limpiar las cookies
       clearAuthTokens()
-      localStorage.removeItem('authToken')
-      sessionStorage.removeItem('authToken')
-      localStorage.removeItem('rpsoft_user')
-      localStorage.removeItem('rpsoft_selection_data')
-      localStorage.removeItem('rpsoft_current_step')
+      
+      // Limpiar todas las cookies manualmente (por si hay otras)
+      // Obtener todas las cookies del dominio actual
+      const cookies = document.cookie.split(';')
+      const domain = window.location.hostname
+      const paths = ['/', '/seleccion-practicantes', '/configuracion', '/agente-integrador']
+      
+      cookies.forEach(cookie => {
+        const eqPos = cookie.indexOf('=')
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
+        
+        if (name) {
+          // Intentar eliminar la cookie con diferentes configuraciones
+          const expiration = 'expires=Thu, 01 Jan 1970 00:00:00 UTC'
+          
+          // Eliminar con diferentes paths
+          paths.forEach(path => {
+            document.cookie = `${name}=; ${expiration}; path=${path};`
+            document.cookie = `${name}=; ${expiration}; path=${path}; domain=${domain};`
+            document.cookie = `${name}=; ${expiration}; path=${path}; domain=.${domain};`
+            document.cookie = `${name}=; ${expiration}; path=${path}; SameSite=Strict;`
+            document.cookie = `${name}=; ${expiration}; path=${path}; SameSite=Lax;`
+            document.cookie = `${name}=; ${expiration}; path=${path}; SameSite=None; Secure;`
+          })
+        }
+      })
+
+      // Limpiar todo localStorage
+      try {
+        // Limpiar items específicos conocidos
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('rpsoft_user')
+        localStorage.removeItem('rpsoft_selection_data')
+        localStorage.removeItem('rpsoft_current_step')
+        
+        // Limpiar todos los intentos de exámenes almacenados
+        const keysToRemove = []
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i)
+          if (key && (key.startsWith('exam_attempt_') || key.startsWith('rpsoft_') || key.startsWith('auth'))) {
+            keysToRemove.push(key)
+          }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key))
+        
+        // Limpiar todo localStorage si es necesario (comentado por seguridad)
+        // localStorage.clear()
+      } catch (error) {
+        console.error('Error al limpiar localStorage:', error)
+      }
+
+      // Limpiar todo sessionStorage (pero mantener la bandera de logout hasta la redirección)
+      try {
+        sessionStorage.removeItem('authToken')
+        // NO limpiar sessionStorage completamente aquí, solo después de la redirección
+        // sessionStorage.clear()
+      } catch (error) {
+        console.error('Error al limpiar sessionStorage:', error)
+      }
 
       // La animación manejará la navegación cuando termine
     } catch (error) {
+      // No mostrar errores durante el logout
       console.error('Error al cerrar sesión:', error)
-      toast.error('Error al cerrar sesión. Por favor, intenta nuevamente.', 4000, 'Error')
       setIsLoggingOut(false)
       setShowAnimation(false)
+      setLoggingOut(false)
+      sessionStorage.removeItem('rpsoft_logging_out')
     }
   }
 
   const handleAnimationComplete = () => {
+    // Asegurar que la bandera de logout esté activa hasta la redirección
+    setLoggingOut(true)
+    sessionStorage.setItem('rpsoft_logging_out', 'true')
     // Redirigir al login después de que la animación termine
     navigate('/')
+    // Limpiar todo después de un breve delay (después de la redirección)
+    setTimeout(() => {
+      setLoggingOut(false)
+      // Limpiar completamente sessionStorage después de la redirección
+      sessionStorage.clear()
+    }, 1000)
   }
 
   return (
@@ -170,7 +244,17 @@ export function SidebarFooter() {
               {userData?.email || 'Sin email'}
             </p>
             <p className={styles.userRole}>
-              {userData?.role_name || userData?.role || 'Usuario'}
+              {(() => {
+                // Priorizar role_id del backend
+                if (userData?.role_id === 1) {
+                  return 'Postulante'
+                }
+                if (userData?.role_id === 2) {
+                  return 'Admin'
+                }
+                // Fallback a otros campos si no hay role_id
+                return userData?.role_name || userData?.role || 'Usuario'
+              })()}
             </p>
           </div>
         </div>

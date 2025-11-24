@@ -85,7 +85,8 @@ export function ProgressBySpecialtyChart({ data = [] }) {
         {chartData.length === 0 ? (
           <EmptyState
             iconPreset="users"
-            colorPreset="purple"
+            colorPreset="dark"
+            iconColor="#0f172a"
             title="No hay datos disponibles"
             description="Los datos aparecerán cuando haya información de progreso por especialidad"
             className={styles.emptyState}

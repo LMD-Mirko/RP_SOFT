@@ -19,7 +19,7 @@ import { HistorialPage } from '../modules/historial/pages'
 import { PostulacionPage } from '../modules/Practicante-Form/pages'
 import { SeleccionarConvocatoriaPage } from '../modules/Practicante-Form/pages/SeleccionarConvocatoriaPage'
 import { EspecialidadesPage } from '../modules/especialidades/pages'
-import { GestionExamenPage, RealizarExamenPage, ExamenesPage, MisExamenesPage } from '../modules/examenes/pages'
+import { GestionExamenPage, RealizarExamenPage, ExamenesPage, ExamenesAsignadosPage, ExamParticipantsPage } from '../modules/examenes/pages'
 import { RequireRole } from './RequireRole'
 import { RequirePostulante } from './RequirePostulante'
 import { TranscripcionesPage } from '@features/transcripcion-reuniones'
@@ -170,21 +170,25 @@ export function ModuleRouter() {
           }
         />
         <Route
+          path="examenes/:examId/participantes"
+          element={
+            <RequireRole requireAdmin={true}>
+              <ExamParticipantsPage />
+            </RequireRole>
+          }
+        />
+        <Route
           path="examenes/:examId/realizar"
           element={<RealizarExamenPage />}
         />
         <Route
-          path="examenes/mis-examenes"
-          element={<MisExamenesPage />}
+          path="examenes/asignados"
+          element={<ExamenesAsignadosPage />}
         />
         {/* Transcripción: enlaza a la vista del módulo transcripcion-reuniones */}
         <Route
           path="transcripciones"
           element={<TranscripcionesPage />}
-        />
-        <Route
-          path="configuracion"
-          element={<div><h2>Configuración</h2></div>}
         />
       </Route>
     </Routes>

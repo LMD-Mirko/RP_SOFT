@@ -1,5 +1,6 @@
 import { FilePlus, ArrowRight, ClipboardCheck, XCircle, CheckCircle, Trash2, LogIn, LogOut, User, Clock } from 'lucide-react'
 import clsx from 'clsx'
+import { EmptyState } from '@shared/components/EmptyState'
 import styles from './ActivityList.module.css'
 
 const getActivityIcon = (type) => {
@@ -95,9 +96,14 @@ const formatTimestamp = (timestamp) => {
 export function ActivityList({ activities, onActivityClick }) {
   if (!activities || activities.length === 0) {
     return (
-      <div className={styles.emptyState}>
-        <p>No hay actividades registradas</p>
-      </div>
+      <EmptyState
+        iconPreset="activity"
+        colorPreset="dark"
+        iconColor="#0f172a"
+        title="No hay actividades registradas"
+        description="Cuando se realicen acciones aparecerán en este historial."
+        className={styles.emptyState}
+      />
     )
   }
 

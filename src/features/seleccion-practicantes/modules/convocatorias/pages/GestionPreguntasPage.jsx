@@ -289,11 +289,17 @@ export function GestionPreguntasPage() {
     return (
       <div className={styles.container}>
         <EmptyState
+          iconPreset="alert"
+          colorPreset="dark"
+          iconColor="#0f172a"
           title="Evaluación no encontrada"
-          message="La evaluación que buscas no existe o fue eliminada."
-          actionLabel="Volver a Encuestas"
-          onAction={handleBack}
-        />
+          description="La evaluación que buscas no existe o fue eliminada."
+          className={styles.emptyState}
+        >
+          <button type="button" className={styles.emptyButton} onClick={handleBack}>
+            Volver a Encuestas
+          </button>
+        </EmptyState>
       </div>
     )
   }

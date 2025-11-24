@@ -131,6 +131,9 @@ export default function RegisterAdminPage() {
       toast.info('Creando tu cuenta de administrador...', 2000, 'Registro Admin')
       const response = await registerAdmin(userData)
       
+      // Limpiar marca de logout si existe
+      sessionStorage.removeItem('rpsoft_logging_out')
+      
       // Guardar tokens en cookies
       if (response.tokens) {
         const accessToken = response.tokens.access
