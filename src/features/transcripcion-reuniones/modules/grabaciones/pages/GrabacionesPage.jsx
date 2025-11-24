@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import styles from './TranscripcionesPage.module.css'
 import { SearchBar } from '../../../components/filters/SearchBar'
 import { DateFilter } from '../../../components/filters/DateFilter'
@@ -61,6 +61,37 @@ export function TranscripcionesPage() {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
   const [bulkDeleteCount, setBulkDeleteCount] = useState(0)
 
+  // Persistencia en localStorage para mantener nombres tras refrescar
+  const STORAGE_KEY = 'rpsoft:transcripciones_items'
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setItems(parsed)
+        }
+      } else {
+        // Guardar iniciales si no hay nada
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(MOCK_ITEMS))
+      }
+    } catch (err) {
+      // Si falla parsing, mantener MOCK_ITEMS
+      console.warn('No se pudo cargar items persistidos', err)
+    }
+    // No incluir setItems en deps para evitar bucles
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+    } catch (err) {
+      console.warn('No se pudo persistir items', err)
+    }
+  }, [items])
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     const base = q ? items.filter((i) => i.name.toLowerCase().includes(q)) : items.slice()
@@ -96,6 +127,49 @@ export function TranscripcionesPage() {
   const handleRename = (item) => {
     setRenameTarget(item.name)
     setRenameOpen(true)
+  }
+
+  const handleConfirmRename = (newName) => {
+    const finalName = (newName || '').trim()
+    if (!finalName) {
+      // No renombrar si el nombre está vacío
+      setRenameOpen(false)
+      setRenameTarget('')
+      return
+    }
+
+    // Evitar duplicados exactos: si ya existe, solo cerrar
+    const exists = items.some((i) => i.name === finalName)
+    if (exists && finalName !== renameTarget) {
+      // Si el nombre ya existe y es diferente, no aplicar cambio
+      setRenameOpen(false)
+      setRenameTarget('')
+      return
+    }
+
+    // Actualizar el nombre del item en la lista y persistir inmediatamente
+    setItems((prev) => {
+      const next = prev.map((i) => (i.name === renameTarget ? { ...i, name: finalName } : i))
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+      } catch (err) {
+        console.warn('No se pudo persistir items tras renombrar', err)
+      }
+      return next
+    })
+
+    // Actualizar selección si el anterior nombre estaba seleccionado
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(renameTarget)) {
+        next.delete(renameTarget)
+        next.add(finalName)
+      }
+      return next
+    })
+
+    setRenameOpen(false)
+    setRenameTarget('')
   }
 
   const handleInfo = (item) => {
@@ -190,7 +264,7 @@ export function TranscripcionesPage() {
         isOpen={renameOpen}
         onClose={() => setRenameOpen(false)}
         name={renameTarget}
-        onConfirm={(newName) => console.log('Renombrar', renameTarget, '->', newName)}
+        onConfirm={handleConfirmRename}
       />
 
       <DeleteModal
