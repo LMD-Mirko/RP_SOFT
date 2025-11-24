@@ -151,7 +151,8 @@ export function ParticipantsModal({ isOpen, onClose, selectedParticipants = [], 
           ) : (
             <EmptyState
               iconPreset="users"
-              colorPreset="blue"
+              colorPreset="dark"
+              iconColor="#0f172a"
               title="No se encontraron participantes"
               description={searchTerm ? "Intenta con otros términos de búsqueda" : "No hay usuarios disponibles"}
               className={styles.emptyState}

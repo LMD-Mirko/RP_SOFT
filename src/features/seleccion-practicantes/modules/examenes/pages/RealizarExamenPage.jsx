@@ -469,15 +469,21 @@ export function RealizarExamenPage() {
     return (
       <div className={styles.container}>
         <EmptyState
+          iconPreset="alert"
+          colorPreset="dark"
+          iconColor="#0f172a"
           title={accessError ? 'No puedes acceder al examen' : 'Examen no encontrado'}
-          message={
+          description={
             accessError
               ? accessError
               : 'El examen que buscas no existe o fue eliminado.'
           }
-          actionLabel="Volver"
-          onAction={handleBack}
-        />
+          className={styles.emptyState}
+        >
+          <button type="button" className={styles.emptyButton} onClick={handleBack}>
+            Volver
+          </button>
+        </EmptyState>
       </div>
     )
   }

@@ -9,6 +9,7 @@ import { useToast } from '@shared/components/Toast'
 import { ExamModal } from '../components/ExamModal'
 import { CreateExamFromJsonModal } from '../components/CreateExamFromJsonModal'
 import { AssignExamModal } from '../components/AssignExamModal'
+import { EmptyState } from '@shared/components/EmptyState'
 import styles from './ExamenesPage.module.css'
 
 const formatDate = (dateString) => {
@@ -151,8 +152,14 @@ export function ExamenesPage() {
 
       <div className={styles.content}>
         {examenes.length === 0 ? (
-          <div className={styles.empty}>
-            <p className={styles.emptyText}>No hay exámenes creados</p>
+          <EmptyState
+            iconPreset="list"
+            colorPreset="dark"
+            iconColor="#0f172a"
+            title="No hay exámenes creados"
+            description="Registra tu primer examen o impórtalo desde un archivo JSON."
+            className={styles.emptyState}
+          >
             <div className={styles.emptyActions}>
               <Button onClick={handleCreateExam} icon={Plus} variant="primary">
                 Crear Primer Examen
@@ -162,7 +169,7 @@ export function ExamenesPage() {
                 Crear desde JSON
               </button>
             </div>
-          </div>
+          </EmptyState>
         ) : (
           <div className={styles.examsList}>
             {examenes.map((exam) => (

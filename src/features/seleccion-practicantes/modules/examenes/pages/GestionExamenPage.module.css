@@ -164,6 +164,29 @@
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
+.emptyState {
+  padding: 2rem 0;
+}
+
+.emptyButton {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  box-shadow: 0 15px 28px -15px rgba(15, 23, 42, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.emptyButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 36px -15px rgba(15, 23, 42, 0.5);
+}
+
 .questionsList {
   display: flex;
   flex-direction: column;

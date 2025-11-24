@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@shared/components/Button'
 import { Skeleton } from '../../../shared/components/Skeleton'
 import { useToast } from '@shared/components/Toast'
-import { Briefcase, Calendar, Users, ArrowRight, AlertCircle } from 'lucide-react'
+import { Briefcase, Calendar, Users, ArrowRight } from 'lucide-react'
+import { EmptyState } from '@shared/components/EmptyState'
 import * as postulacionService from '../services'
 import * as convocatoriaService from '../../convocatorias/services'
 import styles from './SeleccionarConvocatoriaPage.module.css'
@@ -112,15 +113,14 @@ export function SeleccionarConvocatoriaPage() {
     return (
       <div className={styles.container}>
         <div className={styles.content}>
-          <div className={styles.header}>
-            <h1 className={styles.title}>No hay Convocatorias Disponibles</h1>
-            <p className={styles.subtitle}>Actualmente no hay convocatorias abiertas</p>
-          </div>
-          <div className={styles.emptyState}>
-            <AlertCircle size={48} className={styles.emptyIcon} />
-            <p>No hay convocatorias disponibles en este momento.</p>
-            <p>Vuelve más tarde para ver nuevas oportunidades.</p>
-          </div>
+          <EmptyState
+            iconPreset="folder"
+            colorPreset="dark"
+            iconColor="#0f172a"
+            title="No hay convocatorias disponibles"
+            description="Actualmente no hay convocatorias abiertas. Vuelve más tarde para ver nuevas oportunidades."
+            className={styles.emptyState}
+          />
         </div>
       </div>
     )

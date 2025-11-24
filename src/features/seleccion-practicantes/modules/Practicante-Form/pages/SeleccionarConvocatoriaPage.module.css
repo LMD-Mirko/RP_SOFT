@@ -161,23 +161,7 @@
 }
 
 .emptyState {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-.emptyIcon {
-  color: #9ca3af;
-  margin-bottom: 1rem;
-}
-
-.emptyState p {
-  font-size: 1rem;
-  color: #6b7280;
-  margin: 0.5rem 0;
+  padding: 2.5rem 0;
 }
 
 /* Responsive */

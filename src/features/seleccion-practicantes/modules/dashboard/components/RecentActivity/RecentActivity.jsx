@@ -10,7 +10,8 @@ export function RecentActivity({ activities = [], loading = false }) {
         {loading ? (
           <EmptyState
             iconPreset="activity"
-            colorPreset="turquoise"
+            colorPreset="dark"
+            iconColor="#0f172a"
             title="Cargando actividades..."
             description="Por favor espera mientras cargamos la información"
             className={styles.emptyState}
@@ -18,7 +19,8 @@ export function RecentActivity({ activities = [], loading = false }) {
         ) : activities.length === 0 ? (
           <EmptyState
             iconPreset="activity"
-            colorPreset="turquoise"
+            colorPreset="dark"
+            iconColor="#0f172a"
             title="No hay actividad reciente"
             description="Los registros de actividad aparecerán aquí cuando haya movimientos en el sistema"
             className={styles.emptyState}
