@@ -4,6 +4,21 @@
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.1s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .reporteSection h2 {
@@ -53,6 +68,10 @@
   border-radius: 8px;
   margin-top: 32px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.2s;
+  opacity: 0;
+  animation-fill-mode: forwards;
 }
 
 .historialSection h2 {
