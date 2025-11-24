@@ -1,6 +1,11 @@
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './TablaHistorialDetallado.module.css';
 
 const TablaHistorialDetallado = ({ data = [] }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const getAccionBadgeClass = (accion) => {
     if (accion.includes('Advertencia')) return styles.badgeAdvertencia;
     if (accion.includes('Traslado')) return styles.badgeTraslado;
@@ -13,6 +18,19 @@ const TablaHistorialDetallado = ({ data = [] }) => {
     if (estado === 'Transferido') return styles.badgeTransferido;
     if (estado === 'Expulsado') return styles.badgeExpulsado;
     return styles.badgeActivo;
+  };
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = data.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    setCurrentPage(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(prev + 1, totalPages));
   };
 
   return (
@@ -31,7 +49,7 @@ const TablaHistorialDetallado = ({ data = [] }) => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item, index) => (
+            {currentData.map((item, index) => (
               <tr key={index} className={styles.row}>
                 <td className={styles.cell}>
                   <div className={styles.practicanteInfo}>
@@ -59,6 +77,26 @@ const TablaHistorialDetallado = ({ data = [] }) => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className={styles.pagination}>
+        <button
+          className={styles.paginationButton}
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <span className={styles.paginationInfo}>
+          Página {currentPage} de {totalPages}
+        </span>
+        <button
+          className={styles.paginationButton}
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight size={20} />
+        </button>
       </div>
     </div>
   );

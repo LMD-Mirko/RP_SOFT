@@ -1,5 +1,6 @@
 import { forwardRef } from 'react'
 import clsx from 'clsx'
+import { EmptyState } from '@shared/components/EmptyState'
 import styles from './Table.module.css'
 
 export const Table = forwardRef(({ children, className, striped = false, hover = true, bordered = false }, ref) => {
@@ -83,12 +84,37 @@ Table.Cell = function TableCell({ children, className, align = 'left', width }) 
 }
 
 // Subcomponente Empty (estado vacío)
-Table.Empty = function TableEmpty({ children, colSpan, icon: Icon }) {
+Table.Empty = function TableEmpty({
+  children,
+  colSpan = 1,
+  icon: IconComponent,
+  iconPreset = 'default',
+  colorPreset = 'default',
+  iconColor,
+  glowColor,
+  title,
+  description,
+  className,
+}) {
+  const derivedDescription =
+    description ?? (typeof children === 'string' ? children : undefined)
+  const extraContent = typeof children === 'string' ? null : children
+
   return (
     <tr>
-      <td colSpan={colSpan} className={styles.empty}>
-        {Icon && <Icon size={48} className={styles.emptyIcon} />}
-        <div className={styles.emptyText}>{children}</div>
+      <td colSpan={colSpan} className={clsx(styles.empty, className)}>
+        <EmptyState
+          icon={IconComponent}
+          iconPreset={iconPreset}
+          colorPreset={colorPreset}
+          iconColor={iconColor || '#0f172a'}
+          glowColor={glowColor}
+          title={title || 'No hay datos disponibles'}
+          description={derivedDescription || 'Los datos aparecerán aquí cuando estén disponibles.'}
+          className={styles.emptyState}
+        >
+          {extraContent}
+        </EmptyState>
       </td>
     </tr>
   )

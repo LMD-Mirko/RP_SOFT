@@ -1,54 +1,32 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useMemo } from 'react'
+import { EmptyState } from '@shared/components/EmptyState'
 import styles from './PostulantsStatusChart.module.css'
 
-// Paleta de colores pasteles
-const COLOR_SCHEME = {
-  'Personal Data': {
-    gradient: ['#B3D9FF', '#99CCFF'],
-    solid: '#B3D9FF',
-    light: '#f3f4f6',
-  },
-  'Completed': {
-    gradient: ['#B3FFD9', '#99FFCC'],
-    solid: '#B3FFD9',
-    light: '#f9fafb',
-  },
-  'CV': {
-    gradient: ['#FFF4B3', '#FFE699'],
-    solid: '#FFF4B3',
-    light: '#f3f4f6',
-  },
-  'Profile': {
-    gradient: ['#E6B3FF', '#D699FF'],
-    solid: '#E6B3FF',
-    light: '#f9fafb',
-  },
-  'Technical': {
-    gradient: ['#FFD9B3', '#FFCC99'],
-    solid: '#FFD9B3',
-    light: '#f3f4f6',
-  },
-}
+const COLOR_PALETTE = [
+  { gradient: ['#B3FFD9', '#99FFCC'], solid: '#B3FFD9' },
+  { gradient: ['#FFF4B3', '#FFE699'], solid: '#FFF4B3' },
+  { gradient: ['#E6B3FF', '#D699FF'], solid: '#E6B3FF' },
+  { gradient: ['#B3D9FF', '#99CCFF'], solid: '#B3D9FF' },
+  { gradient: ['#FFD9B3', '#FFCC99'], solid: '#FFD9B3' },
+]
 
-const getStatusColor = (status) => {
-  return COLOR_SCHEME[status]?.solid || '#B3D9FF'
-}
-
-const getStatusGradient = (status) => {
-  return COLOR_SCHEME[status]?.gradient || ['#B3D9FF', '#99CCFF']
-}
+const getColorByIndex = (index) => COLOR_PALETTE[index % COLOR_PALETTE.length]
 
 export function PostulantsStatusChart({ data = [] }) {
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return []
     const total = data.reduce((sum, item) => sum + item.count, 0)
-    return data.map((item) => ({
-      name: item.status,
-      value: item.count,
-      percentage: item.percentage || (total > 0 ? (item.count / total) * 100 : 0),
-      fill: getStatusColor(item.status),
-    }))
+    return data.map((item, index) => {
+      const palette = getColorByIndex(index)
+      return {
+        name: item.status,
+        value: item.count,
+        percentage: item.percentage || (total > 0 ? (item.count / total) * 100 : 0),
+        fill: palette.solid,
+        gradient: palette.gradient,
+      }
+    })
   }, [data])
 
   const total = useMemo(() => {
@@ -62,10 +40,14 @@ export function PostulantsStatusChart({ data = [] }) {
           <h3 className={styles.title}>Estados de Postulantes</h3>
           <div className={styles.badge}>{total}</div>
         </div>
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>📊</div>
-          <p className={styles.emptyText}>No hay datos disponibles</p>
-        </div>
+        <EmptyState
+          iconPreset="chart"
+          colorPreset="dark"
+          iconColor="#0f172a"
+          title="No hay datos disponibles"
+          description="Los datos aparecerán cuando se registren postulantes."
+          className={styles.emptyState}
+        />
       </div>
     )
   }
@@ -73,14 +55,13 @@ export function PostulantsStatusChart({ data = [] }) {
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0]
-      const status = data.name
-      const colorScheme = COLOR_SCHEME[status] || {}
+      const palette = data.payload?.gradient
       
       return (
         <div className={styles.tooltip}>
           <div 
             className={styles.tooltipIndicator}
-            style={{ background: `linear-gradient(135deg, ${colorScheme.gradient?.[0] || '#B3D9FF'}, ${colorScheme.gradient?.[1] || '#99CCFF'})` }}
+            style={{ background: `linear-gradient(135deg, ${palette?.[0] || '#B3FFD9'}, ${palette?.[1] || '#99FFCC'})` }}
           />
           <div className={styles.tooltipContent}>
             <p className={styles.tooltipLabel}>{data.name}</p>
@@ -147,15 +128,12 @@ export function PostulantsStatusChart({ data = [] }) {
           <ResponsiveContainer width={240} height={240}>
             <PieChart>
               <defs>
-                {chartData.map((entry, index) => {
-                  const gradient = getStatusGradient(entry.name)
-                  return (
-                    <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor={gradient[0]} stopOpacity={1} />
-                      <stop offset="100%" stopColor={gradient[1]} stopOpacity={1} />
-                    </linearGradient>
-                  )
-                })}
+                {chartData.map((entry, index) => (
+                  <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor={entry.gradient?.[0] || entry.fill} stopOpacity={1} />
+                    <stop offset="100%" stopColor={entry.gradient?.[1] || entry.fill} stopOpacity={1} />
+                  </linearGradient>
+                ))}
               </defs>
               <Pie
                 data={chartData}
@@ -189,32 +167,29 @@ export function PostulantsStatusChart({ data = [] }) {
         </div>
 
         <div className={styles.legend}>
-          {chartData.map((item, index) => {
-            const colorScheme = COLOR_SCHEME[item.name] || {}
-            return (
-              <div 
-                key={index} 
-                className={styles.legendItem}
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                <div className={styles.legendIndicator}>
-                  <div
-                    className={styles.legendColor}
-                    style={{ 
-                      background: `linear-gradient(135deg, ${colorScheme.gradient?.[0] || '#B3D9FF'}, ${colorScheme.gradient?.[1] || '#99CCFF'})`,
-                    }}
-                  />
-                </div>
-                <div className={styles.legendContent}>
-                  <span className={styles.legendLabel}>{item.name}</span>
-                  <span className={styles.legendStats}>
-                    <span className={styles.legendValue}>{item.value}</span>
-                    <span className={styles.legendPercentage}>({item.percentage}%)</span>
-                  </span>
-                </div>
+          {chartData.map((item, index) => (
+            <div 
+              key={index} 
+              className={styles.legendItem}
+              style={{ animationDelay: `${index * 0.05}s` }}
+            >
+              <div className={styles.legendIndicator}>
+                <div
+                  className={styles.legendColor}
+                  style={{ 
+                    background: `linear-gradient(135deg, ${item.gradient[0]}, ${item.gradient[1]})`,
+                  }}
+                />
               </div>
-            )
-          })}
+              <div className={styles.legendContent}>
+                <span className={styles.legendLabel}>{item.name}</span>
+                <span className={styles.legendStats}>
+                  <span className={styles.legendValue}>{item.value}</span>
+                  <span className={styles.legendPercentage}>({item.percentage}%)</span>
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

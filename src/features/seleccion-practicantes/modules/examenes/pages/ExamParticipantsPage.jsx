@@ -175,11 +175,21 @@ export function ExamParticipantsPage() {
     if (!participants.length) {
       return (
         <EmptyState
+          iconPreset="users"
+          colorPreset="dark"
+          iconColor="#0f172a"
           title="Sin participantes asignados"
-          message="Cuando se asignen usuarios aparecerán en esta tabla."
-          actionLabel="Volver"
-          onAction={() => navigate('/seleccion-practicantes/examenes')}
-        />
+          description="Cuando se asignen usuarios aparecerán en esta tabla."
+          className={styles.emptyState}
+        >
+          <button
+            type="button"
+            className={styles.emptyActionButton}
+            onClick={() => navigate('/seleccion-practicantes/examenes')}
+          >
+            Volver al listado
+          </button>
+        </EmptyState>
       )
     }
 

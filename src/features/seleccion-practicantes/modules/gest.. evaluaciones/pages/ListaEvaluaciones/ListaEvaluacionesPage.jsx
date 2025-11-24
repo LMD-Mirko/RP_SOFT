@@ -239,11 +239,17 @@ export function ListaEvaluacionesPage() {
                   </Table.Row>
                 ))
               ) : (
-                <Table.Empty colSpan={5} icon={Award}>
-                  {searchTerm
-                    ? 'No se encontraron evaluaciones con ese criterio de búsqueda'
-                    : 'No hay evaluaciones registradas'}
-                </Table.Empty>
+                <Table.Empty
+                  colSpan={5}
+                  icon={Award}
+                  colorPreset="dark"
+                  title={searchTerm ? 'Sin resultados' : 'No hay evaluaciones registradas'}
+                  description={
+                    searchTerm
+                      ? 'Intenta con otros términos o verifica los filtros aplicados.'
+                      : 'Crea una evaluación técnica para visualizarla en esta tabla.'
+                  }
+                />
               )}
             </Table.Body>
           </Table>

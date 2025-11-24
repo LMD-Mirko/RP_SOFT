@@ -90,7 +90,8 @@ export function MeetingsList({
     return (
       <EmptyState
         iconPreset="calendar"
-        colorPreset="blue"
+        colorPreset="dark"
+        iconColor="#0f172a"
         title="No hay reuniones programadas"
         description="Crea una nueva reunión usando el formulario"
       />

@@ -248,11 +248,17 @@ export function EspecialidadesPage() {
                   </Table.Row>
                 ))
               ) : (
-                <Table.Empty colSpan={5}>
-                  {searchTerm || statusFilter
-                    ? 'No se encontraron especialidades con ese criterio de búsqueda'
-                    : 'No hay especialidades registradas'}
-                </Table.Empty>
+                <Table.Empty
+                  colSpan={5}
+                  icon={GraduationCap}
+                  colorPreset="dark"
+                  title={searchTerm || statusFilter ? 'Sin resultados' : 'No hay especialidades registradas'}
+                  description={
+                    searchTerm || statusFilter
+                      ? 'Ajusta los filtros o busca por otro término.'
+                      : 'Crea una especialidad para comenzar a administrarla.'
+                  }
+                />
               )}
             </Table.Body>
           </Table>

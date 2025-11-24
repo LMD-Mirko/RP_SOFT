@@ -147,8 +147,11 @@ export function ExamenesAsignadosPage() {
       <div className={styles.content}>
         {examenes.length === 0 ? (
           <EmptyState
+            iconPreset="default"
+            colorPreset="dark"
+            iconColor="#0f172a"
             title="Sin exámenes asignados"
-            message="Cuando te asignen un examen aparecerá en esta vista."
+            description="Cuando te asignen un examen aparecerá en esta vista."
           />
         ) : (
           <div className={styles.examsList}>

@@ -195,6 +195,28 @@
   gap: 1rem;
 }
 
+.emptyState {
+  padding: 2rem 0;
+}
+
+.emptyActionButton {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 15px 25px -15px rgba(15, 23, 42, 0.4);
+}
+
+.emptyActionButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 30px -15px rgba(15, 23, 42, 0.45);
+}
+
 .headerActions {
   display: flex;
   align-items: center;

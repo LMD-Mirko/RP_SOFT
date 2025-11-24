@@ -91,11 +91,17 @@ export function GestionEncuestasPage() {
     return (
       <div className={styles.container}>
         <EmptyState
+          iconPreset="alert"
+          colorPreset="dark"
+          iconColor="#0f172a"
           title="Convocatoria no encontrada"
-          message="La convocatoria que buscas no existe o fue eliminada."
-          actionLabel="Volver a Convocatorias"
-          onAction={handleBack}
-        />
+          description="La convocatoria que buscas no existe o fue eliminada."
+          className={styles.emptyState}
+        >
+          <button type="button" className={styles.emptyButton} onClick={handleBack}>
+            Volver a Convocatorias
+          </button>
+        </EmptyState>
       </div>
     )
   }

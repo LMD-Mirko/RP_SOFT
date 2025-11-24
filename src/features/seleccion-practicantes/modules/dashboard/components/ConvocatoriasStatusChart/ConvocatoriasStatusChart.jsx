@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { useMemo } from 'react'
+import { EmptyState } from '@shared/components/EmptyState'
 import styles from './ConvocatoriasStatusChart.module.css'
 
 const COLOR_SCHEME = {
@@ -59,10 +60,14 @@ export function ConvocatoriasStatusChart({ data = [] }) {
           <h3 className={styles.title}>Estados de Convocatorias</h3>
           <div className={styles.badge}>{total}</div>
         </div>
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>📋</div>
-          <p className={styles.emptyText}>No hay datos disponibles</p>
-        </div>
+        <EmptyState
+          iconPreset="folder"
+          colorPreset="dark"
+          iconColor="#0f172a"
+          title="No hay datos disponibles"
+          description="Cuando existan convocatorias registradas verás su estado aquí."
+          className={styles.emptyState}
+        />
       </div>
     )
   }

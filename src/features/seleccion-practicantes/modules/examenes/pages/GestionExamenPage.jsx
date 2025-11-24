@@ -281,11 +281,17 @@ export function GestionExamenPage() {
     return (
       <div className={styles.container}>
         <EmptyState
+          iconPreset="alert"
+          colorPreset="dark"
+          iconColor="#0f172a"
           title="Examen no encontrado"
-          message="El examen que buscas no existe o fue eliminado."
-          actionLabel="Volver a Exámenes"
-          onAction={handleBack}
-        />
+          description="El examen que buscas no existe o fue eliminado."
+          className={styles.emptyState}
+        >
+          <button type="button" className={styles.emptyButton} onClick={handleBack}>
+            Volver a Exámenes
+          </button>
+        </EmptyState>
       </div>
     )
   }

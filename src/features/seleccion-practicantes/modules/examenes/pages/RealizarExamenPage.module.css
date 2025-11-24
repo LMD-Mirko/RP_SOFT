@@ -190,6 +190,29 @@
   animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.emptyState {
+  padding: 2rem 0;
+}
+
+.emptyButton {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.75rem;
+  border-radius: 999px;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 15px 30px -15px rgba(15, 23, 42, 0.45);
+}
+
+.emptyButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 34px -15px rgba(15, 23, 42, 0.5);
+}
+
 .resultHeader {
   display: flex;
   flex-direction: column;

@@ -7,6 +7,12 @@ import { Search, ChevronDown, Download } from 'lucide-react'
 import styles from '../styles/Dashboard.module.css'
 
 export function SearchBar({ searchTerm, onSearchChange, filterValue, onFilterChange, onDownload }) {
+  const options = ['Todos los estados', 'Onboarding', 'Activo', 'Finalizado']
+  const handleFilterClick = () => {
+    const idx = options.indexOf(filterValue)
+    const next = options[(idx + 1) % options.length]
+    onFilterChange?.(next)
+  }
   return (
     <div className={styles.searchBar}>
       {/* Barra de búsqueda */}
@@ -22,7 +28,7 @@ export function SearchBar({ searchTerm, onSearchChange, filterValue, onFilterCha
       </div>
 
       {/* Dropdown de filtros */}
-      <button className={styles.filterButton}>
+      <button className={styles.filterButton} onClick={handleFilterClick}>
         <span>{filterValue}</span>
         <ChevronDown size={16} />
       </button>

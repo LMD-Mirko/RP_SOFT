@@ -253,11 +253,17 @@ export function MisEvaluacionesPage() {
                 )
               })
             ) : (
-              <Table.Empty colSpan={6} icon={Award}>
-                {statusFilter
-                  ? 'No hay evaluaciones con ese estado'
-                  : 'No has completado ninguna evaluación aún'}
-              </Table.Empty>
+              <Table.Empty
+                colSpan={6}
+                icon={Award}
+                colorPreset="dark"
+                title={statusFilter ? 'Sin evaluaciones con este estado' : 'Aún no tienes evaluaciones'}
+                description={
+                  statusFilter
+                    ? 'Prueba cambiando el filtro para ver otros intentos.'
+                    : 'Tus evaluaciones finalizadas aparecerán aquí.'
+                }
+              />
             )}
           </Table.Body>
         </Table>
