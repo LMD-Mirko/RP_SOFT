@@ -4,6 +4,7 @@
  */
 
 import { Routes, Route } from 'react-router-dom'
+import Error404 from '@shared/interfaces/Error404'
 import { Layout } from '../components/Layout'
 import { EventosEvaluacionPage } from '../modules/eventos-evaluacion/pages'
 import { Evaluacion360Page } from '../modules/evaluacion-360/pages'
@@ -51,6 +52,9 @@ export function ModuleRouter() {
           element={<NotaTecnicaUsuarioPage />}
         />
       </Route>
+      
+      {/* Ruta 404 para rutas no encontradas (sin Layout) */}
+      <Route path="*" element={<Error404 />} />
     </Routes>
   )
 }

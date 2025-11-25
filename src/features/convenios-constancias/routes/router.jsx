@@ -4,6 +4,7 @@
  */
 
 import { Routes, Route } from 'react-router-dom'
+import Error404 from '@shared/interfaces/Error404'
 import { Layout } from '../components/Layout'
 import { Dashboard } from '../modules/Dashboard'
 import { Auditoria } from '../modules/auditoria'
@@ -57,6 +58,9 @@ export function ModuleRouter() {
           element={<UsuarioConstancias />}
         />
       </Route>
+      
+      {/* Ruta 404 para rutas no encontradas (sin Layout) */}
+      <Route path="*" element={<Error404 />} />
     </Routes>
   )
 }

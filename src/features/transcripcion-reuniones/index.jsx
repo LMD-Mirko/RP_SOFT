@@ -4,6 +4,7 @@ import { ScrumScrumPage } from './modules/scrum-scrum/pages/ScrumScrumPage.jsx'
 import { DailyScrumPage } from './modules/daily-scrum/pages/DailyScrumPage.jsx'
 import { Layout } from './components/layout/Layout.jsx'
 import { PanelCentralPage } from './modules/panel-central/pages/PanelCentralPage.jsx'
+import Error404 from '@shared/interfaces/Error404'
 export { TranscripcionesPage } from './modules/grabaciones/pages/GrabacionesPage.jsx'
 
 function Placeholder({ title }) {
@@ -20,6 +21,9 @@ export function TranscripcionReunionesIndex() {
         <Route path="panel-central" element={<PanelCentralPage />} />
         <Route path="transcripciones" element={<TranscripcionesPage />} />
       </Route>
+      
+      {/* Ruta 404 para rutas no encontradas (sin Layout) */}
+      <Route path="*" element={<Error404 />} />
     </Routes>
   )
 }

@@ -3,7 +3,7 @@
  * Define todas las rutas internas del módulo.
  */
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "../components/Layout";
 import { Dashboard } from "../modules/dashboard/pages/Dashboard";
 import { Backlog } from "../modules/backlog/pages/Backlog";
@@ -16,7 +16,7 @@ import { UserTasks } from "../components/user/UserTasks";
 import { UserFeedback } from "../components/user/UserFeedback";
 import { UserTeams } from "../components/user/UserTeams";
 import { UserProfile } from "../components/user/UserProfile";
-import { Navigate } from "react-router-dom";
+import Error404 from "@shared/interfaces/Error404";
 
 /**
  * Router del Módulo
@@ -43,6 +43,9 @@ export function ModuleRouter() {
           <Route path="perfil" element={<UserProfile />} />
         </Route>
       </Route>
+      
+      {/* Ruta 404 para rutas no encontradas (sin Layout) */}
+      <Route path="*" element={<Error404 />} />
     </Routes>
   );
 }

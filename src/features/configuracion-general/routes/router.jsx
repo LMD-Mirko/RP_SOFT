@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from '../components/Layout'
 import { PlaceholderSection } from '../pages/PlaceholderSection'
 import { RolesPage, PerfilPage, UsuariosPage, TiposDocumentoPage, VariablesEntornoPage } from '../modules'
+import Error404 from '@shared/interfaces/Error404'
 
 export function ModuleRouter() {
   return (
@@ -44,9 +45,10 @@ export function ModuleRouter() {
           path="global/perfil"
           element={<PerfilPage />}
         />
-
-        <Route path="*" element={<Navigate to="global/general" replace />} />
       </Route>
+      
+      {/* Ruta 404 para rutas no encontradas (sin Layout) */}
+      <Route path="*" element={<Error404 />} />
     </Routes>
   )
 }

@@ -4,6 +4,7 @@
  */
 
 import { Routes, Route } from 'react-router-dom'
+import Error404 from '@shared/interfaces/Error404'
 import { Layout } from '../components/Layout'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
@@ -75,6 +76,9 @@ export function ModuleRouter() {
           element={<DisciplinaryTrackingView />}
         />
       </Route>
+      
+      {/* Ruta 404 para rutas no encontradas (sin Layout) */}
+      <Route path="*" element={<Error404 />} />
     </Routes>
   )
 }

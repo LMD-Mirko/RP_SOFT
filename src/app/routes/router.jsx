@@ -1,65 +1,34 @@
 /**
  * Router Principal
- * Define las rutas de la aplicación con lazy loading para optimizar la carga inicial.
+ * Define las rutas de la aplicación.
  */
 
-import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { MainLayout } from '@shared/components/Layout/MainLayout'
+import ErrorBoundary from '@shared/components/ErrorBoundary'
+import Error404 from '@shared/interfaces/Error404'
 
-// Lazy loading de páginas de autenticación
-const LoginPage = lazy(() =>
-  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.LoginPage }))
-)
-const RegisterPage = lazy(() =>
-  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.RegisterPage }))
-)
-const OAuthCallbackPage = lazy(() =>
-  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.OAuthCallbackPage }))
-)
-const ForgotPasswordPage = lazy(() =>
-  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.ForgotPasswordPage }))
-)
-const ResetPasswordPage = lazy(() =>
-  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.ResetPasswordPage }))
-)
-const RegisterAdminPage = lazy(() =>
-  import('@features/seleccion-practicantes/modules/auth/pages').then((m) => ({ default: m.RegisterAdminPage }))
-)
+// Importaciones directas de páginas de autenticación
+import {
+  LoginPage,
+  RegisterPage,
+  OAuthCallbackPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
+  RegisterAdminPage
+} from '@features/seleccion-practicantes/modules/auth/pages'
 
-// Lazy loading de módulos - se cargan bajo demanda
-const SeleccionPracticantesIndex = lazy(() =>
-  import('@features/seleccion-practicantes').then((m) => ({ default: m.SeleccionPracticantesIndex }))
-)
+// Importaciones directas de módulos
+import { SeleccionPracticantesIndex } from '@features/seleccion-practicantes'
+import { TranscripcionReunionesIndex } from '@features/transcripcion-reuniones'
+import { GestionTareasIndex } from '@features/gestion-tareas'
+import { AsistenciaHorarioIndex } from '@features/asistencia-horario'
+import { Evaluacion360Index } from '@features/evaluacion-360'
+import { ConveniosConstanciasIndex } from '@features/convenios-constancias'
+import { ConfiguracionGeneralIndex } from '@features/configuracion-general'
 
-const TranscripcionReunionesIndex = lazy(() =>
-  import('@features/transcripcion-reuniones').then((m) => ({ default: m.TranscripcionReunionesIndex }))
-)
-
-const GestionTareasIndex = lazy(() =>
-  import('@features/gestion-tareas').then((m) => ({ default: m.GestionTareasIndex }))
-)
-
-const AsistenciaHorarioIndex = lazy(() =>
-  import('@features/asistencia-horario').then((m) => ({ default: m.AsistenciaHorarioIndex }))
-)
-
-const Evaluacion360Index = lazy(() =>
-  import('@features/evaluacion-360').then((m) => ({ default: m.Evaluacion360Index }))
-)
-
-const ConveniosConstanciasIndex = lazy(() =>
-  import('@features/convenios-constancias').then((m) => ({ default: m.ConveniosConstanciasIndex }))
-)
-
-const ConfiguracionGeneralIndex = lazy(() =>
-  import('@features/configuracion-general').then((m) => ({ default: m.ConfiguracionGeneralIndex }))
-)
-
-// Lazy loading del Dashboard
-const DashboardPage = lazy(() =>
-  import('@features/seleccion-practicantes/modules/dashboard/pages').then((m) => ({ default: m.DashboardPage }))
-)
+// Importación directa del Dashboard
+import { DashboardPage } from '@features/seleccion-practicantes/modules/dashboard/pages'
 
 /**
  * Router Principal
@@ -68,130 +37,33 @@ const DashboardPage = lazy(() =>
  */
 export function Router() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Rutas públicas de autenticación (sin Layout) */}
-        <Route
-          path="/"
-          element={
-            <Suspense fallback={null}>
-              <LoginPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <Suspense fallback={null}>
-              <RegisterPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/auth/callback"
-          element={
-            <Suspense fallback={null}>
-              <OAuthCallbackPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <Suspense fallback={null}>
-              <ForgotPasswordPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <Suspense fallback={null}>
-              <ResetPasswordPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/admin/register"
-          element={
-            <Suspense fallback={null}>
-              <RegisterAdminPage />
-            </Suspense>
-          }
-        />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
+          {/* Rutas públicas de autenticación (sin Layout) */}
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/auth/callback" element={<OAuthCallbackPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/admin/register" element={<RegisterAdminPage />} />
 
-        {/* Rutas con Layout (requieren autenticación) */}
-        <Route element={<MainLayout />}>
-          <Route
-            path="/dashboard"
-            element={
-              <Suspense fallback={null}>
-                <DashboardPage />
-              </Suspense>
-            }
-          />
-
-          <Route
-            path="/seleccion-practicantes/*"
-            element={
-              <Suspense fallback={null}>
-                <SeleccionPracticantesIndex />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/transcripcion-reuniones/*"
-            element={
-              <Suspense fallback={null}>
-                <TranscripcionReunionesIndex />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/gestion-tareas/*"
-            element={
-              <Suspense fallback={null}>
-                <GestionTareasIndex />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/asistencia-horario/*"
-            element={
-              <Suspense fallback={null}>
-                <AsistenciaHorarioIndex />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/evaluacion-360/*"
-            element={
-              <Suspense fallback={null}>
-                <Evaluacion360Index />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/convenios-constancias/*"
-            element={
-              <Suspense fallback={null}>
-                <ConveniosConstanciasIndex />
-              </Suspense>
-            }
-          />
-
-
-          <Route
-            path="/configuracion/*"
-            element={
-              <Suspense fallback={null}>
-                <ConfiguracionGeneralIndex />
-              </Suspense>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          {/* Rutas con Layout (requieren autenticación) */}
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/seleccion-practicantes/*" element={<SeleccionPracticantesIndex />} />
+            <Route path="/transcripcion-reuniones/*" element={<TranscripcionReunionesIndex />} />
+            <Route path="/gestion-tareas/*" element={<GestionTareasIndex />} />
+            <Route path="/asistencia-horario/*" element={<AsistenciaHorarioIndex />} />
+            <Route path="/evaluacion-360/*" element={<Evaluacion360Index />} />
+            <Route path="/convenios-constancias/*" element={<ConveniosConstanciasIndex />} />
+            <Route path="/configuracion/*" element={<ConfiguracionGeneralIndex />} />
+          </Route>
+          
+          {/* Ruta 404 para todas las rutas no encontradas (sin Layout) */}
+          <Route path="*" element={<Error404 />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }
