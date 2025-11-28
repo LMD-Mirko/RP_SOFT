@@ -34,13 +34,6 @@ const defaultConfig = {
     },
   },
   
-  // Firma Estudiante
-  firmaEstudiante: {
-    permitirDibujarFirma: true,
-    permitirSubirImagen: true,
-    validezTokenDias: 10,
-  },
-  
   // Correos
   correos: {
     compromisosInternos: {
@@ -73,33 +66,6 @@ Equipo RP SOFT`,
     },
   },
   
-  // Compromisos
-  compromisos: [
-    {
-      id: 1,
-      nombre: 'Acuerdo de Confidencialidad',
-      configurada: true,
-      activa: true,
-    },
-    {
-      id: 2,
-      nombre: 'Sesión de Derechos de Autor',
-      configurada: true,
-      activa: true,
-    },
-    {
-      id: 3,
-      nombre: 'Aceptación del Reglamento Interno',
-      configurada: true,
-      activa: true,
-    },
-    {
-      id: 4,
-      nombre: 'Términos y Condiciones',
-      configurada: true,
-      activa: true,
-    },
-  ],
   
   // Constancia
   constancia: {
@@ -186,24 +152,23 @@ export async function getConfiguracionSection(section) {
  */
 function mergeConfig(defaultConfig, userConfig) {
   const merged = { ...defaultConfig }
-  
-  for (const key in userConfig) {
-    if (Object.prototype.hasOwnProperty.call(userConfig, key)) {
-      if (
-        typeof userConfig[key] === 'object' &&
-        userConfig[key] !== null &&
-        !Array.isArray(userConfig[key]) &&
-        typeof defaultConfig[key] === 'object' &&
-        defaultConfig[key] !== null &&
-        !Array.isArray(defaultConfig[key])
-      ) {
-        merged[key] = mergeConfig(defaultConfig[key], userConfig[key])
-      } else {
-        merged[key] = userConfig[key]
-      }
+  for (const key in (userConfig || {})) {
+    if (!Object.prototype.hasOwnProperty.call(defaultConfig, key)) continue
+    const userVal = userConfig[key]
+    const defVal = defaultConfig[key]
+    if (
+      typeof userVal === 'object' &&
+      userVal !== null &&
+      !Array.isArray(userVal) &&
+      typeof defVal === 'object' &&
+      defVal !== null &&
+      !Array.isArray(defVal)
+    ) {
+      merged[key] = mergeConfig(defVal, userVal)
+    } else {
+      merged[key] = userVal
     }
   }
-  
   return merged
 }
 

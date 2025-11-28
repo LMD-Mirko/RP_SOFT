@@ -11,17 +11,13 @@ import {
   validateFirmaData,
   getImageDimensions 
 } from '../../services/configuracionService'
-import Compromiso from '../compromiso/Compromiso'
 import Constacia from '../constancia/Constacia'
 import Correo from '../correos/Correo'
-import FirmaEstudiante from '../firmaEstudiante/FirmaEstudiante'
 import styles from './Configuracion.module.css'
 
 const tabs = [
-  { id: 'firma-empresa', label: 'Firma Empresa' },
-  { id: 'compromisos', label: 'Compromisos' },
+  { id: 'firma-empresa', label: 'Firmaempresa' },
   { id: 'constancia', label: 'Constancia' },
-  { id: 'firma-estudiante', label: 'Firma Estudiante' },
   { id: 'correos', label: 'Correos' },
 ]
 
@@ -1010,16 +1006,8 @@ export default function Configuracion() {
           </>
         )}
 
-        {activeTab === 'compromisos' && (
-          <Compromiso />
-        )}
-
         {activeTab === 'constancia' && (
           <Constacia />
-        )}
-
-        {activeTab === 'firma-estudiante' && (
-          <FirmaEstudiante />
         )}
 
         {activeTab === 'correos' && (
