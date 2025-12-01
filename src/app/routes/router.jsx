@@ -124,58 +124,58 @@ export function Router() {
           <Route
             path="/dashboard"
             element={
-              <Suspense fallback={null}>
-                <DashboardPage />
-              </Suspense>
+            <Suspense fallback={<div style={{padding:24}}>Cargando módulo...</div>}>
+              <DashboardPage />
+            </Suspense>
             }
           />
 
           <Route
             path="/seleccion-practicantes/*"
             element={
-              <Suspense fallback={null}>
-                <SeleccionPracticantesIndex />
-              </Suspense>
+            <Suspense fallback={<div style={{padding:24}}>Cargando módulo...</div>}>
+              <SeleccionPracticantesIndex />
+            </Suspense>
             }
           />
           <Route
             path="/transcripcion-reuniones/*"
             element={
-              <Suspense fallback={null}>
-                <TranscripcionReunionesIndex />
-              </Suspense>
+            <Suspense fallback={<div style={{padding:24}}>Cargando módulo...</div>}>
+              <TranscripcionReunionesIndex />
+            </Suspense>
             }
           />
           <Route
             path="/gestion-tareas/*"
             element={
-              <Suspense fallback={null}>
-                <GestionTareasIndex />
-              </Suspense>
+            <Suspense fallback={<div style={{padding:24}}>Cargando módulo...</div>}>
+              <GestionTareasIndex />
+            </Suspense>
             }
           />
           <Route
             path="/asistencia-horario/*"
             element={
-              <Suspense fallback={null}>
-                <AsistenciaHorarioIndex />
-              </Suspense>
+            <Suspense fallback={<div style={{padding:24}}>Cargando módulo...</div>}>
+              <AsistenciaHorarioIndex />
+            </Suspense>
             }
           />
           <Route
             path="/evaluacion-360/*"
             element={
-              <Suspense fallback={null}>
-                <Evaluacion360Index />
-              </Suspense>
+            <Suspense fallback={<div style={{padding:24}}>Cargando módulo...</div>}>
+              <Evaluacion360Index />
+            </Suspense>
             }
           />
           <Route
             path="/convenios-constancias/*"
             element={
-              <Suspense fallback={null}>
-                <ConveniosConstanciasIndex />
-              </Suspense>
+            <Suspense fallback={<div style={{padding:24}}>Cargando módulo...</div>}>
+              <ConveniosConstanciasIndex />
+            </Suspense>
             }
           />
 
