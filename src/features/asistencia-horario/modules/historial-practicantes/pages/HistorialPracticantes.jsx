@@ -71,7 +71,7 @@ const HistorialPracticantes = () => {
   };
 
   // Transformar datos del backend
-  const historialDetallado = historialData.length > 0
+  const historialDetallado = (historialData && Array.isArray(historialData) && historialData.length > 0)
     ? historialData.map(transformHistorialItem)
     : [];
 

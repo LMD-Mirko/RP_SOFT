@@ -66,7 +66,7 @@ export function Dashboard() {
   }, [currentPage, selectedStatus, searchTerm])
 
   // Transformar datos del backend al formato del frontend
-  const practicantes = practicantesData.length > 0 
+  const practicantes = (practicantesData && Array.isArray(practicantesData) && practicantesData.length > 0)
     ? practicantesData.map(transformPracticante)
     : []
 

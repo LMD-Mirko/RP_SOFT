@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useToast } from '@shared/components/Toast';
 import { requestGuard } from '@shared/utils/requestGuard';
 import * as historialService from '../services';
@@ -19,7 +19,7 @@ export const useHistorialPracticantes = (filters = {}) => {
   const toast = useToast();
   const isLoadingRef = useRef(false);
 
-  const loadHistorial = async (pagina = 1, params = {}) => {
+  const loadHistorial = useCallback(async (pagina = 1, params = {}) => {
     if (isLoadingRef.current) {
       return;
     }
@@ -63,8 +63,10 @@ export const useHistorialPracticantes = (filters = {}) => {
       setError(null);
       try {
         const response = await historialService.getHistorialAcciones(requestParams);
-        const historialData = response.data || [];
-        setHistorial(historialData);
+        const historialData = (response && response.data) 
+          ? response.data 
+          : [];
+        setHistorial(Array.isArray(historialData) ? historialData : []);
         setPagination(prev => ({
           ...prev,
           pagina: response.paginacion?.pagina || pagina,
@@ -82,7 +84,7 @@ export const useHistorialPracticantes = (filters = {}) => {
         isLoadingRef.current = false;
       }
     });
-  };
+  }, [filters, pagination.por_pagina, toast]);
 
   const registrarAccion = async (data) => {
     try {

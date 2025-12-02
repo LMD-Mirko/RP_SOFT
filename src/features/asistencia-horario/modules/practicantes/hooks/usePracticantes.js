@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useToast } from '@shared/components/Toast';
 import { requestGuard } from '@shared/utils/requestGuard';
 import * as practicantesService from '../services';
@@ -18,13 +18,13 @@ export const usePracticantes = (filters = {}) => {
   const toast = useToast();
   const isLoadingRef = useRef(false);
 
-  const loadPracticantes = async (page = 1, params = {}) => {
+  const loadPracticantes = useCallback(async (page = 1, params = {}) => {
     if (isLoadingRef.current) {
       return;
     }
 
     const requestParams = {
-      page,
+      page: page || 1,
       ...filters,
       ...params,
     };
@@ -52,8 +52,10 @@ export const usePracticantes = (filters = {}) => {
       try {
         const response = await practicantesService.getPracticantes(requestParams);
         // El backend puede devolver results (DRF) o data (custom)
-        const practicantesData = response.results || response.data || [];
-        setPracticantes(practicantesData);
+        const practicantesData = (response && (response.results || response.data)) 
+          ? (response.results || response.data)
+          : [];
+        setPracticantes(Array.isArray(practicantesData) ? practicantesData : []);
         setPagination(prev => ({
           ...prev,
           page: response.pagination?.page || page,
@@ -70,7 +72,7 @@ export const usePracticantes = (filters = {}) => {
         isLoadingRef.current = false;
       }
     });
-  };
+  }, [filters, pagination.page_size, toast]);
 
   const createPracticante = async (data) => {
     try {

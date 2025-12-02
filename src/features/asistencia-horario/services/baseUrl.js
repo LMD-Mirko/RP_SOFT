@@ -27,10 +27,6 @@ export const buildUrl = (endpoint) => {
   return `${cleanBaseUrl}${cleanEndpoint}`;
 };
 
-// Re-exportar métodos HTTP del mismo módulo
-export { get, post, put, patch, del, request, httpClient } from './methods';
-export { default as methods } from './methods';
-
 export default BASE_URL;
 
 
