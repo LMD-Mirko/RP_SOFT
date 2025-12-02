@@ -3,7 +3,7 @@
  * Endpoints: /api/practicantes/historial/
  */
 
-import { get, post } from '../../../../services/methods';
+import { get, post } from '../../../services';
 
 /**
  * Obtiene el historial de acciones de practicantes con filtros y paginación

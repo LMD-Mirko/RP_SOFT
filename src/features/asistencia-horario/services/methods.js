@@ -1,11 +1,11 @@
 /**
- * Métodos HTTP para el módulo Selección de Practicantes
- * Proporciona funciones helper para realizar peticiones HTTP
+ * Métodos HTTP para el módulo Asistencia y Horario
+ * Proporciona funciones helper para realizar peticiones HTTP básicas
+ * Sin manejo de autenticación - el backend es libre
  */
 
 import axios from 'axios';
 import { BASE_URL } from './baseUrl';
-import { getAccessToken, getRefreshToken, setAuthTokens, clearAuthTokens } from '../shared/utils/cookieHelper';
 
 /**
  * Opciones por defecto para las peticiones
@@ -14,14 +14,6 @@ const defaultOptions = {
   headers: {
     'Content-Type': 'application/json',
   },
-};
-
-/**
- * Obtiene el token de autenticación de las cookies
- * @returns {string|null} Token de autenticación o null
- */
-const getAuthToken = () => {
-  return getAccessToken();
 };
 
 /**
@@ -36,162 +28,28 @@ const httpClient = axios.create({
   },
 });
 
-// Variable para evitar múltiples refresh simultáneos
-let isRefreshing = false;
-let failedQueue = [];
-// Bandera para indicar que estamos en proceso de logout
-let isLoggingOut = false;
-
 /**
- * Verifica si estamos en proceso de logout
- * @returns {boolean} true si estamos en proceso de logout
+ * Normaliza el endpoint asegurando formato correcto
+ * @param {string} endpoint - Endpoint a normalizar
+ * @returns {string} Endpoint normalizado
  */
-export const getIsLoggingOut = () => {
-  return isLoggingOut;
+const normalizeEndpoint = (endpoint) => {
+  if (!endpoint) return '/';
+  
+  // Separar el endpoint de los query params
+  const [path, queryString] = endpoint.split('?');
+  
+  // Normalizar el path
+  let normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  
+  // Asegurar que el path termine con / (excepto si es solo /)
+  if (normalizedPath !== '/' && !normalizedPath.endsWith('/')) {
+    normalizedPath = `${normalizedPath}/`;
+  }
+  
+  // Reconstruir con query params si existen
+  return queryString ? `${normalizedPath}?${queryString}` : normalizedPath;
 };
-
-const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
-};
-
-/**
- * Refresca el token de acceso usando el refresh token
- * @returns {Promise<string>} Nuevo access token
- */
-const refreshAccessToken = async () => {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) {
-    throw new Error('No hay refresh token disponible');
-  }
-
-  try {
-    const response = await axios.post(
-      `${sanitizeBaseUrl(BASE_URL)}/auth/refresh/`,
-      { refresh: refreshToken },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    const newAccessToken = response.data?.access || response.data?.access_token;
-    const newRefreshToken = response.data?.refresh || refreshToken;
-
-    if (newAccessToken) {
-      setAuthTokens(newAccessToken, newRefreshToken);
-      return newAccessToken;
-    }
-
-    throw new Error('No se recibió un nuevo access token');
-  } catch (error) {
-    // Si el refresh falla, limpiar tokens y redirigir al login
-    clearAuthTokens();
-    localStorage.removeItem('rpsoft_user');
-    
-    // Redirigir al login si estamos en el navegador
-    if (typeof window !== 'undefined') {
-      window.location.href = '/';
-    }
-    
-    throw error;
-  }
-};
-
-// Interceptor de request: agrega el token a las peticiones
-httpClient.interceptors.request.use((config) => {
-  config.headers = {
-    ...defaultOptions.headers,
-    ...config.headers,
-  };
-
-  const token = getAuthToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  } else {
-    delete config.headers?.Authorization;
-  }
-
-  return config;
-});
-
-// Interceptor de response: maneja 401 y refresh token
-httpClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    // Si estamos en proceso de logout, suprimir todos los errores
-    if (isLoggingOut) {
-      // Crear un error silencioso que no se mostrará
-      const silentError = new Error('Logout en progreso');
-      silentError.isLogoutError = true;
-      silentError.silent = true;
-      return Promise.reject(silentError);
-    }
-
-    // Manejar error de usuario inactivo
-    if (error.response?.data?.code === 'user_inactive' || 
-        (error.response?.data?.detail && error.response.data.detail.includes('inactive'))) {
-      // Limpiar tokens y datos del usuario
-      clearAuthTokens();
-      localStorage.removeItem('rpsoft_user');
-      
-      // Redirigir al login con mensaje
-      if (typeof window !== 'undefined') {
-        const errorMessage = error.response?.data?.detail || 'Tu cuenta está inactiva. Por favor, contacta al administrador.';
-        sessionStorage.setItem('login_error', errorMessage);
-        window.location.href = '/';
-      }
-      
-      const inactiveError = new Error(error.response?.data?.detail || 'User is inactive');
-      inactiveError.code = 'user_inactive';
-      inactiveError.status = error.response?.status || 403;
-      return Promise.reject(inactiveError);
-    }
-
-    // Si el error es 401 y no es una petición de refresh
-    if (error.response?.status === 401 && !originalRequest._retry && !isLoggingOut) {
-      if (isRefreshing) {
-        // Si ya se está refrescando, esperar en la cola
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return httpClient(originalRequest);
-          })
-          .catch((err) => {
-            return Promise.reject(err);
-          });
-      }
-
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-        const newToken = await refreshAccessToken();
-        processQueue(null, newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return httpClient(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError, null);
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
 
 /**
  * Traduce mensajes de error comunes del inglés al español
@@ -237,24 +95,14 @@ const translateErrorMessage = (message, status) => {
   return message;
 };
 
-const normalizeEndpoint = (endpoint) => {
-  if (!endpoint) return '/';
-  
-  // Separar el endpoint de los query params
-  const [path, queryString] = endpoint.split('?');
-  
-  // Normalizar el path
-  let normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  
-  // Asegurar que el path termine con / (excepto si es solo /)
-  if (normalizedPath !== '/' && !normalizedPath.endsWith('/')) {
-    normalizedPath = `${normalizedPath}/`;
-  }
-  
-  // Reconstruir con query params si existen
-  return queryString ? `${normalizedPath}?${queryString}` : normalizedPath;
-};
-
+/**
+ * Ejecuta una petición HTTP
+ * @param {string} method - Método HTTP (GET, POST, PUT, PATCH, DELETE)
+ * @param {string} endpoint - Endpoint de la API
+ * @param {Object} data - Datos a enviar en el body (opcional)
+ * @param {Object} options - Opciones adicionales para la petición
+ * @returns {Promise} Datos de la respuesta
+ */
 const executeRequest = async (method, endpoint, data, options = {}) => {
   try {
     const response = await httpClient.request({
@@ -265,20 +113,6 @@ const executeRequest = async (method, endpoint, data, options = {}) => {
     });
     return response.data;
   } catch (error) {
-    // Si estamos en proceso de logout, suprimir el error
-    if (error.isLogoutError || error.silent || isLoggingOut) {
-      // Crear un error silencioso que no se mostrará
-      const silentError = new Error('Logout en progreso');
-      silentError.silent = true;
-      silentError.isLogoutError = true;
-      throw silentError;
-    }
-
-    // Si el error ya fue procesado por el interceptor (user_inactive), re-lanzarlo
-    if (error.code === 'user_inactive') {
-      throw error;
-    }
-
     if (error.response) {
       // Preservar el código de error si existe
       const errorCode = error.response.data?.code;
@@ -306,13 +140,6 @@ const executeRequest = async (method, endpoint, data, options = {}) => {
 
     throw new Error(error.message || 'Error al realizar la petición');
   }
-};
-
-/**
- * Marca que estamos en proceso de logout para suprimir errores
- */
-export const setLoggingOut = (value) => {
-  isLoggingOut = value;
 };
 
 /**
@@ -391,4 +218,3 @@ export default {
 };
 
 export { httpClient };
-

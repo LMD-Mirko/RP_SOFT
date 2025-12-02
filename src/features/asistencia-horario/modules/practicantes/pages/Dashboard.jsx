@@ -32,150 +32,6 @@ const transformPracticante = (practicante) => {
   }
 }
 
-// Datos de ejemplo basados en el diseño (fallback)
-const mockPracticantes = [
-  {
-    id: 1,
-    nombre: 'Juan Pérez',
-    email: 'juan.perez@rpsoft.com',
-    equipo: 'Rpsoft • Team Alpha',
-    servidor: 'rpsoft',
-    estado: 'activo',
-    cohorte: 'Cohorte 2024-A',
-    score: 850,
-    asistencia: '98%',
-    infracciones: 0,
-    avatar: 'JP',
-    color: '#3b82f6'
-  },
-  {
-    id: 2,
-    nombre: 'María López',
-    email: 'maria.lopez@rpsoft.com',
-    equipo: 'Innovacion • Team Beta',
-    servidor: 'innovacion',
-    estado: 'activo',
-    cohorte: 'Cohorte 2024-A',
-    score: 620,
-    asistencia: '95%',
-    infracciones: 0,
-    avatar: 'ML',
-    color: '#3b82f6'
-  },
-  {
-    id: 3,
-    nombre: 'Carlos Ruiz',
-    email: 'carlos.ruiz@rpsoft.com',
-    equipo: 'Laboratorios • Team Gamma',
-    servidor: 'laboratorios',
-    estado: 'riesgo',
-    cohorte: 'Cohorte 2024-B',
-    score: 380,
-    asistencia: '88%',
-    infracciones: 1,
-    avatar: 'CR',
-    color: '#3b82f6'
-  },
-  {
-    id: 4,
-    nombre: 'Ana García',
-    email: 'ana.garcia@rpsoft.com',
-    equipo: 'Recuperacion • Team Delta',
-    servidor: 'recuperacion',
-    estado: 'recuperacion',
-    cohorte: 'Cohorte 2023-B',
-    score: 150,
-    asistencia: '75%',
-    infracciones: 3,
-    avatar: 'AG',
-    color: '#ef4444'
-  },
-  {
-    id: 5,
-    nombre: 'Luis Martínez',
-    email: 'luis.martinez@rpsoft.com',
-    equipo: 'MiniBootcamp • Team Epsilon',
-    servidor: 'minibootcamp',
-    estado: 'activo',
-    cohorte: 'Cohorte 2024-B',
-    score: 520,
-    asistencia: '92%',
-    infracciones: 0,
-    avatar: 'LM',
-    color: '#3b82f6'
-  },
-  {
-    id: 6,
-    nombre: 'Pedro Sánchez',
-    email: 'pedro.sanchez@rpsoft.com',
-    equipo: 'Rpsoft • Team Beta',
-    servidor: 'rpsoft',
-    estado: 'inactivo',
-    cohorte: 'Cohorte 2023-B',
-    score: 0,
-    asistencia: '0%',
-    infracciones: 5,
-    avatar: 'PS',
-    color: '#6b7280'
-  },
-  {
-    id: 7,
-    nombre: 'Sofia Torres',
-    email: 'sofia.torres@rpsoft.com',
-    equipo: 'Innovacion • Team Gamma',
-    servidor: 'innovacion',
-    estado: 'activo',
-    cohorte: 'Cohorte 2024-A',
-    score: 720,
-    asistencia: '96%',
-    infracciones: 0,
-    avatar: 'ST',
-    color: '#3b82f6'
-  },
-  {
-    id: 8,
-    nombre: 'Diego Ramírez',
-    email: 'diego.ramirez@rpsoft.com',
-    equipo: 'Laboratorios • Team Delta',
-    servidor: 'laboratorios',
-    estado: 'activo',
-    cohorte: 'Cohorte 2024-B',
-    score: 680,
-    asistencia: '94%',
-    infracciones: 1,
-    avatar: 'DR',
-    color: '#3b82f6'
-  },
-  {
-    id: 9,
-    nombre: 'Valentina Morales',
-    email: 'valentina.morales@rpsoft.com',
-    equipo: 'Rpsoft • Team Gamma',
-    servidor: 'rpsoft',
-    estado: 'activo',
-    cohorte: 'Cohorte 2024-A',
-    score: 780,
-    asistencia: '97%',
-    infracciones: 0,
-    avatar: 'VM',
-    color: '#3b82f6'
-  },
-  {
-    id: 10,
-    nombre: 'Roberto Fernández',
-    email: 'roberto.fernandez@rpsoft.com',
-    equipo: 'Innovacion • Team Alpha',
-    servidor: 'innovacion',
-    estado: 'riesgo',
-    cohorte: 'Cohorte 2024-B',
-    score: 420,
-    asistencia: '86%',
-    infracciones: 2,
-    avatar: 'RF',
-    color: '#3b82f6'
-  }
-]
-
 export function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedServer, setSelectedServer] = useState('todos')
@@ -214,21 +70,14 @@ export function Dashboard() {
     ? practicantesData.map(transformPracticante)
     : []
 
-  // Filtrar por servidor y cohorte en el frontend (si no están en el backend)
-  const filteredPracticantes = practicantes.filter(practicante => {
-    const matchesServer = selectedServer === 'todos' ||
-      practicante.servidor === selectedServer
-
-    const matchesCohort = selectedCohort === 'todas' ||
-      practicante.cohorte.includes(selectedCohort)
-
-    return matchesServer && matchesCohort
-  })
-
-  const totalPages = Math.ceil((pagination.total || filteredPracticantes.length) / itemsPerPage)
+  // Usar paginación del backend si está disponible
+  const totalPages = pagination.total 
+    ? Math.ceil(pagination.total / itemsPerPage)
+    : Math.ceil(practicantes.length / itemsPerPage)
+  
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
-  const currentPracticantes = filteredPracticantes.slice(startIndex, endIndex)
+  const currentPracticantes = practicantes.slice(startIndex, endIndex)
 
   const handlePreviousPage = () => {
     setCurrentPage(prev => Math.max(prev - 1, 1))

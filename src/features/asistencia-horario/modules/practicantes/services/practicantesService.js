@@ -3,7 +3,7 @@
  * Endpoints: /api/practicantes/
  */
 
-import { get, post, put, patch, del } from '../../../../services/methods';
+import { get, post, put, patch, del } from '../../../services';
 
 /**
  * Lista todos los practicantes con filtros opcionales
