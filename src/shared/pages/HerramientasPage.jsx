@@ -32,7 +32,7 @@ export function HerramientasPage() {
           className={styles.toolCard}
         >
           <FileSpreadsheet size={40} className={styles.toolIcon} />
-          <span className={styles.toolLabel}>Subir archivo XLSX</span>
+          <span className={styles.toolLabel}>Subir archivo Excel</span>
         </div>
 
         <div

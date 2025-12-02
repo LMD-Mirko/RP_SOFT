@@ -1,11 +1,14 @@
 import { FileText, Users, FileEdit, CheckCircle, Lock } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Modal } from '@shared/components/Modal'
-import { DatePicker } from '@shared/components/DatePicker'
 import { Input } from '@shared/components/Input'
 import { Textarea } from '@shared/components/Textarea'
 import { Select } from '@shared/components/Select'
 import { Button } from '@shared/components/Button'
+import { PopoverCalendar, parsePartialDate } from '@shared/components/Calendar/CustomCalendar'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+dayjs.extend(customParseFormat)
 import styles from './ConvocatoriaModal.module.css'
 
 export function ConvocatoriaModal({ isOpen, onClose, onSave, convocatoria = null }) {
@@ -47,6 +50,50 @@ export function ConvocatoriaModal({ isOpen, onClose, onSave, convocatoria = null
 
   const handleDateChange = (name, date) => {
     setFormData(prev => ({ ...prev, [name]: date }))
+  }
+
+  const [openFechaInicio, setOpenFechaInicio] = useState(false)
+  const [openFechaFin, setOpenFechaFin] = useState(false)
+  const inicioBtnRef = useRef(null)
+  const finBtnRef = useRef(null)
+  const [inputFechaInicio, setInputFechaInicio] = useState('')
+  const [inputFechaFin, setInputFechaFin] = useState('')
+  const [previewFechaInicio, setPreviewFechaInicio] = useState(null)
+  const [previewFechaFin, setPreviewFechaFin] = useState(null)
+
+  useEffect(() => {
+    setInputFechaInicio(formData.fechaInicio ? dayjs(formData.fechaInicio).format('DD-MM-YYYY') : '')
+    setInputFechaFin(formData.fechaFin ? dayjs(formData.fechaFin).format('DD-MM-YYYY') : '')
+  }, [formData.fechaInicio, formData.fechaFin])
+
+  const handleInputFechaInicioBlur = () => {
+    if (!inputFechaInicio) {
+      handleDateChange('fechaInicio', null)
+      return
+    }
+    const parsed = dayjs(inputFechaInicio, 'DD-MM-YYYY', true)
+    if (parsed.isValid()) handleDateChange('fechaInicio', parsed.toDate())
+  }
+
+  const handleInputFechaInicioChange = (val) => {
+    setInputFechaInicio(val)
+    const p = parsePartialDate(val)
+    setPreviewFechaInicio(p)
+  }
+
+  const handleInputFechaFinBlur = () => {
+    if (!inputFechaFin) {
+      handleDateChange('fechaFin', null)
+      return
+    }
+    const parsed = dayjs(inputFechaFin, 'DD-MM-YYYY', true)
+    if (parsed.isValid()) handleDateChange('fechaFin', parsed.toDate())
+  }
+
+  const handleInputFechaFinChange = (val) => {
+    setInputFechaFin(val)
+    const p = parsePartialDate(val)
+    setPreviewFechaFin(p)
   }
 
   const handleSubmit = (e) => {
@@ -91,12 +138,27 @@ export function ConvocatoriaModal({ isOpen, onClose, onSave, convocatoria = null
               <label htmlFor="fechaInicio" className={styles.label}>
                 Fecha Inicio *
               </label>
-              <DatePicker
-                selected={formData.fechaInicio}
-                onChange={(date) => handleDateChange('fechaInicio', date)}
-                placeholder="Seleccionar fecha de inicio"
-                minDate={new Date()}
-                maxDate={formData.fechaFin}
+              <Input
+                id="fechaInicio"
+                placeholder="DD-MM-YYYY"
+                value={inputFechaInicio}
+                onChange={(e) => handleInputFechaInicioChange(e.target.value)}
+                onBlur={handleInputFechaInicioBlur}
+                onFocus={() => setOpenFechaInicio(true)}
+                ref={inicioBtnRef}
+                style={{ backgroundColor: '#fbfdff', color: '#0f172a', borderColor: '#eef2ff' }}
+              />
+              <PopoverCalendar
+                open={openFechaInicio}
+                anchorEl={inicioBtnRef.current}
+                initialValue={previewFechaInicio ?? (formData.fechaInicio ? dayjs(formData.fechaInicio) : null)}
+                onClose={() => setOpenFechaInicio(false)}
+                onSelect={(d) => {
+                  handleDateChange('fechaInicio', d ? d.toDate() : null)
+                  setInputFechaInicio(d ? d.format('DD-MM-YYYY') : '')
+                  setPreviewFechaInicio(null)
+                }}
+                title="Fecha Inicio"
               />
             </div>
 
@@ -104,11 +166,27 @@ export function ConvocatoriaModal({ isOpen, onClose, onSave, convocatoria = null
               <label htmlFor="fechaFin" className={styles.label}>
                 Fecha Fin *
               </label>
-              <DatePicker
-                selected={formData.fechaFin}
-                onChange={(date) => handleDateChange('fechaFin', date)}
-                placeholder="Seleccionar fecha de fin"
-                minDate={formData.fechaInicio || new Date()}
+              <Input
+                id="fechaFin"
+                placeholder="DD-MM-YYYY"
+                value={inputFechaFin}
+                onChange={(e) => handleInputFechaFinChange(e.target.value)}
+                onBlur={handleInputFechaFinBlur}
+                onFocus={() => setOpenFechaFin(true)}
+                ref={finBtnRef}
+                style={{ backgroundColor: '#fbfdff', color: '#0f172a', borderColor: '#eef2ff' }}
+              />
+              <PopoverCalendar
+                open={openFechaFin}
+                anchorEl={finBtnRef.current}
+                initialValue={previewFechaFin ?? (formData.fechaFin ? dayjs(formData.fechaFin) : null)}
+                onClose={() => setOpenFechaFin(false)}
+                onSelect={(d) => {
+                  handleDateChange('fechaFin', d ? d.toDate() : null)
+                  setInputFechaFin(d ? d.format('DD-MM-YYYY') : '')
+                  setPreviewFechaFin(null)
+                }}
+                title="Fecha Fin"
               />
             </div>
           </div>

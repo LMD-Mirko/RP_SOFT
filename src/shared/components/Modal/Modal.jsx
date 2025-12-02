@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './Modal.module.css'
 import clsx from 'clsx'
 
@@ -52,14 +53,18 @@ export function Modal({
   const isFullscreen = size === 'fullscreen'
 
   const overlayStyle = zIndex ? { zIndex } : {}
+  const modalStyle = zIndex ? { zIndex: zIndex + 1 } : {}
 
-  return (
+  const modalContent = (
     <div 
       className={clsx(styles.overlay, useTopAlignment && styles.overlayTop, isFullscreen && styles.overlayNoPadding)} 
       onClick={handleOverlayClick}
       style={overlayStyle}
     >
-      <div className={clsx(styles.modal, styles[size], useTopAlignment && styles.modalTop, !rounded && styles.square, className)}>
+      <div 
+        className={clsx(styles.modal, styles[size], useTopAlignment && styles.modalTop, !rounded && styles.square, className)}
+        style={modalStyle}
+      >
         {/* Header */}
         {(title || showCloseButton) && (
           <div className={styles.header}>
@@ -79,6 +84,9 @@ export function Modal({
       </div>
     </div>
   )
+
+  // Renderizar el modal en un portal directamente en el body para que esté por encima de todo
+  return createPortal(modalContent, document.body)
 }
 
 // Subcomponentes para mejor estructura

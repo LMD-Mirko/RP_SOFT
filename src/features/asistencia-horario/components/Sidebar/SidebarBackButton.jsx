@@ -6,7 +6,7 @@ export function SidebarBackButton() {
   const navigate = useNavigate()
 
   const handleBackToMain = () => {
-    navigate('/dashboard')
+    navigate('/')
   }
 
   return (

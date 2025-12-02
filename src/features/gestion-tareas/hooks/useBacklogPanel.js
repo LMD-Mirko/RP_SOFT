@@ -48,6 +48,10 @@ export function useBacklogPanel() {
     return { total, puntos, listasSprint, sinEstimar }
   }, [stories])
 
+  const addStory = (story) => {
+    setStories((prev) => [story, ...prev])
+  }
+
   return {
     loading,
     stories: filtered,
@@ -60,5 +64,6 @@ export function useBacklogPanel() {
     state,
     setState,
     stats,
+    addStory,
   }
 }

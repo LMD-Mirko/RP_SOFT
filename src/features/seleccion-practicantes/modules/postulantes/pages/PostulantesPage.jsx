@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Search, Eye, CheckCircle, XCircle, Download, FileSpreadsheet } from 'lucide-react'
+import { Search, Eye, CheckCircle, XCircle, Download, FileSpreadsheet, Users } from 'lucide-react'
 import { Pagination } from 'antd'
 import { Table } from '@shared/components/UI/Table'
 import { Select } from '@shared/components/Select'
@@ -465,11 +465,17 @@ export function PostulantesPage() {
                   </Table.Row>
                 ))
               ) : (
-                <Table.Empty colSpan={6}>
-                  {searchTerm
-                    ? 'No se encontraron postulantes con ese criterio de búsqueda'
-                    : 'No hay postulantes registrados'}
-                </Table.Empty>
+                <Table.Empty
+                  colSpan={6}
+                  icon={Users}
+                  colorPreset="dark"
+                  title={searchTerm ? 'Sin coincidencias' : 'No hay postulantes registrados'}
+                  description={
+                    searchTerm
+                      ? 'Intenta con otro nombre, correo o limpia los filtros.'
+                      : 'Cuando se registren postulantes, los verás en esta tabla.'
+                  }
+                />
               )}
             </Table.Body>
           </Table>

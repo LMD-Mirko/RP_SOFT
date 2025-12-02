@@ -1,0 +1,441 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 0;
+  margin: 0;
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.questionInfo {
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  margin-bottom: 0.25rem;
+  animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.questionInfo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.questionInfo:hover::before {
+  left: 100%;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.questionLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.875rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.questionText {
+  font-size: 0.9375rem;
+  color: #111827;
+  margin: 0;
+  padding: 0;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.counter {
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #1e40af;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: center;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15), 0 1px 2px rgba(59, 130, 246, 0.1);
+  letter-spacing: 0.025em;
+  margin-bottom: 0.25rem;
+  animation: pulse 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.counter::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  animation: rotate 3s linear infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin: 0;
+  padding: 0;
+}
+
+.form > * {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  transition: all 0.3s ease;
+}
+
+.form > *:hover {
+  transform: translateY(-1px);
+}
+
+.form > *:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.form > *:nth-child(2) {
+  animation-delay: 0.25s;
+}
+
+.form > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.form > *:nth-child(4) {
+  animation-delay: 0.35s;
+}
+
+/* Efecto de brillo en inputs al focus */
+.form :global(.input:focus),
+.form :global(.textarea:focus) {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.checkboxContainer {
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.checkboxContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #059669, #10b981);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.checkboxContainer:hover::before {
+  transform: scaleX(1);
+}
+
+.checkboxContainer:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.checkboxLabel:hover {
+  transform: translateX(4px);
+}
+
+.checkboxLabel:active {
+  transform: translateX(2px) scale(0.98);
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: #10b981;
+  border-radius: 0.375rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  margin: 0;
+  position: relative;
+}
+
+.checkbox:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.checkbox:checked {
+  background-color: #10b981;
+  border-color: #10b981;
+  animation: checkmark 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.checkbox:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.checkboxText {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #374151;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.checkboxText svg {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.875rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid #f3f4f6;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+  position: relative;
+}
+
+.actions::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+}
+
+.actions button {
+  min-width: 130px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.actions button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.actions button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.actions button:active {
+  transform: translateY(0);
+}
+
+.actions button:last-child {
+  flex: 1;
+  min-width: 150px;
+  max-width: none;
+}
+
+.errorMessage {
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  border: 1px solid #fecaca;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  box-shadow: 0 2px 8px rgba(153, 27, 27, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.errorMessage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    gap: 1.5rem;
+  }
+
+  .questionInfo {
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .questionLabel {
+    margin-bottom: 0.75rem;
+  }
+
+  .counter {
+    padding: 0.875rem 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form {
+    gap: 1.5rem;
+  }
+
+  .checkboxContainer {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 1.5rem;
+  }
+
+  .actions button {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .actions button:last-child {
+    order: -1;
+  }
+}
+

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { CheckCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import styles from './ConfirmacionStep.module.css'
 
 
@@ -8,6 +9,16 @@ export function ConfirmacionStep({ data }) {
     // Aquí podrías hacer scroll to top o alguna animación
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Redirigir automáticamente al login después de 2.5s
+    const t = setTimeout(() => {
+      navigate('/')
+    }, 2500)
+    return () => clearTimeout(t)
+  }, [navigate])
 
   return (
     <div className={styles.stepContainer}>
@@ -59,6 +70,15 @@ export function ConfirmacionStep({ data }) {
               <span className={styles.summaryValue}>{data.dni}</span>
             </div>
           </div>
+        </div>
+        <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+          <button
+            className="button primary"
+            onClick={() => navigate('/')}
+            style={{ padding: '0.75rem 1.25rem', borderRadius: 8 }}
+          >
+            Ir al login
+          </button>
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
-import { Copy } from 'lucide-react'
+import { Copy, FileText } from 'lucide-react'
 import { useState } from 'react'
 import styles from './ConvocatoriaCard.module.css'
 import clsx from 'clsx'
 
-export function ConvocatoriaCard({ convocatoria, onEdit, onViewApplicants, index = 0 }) {
+export function ConvocatoriaCard({ convocatoria, onEdit, onViewApplicants, onManageEvaluations, index = 0 }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -77,6 +77,15 @@ export function ConvocatoriaCard({ convocatoria, onEdit, onViewApplicants, index
 
       {/* Actions */}
       <div className={styles.actions}>
+        {onManageEvaluations && (
+          <button
+            onClick={() => onManageEvaluations(convocatoria)}
+            className={styles.buttonPrimary}
+          >
+            <FileText size={18} />
+            Gestionar Encuestas
+          </button>
+        )}
         <button
           onClick={() => onEdit(convocatoria)}
           className={styles.buttonSecondary}

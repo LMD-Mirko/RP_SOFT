@@ -146,10 +146,7 @@
 }
 
 .emptyState {
-  padding: 3rem;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.9375rem;
+  padding: 2rem 0;
 }
 
 @media (max-width: 768px) {

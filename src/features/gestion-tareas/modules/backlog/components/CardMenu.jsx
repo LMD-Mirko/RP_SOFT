@@ -29,7 +29,7 @@ export function CardMenu({ onEdit, onAddSprint, onDuplicate, onDelete }) {
             <Edit3 size={16} /> Editar
           </button>
           <button className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2" onClick={onAddSprint}>
-            <PlusCircle size={16} /> Agregar Sprint
+            <PlusCircle size={16} /> Agregar al Sprint
           </button>
           <button className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2" onClick={onDuplicate}>
             <Copy size={16} /> Duplicar

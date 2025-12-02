@@ -53,6 +53,9 @@ export default function OAuthCallbackPage() {
         // Limpiar el role_id de sessionStorage después de usarlo
         sessionStorage.removeItem('oauth_role_id')
 
+        // Limpiar marca de logout si existe
+        sessionStorage.removeItem('rpsoft_logging_out')
+        
         // Guardar tokens en cookies
         if (response.tokens) {
           const accessToken = response.tokens.access

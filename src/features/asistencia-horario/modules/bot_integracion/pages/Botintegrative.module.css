@@ -1,0 +1,402 @@
+/* --- Variables de Color (Basadas en la imagen) --- */
+:root {
+  --bg-color: #fff9fb;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #f3e8eb;
+  --shadow: 0px 4px 12px rgba(0, 0, 0, 0.04);
+  
+  --blue: #1976d2;
+  --blue-bg: #d6e9ff;
+  --purple: #7b1fa2;
+  --purple-bg: #ead9ff;
+  --green: #00c853;
+  --green-bg: #d4f4dd;
+  --orange: #ff9500;
+  --orange-bg: #fffaf0;
+  --pink: #eb5ceb;
+  --pink-bg: #fff0ff;
+  --light-orange: #e65100;
+  --light-orange-bg: #ffe8d6;
+}
+
+/* --- Contenedor Principal --- */
+.botPage {
+  background-color: var(--bg-color);
+  padding: 24px;
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-primary);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* --- Encabezado --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 4px 0 0 0;
+}
+
+.statusBadgeWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #00c853;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+}
+
+.activeDot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--green);
+  border-radius: 50%;
+}
+
+/* --- Secciones --- */
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionContainer {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* --- Resumen Global --- */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.1s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.summaryCard {
+  background-color: #fafbfc;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid #f0f1f3;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+}
+
+.summaryCard:hover {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.summaryIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.summaryContent {
+  overflow: hidden;
+}
+
+.summaryValue {
+  font-size: 22px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summaryLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* --- Estado en Tiempo Real --- */
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.2s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.statusCard {
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.statusCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.statusHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.statusBadge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.7);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.statusValue {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 12px;
+  color: var(--text-primary);
+}
+
+/* --- Lista de Servidores --- */
+.serverGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.4s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+@media (max-width: 1200px) {
+  .serverGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.serverCard {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.serverHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: white;
+}
+
+.checkIcon {
+  margin-left: auto;
+  opacity: 0.8;
+}
+
+.serverBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.serverRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.serverInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.serverFooter {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.statusSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: var(--green-bg);
+  color: var(--green);
+  font-weight: 600;
+  font-size: 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2334c759' viewBox='0 0 256 256'%3E%3Cpath d='M215.39,90.61l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,51.31,79.31L128,155.94l76.69-76.63a8,8,0,0,1,10.7,11.32Z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+/* --- Modificadores de Color --- */
+
+/* Resumen */
+.summaryIcon.blue { background-color: var(--blue-bg); color: var(--blue); }
+.summaryIcon.purple { background-color: var(--purple-bg); color: var(--purple); }
+.summaryIcon.green { background-color: var(--green-bg); color: var(--green); }
+.summaryIcon.orange { background-color: var(--orange-bg); color: var(--orange); }
+
+/* Estado */
+.statusCard.green { 
+  background-color: #d4f4dd; 
+  border: 1px solid #7ed99a;
+  border-radius: 16px;
+}
+.statusCard.green .statusHeader { 
+  color: #00a843;
+}
+.statusCard.green .statusBadge {
+  background-color: #00c853;
+  color: white;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+.statusCard.blue { 
+  background-color: #d6e9ff; 
+  border: 1px solid #7db8ff;
+  border-radius: 16px;
+}
+.statusCard.blue .statusHeader { 
+  color: #1976d2;
+}
+.statusCard.blue .statusBadge {
+  background-color: #90c9ff;
+  color: #1565c0;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid #64b5f6;
+}
+.statusCard.purple { 
+  background-color: #ead9ff; 
+  border: 1px solid #b388ff;
+  border-radius: 16px;
+}
+.statusCard.purple .statusHeader { 
+  color: #7b1fa2;
+}
+.statusCard.purple .statusBadge {
+  background-color: #d4b3ff;
+  color: #6a1b9a;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid #b388ff;
+}
+.statusCard.lightOrange { 
+  background-color: #ffe8d6; 
+  border: 1px solid #ffb380;
+  border-radius: 16px;
+}
+.statusCard.lightOrange .statusHeader { 
+  color: #e65100;
+}
+.statusCard.lightOrange .statusBadge {
+  background-color: #ffd4b3;
+  color: #d84315;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid #ffb380;
+}
+
+/* Servidor */
+.serverHeader.blue { background-color: var(--blue); }
+.serverHeader.green { background-color: var(--green); }
+.serverHeader.pink { background-color: var(--pink); }
+.serverHeader.orange { background-color: var(--orange); }
+
+/* --- Responsividad --- */
+@media (max-width: 768px) {
+  .summaryGrid, .statusGrid {
+    grid-template-columns: 1fr;
+  }
+  .serverGrid {
+    grid-template-columns: 1fr;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

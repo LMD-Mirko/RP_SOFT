@@ -136,6 +136,8 @@ export const Select = forwardRef(({
               top: `${dropdownPosition.top}px`,
               left: `${dropdownPosition.left}px`,
               width: `${dropdownPosition.width}px`,
+              zIndex: 99999,
+              position: 'fixed',
             }}
           >
             {options.map((option) => (

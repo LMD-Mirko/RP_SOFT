@@ -28,6 +28,12 @@ export const redirectByRole = (userData, navigate) => {
 
   // Paso 2: Si es Postulante, verificar estado
   if (isPostulante || roleId === 1) {
+    // Si no tiene postulant_status o es null/undefined, redirigir a selección de convocatoria
+    if (postulantStatus === null || postulantStatus === undefined || postulantStatus === 0) {
+      navigate('/seleccion-practicantes/seleccionar-convocatoria');
+      return;
+    }
+
     switch (postulantStatus) {
       case 3:
         // Aceptado → Dashboard de Postulante (con acceso completo)
@@ -41,8 +47,8 @@ export const redirectByRole = (userData, navigate) => {
         
       case 1:
       default:
-        // No aplicado → Crear primera postulación
-        navigate('/seleccion-practicantes/postulacion');
+        // No aplicado o primera vez → Seleccionar convocatoria primero
+        navigate('/seleccion-practicantes/seleccionar-convocatoria');
         break;
     }
     return;

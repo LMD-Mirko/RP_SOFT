@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'  // Agregar useEffect
 import { Code2 } from 'lucide-react'
 import { EvaluacionTecnicaModal } from '../../../components/EvaluacionTecnicaModal'
 import { usePracticantes } from '../../../context/PracticantesContext'
@@ -14,7 +14,15 @@ export function EvaluacionTecnicaPage() {
     sala: '',
     enRiesgo: ''
   })
+  const [mostrarContenido, setMostrarContenido] = useState(false) // NUEVO: Estado para animaciones
+  const [filtroActivo, setFiltroActivo] = useState('todos') // NUEVO: Filtros rápidos
+  
   const { practicantes } = usePracticantes()
+
+  // NUEVO: Efecto para animación de entrada
+  useEffect(() => {
+    setMostrarContenido(true)
+  }, [])
 
   const filteredPracticantes = useMemo(() => {
     if (!filters.practicante) return []
@@ -60,7 +68,7 @@ export function EvaluacionTecnicaPage() {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${mostrarContenido ? styles.fadeIn : ''}`}>
       <div className={styles.header}>
         <div className={styles.titleSection}>
           <h1 className={styles.title}>
@@ -77,7 +85,8 @@ export function EvaluacionTecnicaPage() {
           </p>
         </div>
 
-        <div className={styles.stats}>
+        {/* Stats - CON ANIMACIÓN */}
+        <div className={`${styles.stats} ${styles.slideIn}`} style={{animationDelay: '0.1s'}}>
           <div className={styles.statCard} style={{ backgroundColor: '#E3F2FD' }}>
             <div className={styles.statIcon} style={{ color: '#1976D2' }}>
               <Code2 className="w-5 h-5" />
@@ -110,8 +119,37 @@ export function EvaluacionTecnicaPage() {
         </div>
       </div>
 
-      <div className={styles.filtersSection}>
-        <h3 className={styles.filtersTitle}>Filtros:</h3>
+      {/* NUEVO: SELECTORES MEJORADOS */}
+      <div className={styles.filtrosContainer}>
+        <button 
+          className={`${styles.filtroBtn} ${filtroActivo === 'todos' ? styles.filtroBtnActive : ''}`}
+          onClick={() => setFiltroActivo('todos')}
+        >
+          Todos los Practicantes
+        </button>
+        <button 
+          className={`${styles.filtroBtn} ${filtroActivo === 'evaluados' ? styles.filtroBtnActive : ''}`}
+          onClick={() => setFiltroActivo('evaluados')}
+        >
+          Evaluados ({practicantes.filter(p => p.evaluacionTecnica).length})
+        </button>
+        <button 
+          className={`${styles.filtroBtn} ${filtroActivo === 'no-evaluados' ? styles.filtroBtnActive : ''}`}
+          onClick={() => setFiltroActivo('no-evaluados')}
+        >
+          No Evaluados ({practicantes.filter(p => !p.evaluacionTecnica).length})
+        </button>
+        <button 
+          className={`${styles.filtroBtn} ${filtroActivo === 'riesgo' ? styles.filtroBtnActive : ''}`}
+          onClick={() => setFiltroActivo('riesgo')}
+        >
+          En Riesgo (10)
+        </button>
+      </div>
+
+      {/* Filters - CON ANIMACIÓN */}
+      <div className={`${styles.filtersSection} ${styles.slideIn}`} style={{animationDelay: '0.2s'}}>
+        <h3 className={styles.filtersTitle}>Filtros Avanzados:</h3>
         
         <div className={styles.filtersGrid}>
           <div className={styles.filterGroup}>
@@ -192,7 +230,7 @@ export function EvaluacionTecnicaPage() {
       </div>
 
       {filteredPracticantes.length > 0 ? (
-        <div className={styles.tableContainer}>
+        <div className={`${styles.tableContainer} ${styles.slideIn}`} style={{animationDelay: '0.3s'}}>
           <table className={styles.table}>
             <thead>
               <tr>
@@ -207,14 +245,24 @@ export function EvaluacionTecnicaPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredPracticantes.map(practicante => (
-                <tr key={practicante.id}>
+              {filteredPracticantes.map((practicante, index) => (
+                <tr 
+                  key={practicante.id}
+                  className={styles.slideIn}
+                  style={{animationDelay: `${0.4 + (index * 0.05)}s`}}
+                >
                   <td>{practicante.nombres}</td>
                   <td>{practicante.apellidos}</td>
                   <td>{practicante.servidor}</td>
                   <td>{practicante.proyecto}</td>
                   <td>{practicante.sala}</td>
-                  <td>{practicante.evaluacionTecnica ? 'Evaluado' : 'No evaluado'}</td>
+                  <td>
+                    <span className={`${styles.estadoBadge} ${
+                      practicante.evaluacionTecnica ? styles.estadoEvaluado : styles.estadoNoEvaluado
+                    }`}>
+                      {practicante.evaluacionTecnica ? 'Evaluado' : 'No evaluado'}
+                    </span>
+                  </td>
                   <td>{practicante.notaTecnica}</td>
                   <td>
                     <button
@@ -230,7 +278,7 @@ export function EvaluacionTecnicaPage() {
           </table>
         </div>
       ) : (
-        <div className={styles.emptyState}>
+        <div className={`${styles.emptyState} ${styles.slideIn}`} style={{animationDelay: '0.3s'}}>
           <div className={styles.emptyIcon}>
             <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
               <circle cx="40" cy="30" r="15" stroke="#CBD5E1" strokeWidth="2"/>

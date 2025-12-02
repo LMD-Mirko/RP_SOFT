@@ -1,6 +1,7 @@
 import ResumenAsistencia from '../components/ResumenAsistencia/ResumenAsistencia';
 import HistorialAsistencia from '../components/HistorialAsistencia/HistorialAsistencia';
 import JustificacionesEnviadas from '../components/JustificacionesEnviadas/JustificacionesEnviadas';
+import styles from './ControlAsistencia.module.css';
 
 const ControlAsistencia = () => {
   const resumenData = {
@@ -31,8 +32,8 @@ const ControlAsistencia = () => {
     <div className='w-full min-h-screen bg-gray-50'>
       <div className='flex justify-center'>
         <div className='w-full max-w-[1400px] px-8 py-8'>
-          <div className='mb-8'>
-            <h1 className='text-2xl font-bold mb-2'>Control de Asistencia</h1>
+          <div className={`mb-8 ${styles.header}`}>
+            <h1 className='font-bold mb-2' style={{ fontSize: '36px' }}>Control de Asistencia</h1>
             <p className='text-gray-600'>Revisa tu registro de asistencia y justificaciones</p>
           </div>
           

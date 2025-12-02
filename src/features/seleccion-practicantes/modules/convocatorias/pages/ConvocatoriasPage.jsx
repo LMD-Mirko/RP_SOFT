@@ -5,6 +5,7 @@ import { ConvocatoriaCard } from '../components/ConvocatoriaCard'
 import { ConvocatoriaModal } from '../components/ConvocatoriaModal'
 import { useConvocatorias } from '../hooks/useConvocatorias'
 import { SkeletonConvocatoriaCard } from '../../../shared/components/Skeleton'
+import { EmptyState } from '@shared/components/EmptyState'
 import styles from './ConvocatoriasPage.module.css'
 
 /**
@@ -93,6 +94,10 @@ export function ConvocatoriasPage() {
     navigate(`/seleccion-practicantes/postulantes?convocatoria=${convocatoria.id}`)
   }
 
+  const handleManageEvaluations = (convocatoria) => {
+    navigate(`/seleccion-practicantes/convocatorias/${convocatoria.id}/encuestas`)
+  }
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -116,13 +121,19 @@ export function ConvocatoriasPage() {
             <SkeletonConvocatoriaCard index={2} />
           </div>
         ) : convocatorias.length === 0 ? (
-          <div className={styles.empty}>
-            <p className={styles.emptyText}>No hay convocatorias creadas</p>
+          <EmptyState
+            iconPreset="folder"
+            colorPreset="dark"
+            iconColor="#0f172a"
+            title="No hay convocatorias creadas"
+            description="Crea tu primera convocatoria para comenzar a reclutar."
+            className={styles.emptyState}
+          >
             <button onClick={handleNewConvocatoria} className={styles.buttonPrimary}>
               <Plus size={20} />
               Crear Primera Convocatoria
             </button>
-          </div>
+          </EmptyState>
         ) : (
           <div className={styles.grid}>
             {convocatorias.map((convocatoria, index) => (
@@ -131,6 +142,7 @@ export function ConvocatoriasPage() {
                 convocatoria={convocatoria}
                 onEdit={handleEdit}
                 onViewApplicants={handleViewApplicants}
+                onManageEvaluations={handleManageEvaluations}
                 index={index}
               />
             ))}

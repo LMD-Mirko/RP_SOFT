@@ -16,7 +16,6 @@ export function EditorFirmaModal({ isOpen, onClose, onSave, firmaActual, documen
   const [zoom, setZoom] = useState(1)
   const containerRef = useRef(null)
   const firmaRef = useRef(null)
-  const canvasRef = useRef(null)
   
   // El documento está disponible si se pasa como prop
   const documentoDisponible = documentoActual && documentoPreview
@@ -99,8 +98,6 @@ export function EditorFirmaModal({ isOpen, onClose, onSave, firmaActual, documen
     setIsDragging(true)
     const rect = containerRef.current.getBoundingClientRect()
     // Calcular posición relativa al contenedor sin zoom
-    const scaledX = firmaPosition.x * zoom
-    const scaledY = firmaPosition.y * zoom
     setDragStart({
       x: (e.clientX - rect.left) / zoom - firmaPosition.x,
       y: (e.clientY - rect.top) / zoom - firmaPosition.y,

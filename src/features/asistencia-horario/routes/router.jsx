@@ -5,16 +5,16 @@
 
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '../components/Layout'
-import { Dashboard } from '../pages/Dashboard'
 import { Dashboard as PracticantesDashboard } from '../modules/practicantes/pages/Dashboard'
 import { PerfilPracticante } from '../modules/practicantes/pages/PerfilPracticante'
-import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages/DisciplinaryTrackingView'
-//import { Botintegrative } from '../modules/bot_integracion/pages/botintegrative'//
-import { Reports } from '../modules/reportes/pages/Reports'
-import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
 import { Dashboard as GestionHorariosDashboard } from '../modules/gestion-horarios/pages/Dashboard'
-import { Inicio } from '../modules/inicio/pages/nicolayus'
+import { Reports } from '../modules/reportes/pages/Reports'
+import DisciplinaryTrackingView from '../modules/seguimiento-disciplinario/pages/DisciplinaryTrackingView'
 import HistorialPracticantes from '../modules/historial-practicantes/pages/HistorialPracticantes'
+import ControlAsistencia from '../modules/control-asistencias/pages/ControlAsistencia'
+import { Inicio } from '../modules/inicio/pages/nicolayus'
+import PuntualidadDashboard from '../modules/puntualidad/pages/PuntualidadDashboard'
+import { Botintegrative } from '../modules/bot_integracion/pages/Botintegrative'
 
 /**
  * Router del Módulo
@@ -25,18 +25,18 @@ export function ModuleRouter() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<Dashboard />} />
+        <Route index element={<Botintegrative />} />
 
         {/* Rutas de Monitoreo */}
         <Route
           path="bot-integracion"
-          element={<div><h2>Bot de Integración</h2></div>}
+          element={<Botintegrative />}
         />
 
         {/* Rutas de Asistencia */}
         <Route
           path="puntualidad"
-          element={<div><h2>Puntualidad</h2></div>}
+          element={<PuntualidadDashboard />}
         />
         <Route
           path="practicantes"
@@ -55,10 +55,6 @@ export function ModuleRouter() {
         <Route
           path="reportes"
           element={<Reports />}
-        />
-        <Route
-          path="reforzamiento"
-          element={<div><h2>Reforzamiento</h2></div>}
         />
         <Route
           path="historial-practicantes"

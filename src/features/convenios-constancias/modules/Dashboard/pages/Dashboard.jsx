@@ -49,7 +49,7 @@ export function Dashboard() {
               title={kpi.title}
               value={kpi.value}
               description={kpi.description}
-              icon={IconComponent}
+              iconComponent={IconComponent}
               iconColor={kpi.iconColor}
             />
           )

@@ -79,7 +79,8 @@ export function ProgressByConvocatoriaChart({ data = [] }) {
         {chartData.length === 0 ? (
           <EmptyState
             iconPreset="calendar"
-            colorPreset="green"
+            colorPreset="dark"
+            iconColor="#0f172a"
             title="No hay datos disponibles"
             description="Los datos aparecerán cuando haya información de progreso por convocatoria"
             className={styles.emptyState}

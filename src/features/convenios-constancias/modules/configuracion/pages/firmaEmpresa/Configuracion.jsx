@@ -134,12 +134,10 @@ export default function Configuracion() {
         // Dimensiones del iframe
         const iframeRect = iframe.getBoundingClientRect()
         const iframeWidth = iframeRect.width
-        const iframeHeight = iframeRect.height
 
         // Tamaño estándar del documento en el editor (800x1000 es el tamaño por defecto)
         // Este es el tamaño de referencia usado en el EditorFirmaModal
         const editorWidth = 800
-        const editorHeight = 1000
 
         // Calcular escala basándose en el ancho (más confiable que el alto para PDFs)
         // Usar la misma escala para X e Y para mantener proporciones
@@ -190,7 +188,7 @@ export default function Configuracion() {
         })
       }
     }
-  }, [documentoCargado, documentoPreview, firmaEmpresa.preview, firmaEmpresa.posicion, documentoConFirma])
+  }, [documentoCargado, documentoPreview, firmaEmpresa.preview, firmaEmpresa.posicion, firmaEmpresa.size, documentoConFirma])
 
   // Limpiar URLs de blob al desmontar
   useEffect(() => {

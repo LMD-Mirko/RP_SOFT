@@ -1,147 +1,43 @@
-import { useState } from 'react'
 import { Button } from '@shared/components/Button'
-import { Code } from 'lucide-react'
+import { Code, AlertCircle } from 'lucide-react'
+import { EvaluacionEmbedded } from '../EvaluacionEmbedded'
 import styles from './TecnicaStep.module.css'
 
-const NIVELES = [
-  { value: 'Basico', label: 'Básico' },
-  { value: 'Intermedio', label: 'Intermedio' },
-  { value: 'Avanzado', label: 'Avanzado' },
-]
-
-export function TecnicaStep({ data, onNext, onBack }) {
-  const [formData, setFormData] = useState({
-    nivelHTML: data.nivelHTML || '',
-    nivelCSS: data.nivelCSS || '',
-    nivelJavaScript: data.nivelJavaScript || '',
-  })
-
-  const [errors, setErrors] = useState({})
-
-  const handleSelect = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }))
+/**
+ * Paso de Evaluación Técnica
+ * Usa EvaluacionEmbedded para mostrar la evaluación directamente en el flujo lineal
+ */
+export function TecnicaStep({ evaluationId, convocatoriaId, onNext, onBack, onEvaluationComplete, evaluationStatus }) {
+  const handleEvaluationComplete = (result) => {
+    // Cuando se completa la evaluación, continuar al siguiente paso
+    if (onEvaluationComplete) {
+      onEvaluationComplete()
     }
+    onNext({ 
+      evaluacionTecnicaCompletada: true,
+      evaluacionResultado: result 
+    })
   }
 
-  const validate = () => {
-    const newErrors = {}
-    
-    if (!formData.nivelHTML) newErrors.nivelHTML = 'Selecciona tu nivel en HTML'
-    if (!formData.nivelCSS) newErrors.nivelCSS = 'Selecciona tu nivel en CSS'
-    if (!formData.nivelJavaScript) newErrors.nivelJavaScript = 'Selecciona tu nivel en JavaScript'
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+  const handleSkip = () => {
+    // Permitir saltar si no hay evaluación disponible
+    onNext({ evaluacionTecnicaCompletada: false })
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (validate()) {
-      onNext(formData)
-    }
-  }
-
-  return (
-    <div className={styles.stepContainer}>
-      <div className={styles.stepCard}>
-        <div className={styles.stepHeader}>
-          <h2 className={styles.stepTitle}>Encuesta Técnica</h2>
-          <p className={styles.stepSubtitle}>Ayúdanos a conocer tu conocimiento en frontend</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {/* HTML */}
-          <div className={styles.questionGroup}>
-            <label className={styles.questionLabel}>
-              <Code size={20} />
-              ¿Cuál es tu nivel en HTML?
-            </label>
-            <div className={styles.optionsList}>
-              {NIVELES.map((nivel) => (
-                <div
-                  key={nivel.value}
-                  className={`${styles.checkboxOption} ${
-                    formData.nivelHTML === nivel.value ? styles.checkboxOptionSelected : ''
-                  }`}
-                  onClick={() => handleSelect('nivelHTML', nivel.value)}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.nivelHTML === nivel.value}
-                    onChange={() => handleSelect('nivelHTML', nivel.value)}
-                    className={styles.checkbox}
-                  />
-                  <label className={styles.checkboxLabel}>{nivel.label}</label>
-                </div>
-              ))}
+  // Si la evaluación ya está completada y aprobada, mostrar mensaje de éxito
+  if (evaluationStatus?.status === 'completed' && evaluationStatus?.passed) {
+    return (
+      <div className={styles.stepContainer}>
+        <div className={styles.stepCard}>
+          <div className={styles.stepHeader}>
+            <div className={styles.iconContainer}>
+              <Code size={48} className={styles.icon} />
             </div>
-            {errors.nivelHTML && (
-              <span className={styles.errorText}>{errors.nivelHTML}</span>
-            )}
+            <h2 className={styles.stepTitle}>Evaluación Técnica</h2>
+            <p className={styles.stepSubtitle}>
+              Ya completaste esta evaluación exitosamente
+            </p>
           </div>
-
-          {/* CSS */}
-          <div className={styles.questionGroup}>
-            <label className={styles.questionLabel}>
-              <Code size={20} />
-              ¿Cuál es tu nivel en CSS?
-            </label>
-            <div className={styles.optionsList}>
-              {NIVELES.map((nivel) => (
-                <div
-                  key={nivel.value}
-                  className={`${styles.checkboxOption} ${
-                    formData.nivelCSS === nivel.value ? styles.checkboxOptionSelected : ''
-                  }`}
-                  onClick={() => handleSelect('nivelCSS', nivel.value)}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.nivelCSS === nivel.value}
-                    onChange={() => handleSelect('nivelCSS', nivel.value)}
-                    className={styles.checkbox}
-                  />
-                  <label className={styles.checkboxLabel}>{nivel.label}</label>
-                </div>
-              ))}
-            </div>
-            {errors.nivelCSS && (
-              <span className={styles.errorText}>{errors.nivelCSS}</span>
-            )}
-          </div>
-
-          {/* JavaScript */}
-          <div className={styles.questionGroup}>
-            <label className={styles.questionLabel}>
-              <Code size={20} />
-              ¿Cuál es tu nivel en JavaScript?
-            </label>
-            <div className={styles.optionsList}>
-              {NIVELES.map((nivel) => (
-                <div
-                  key={nivel.value}
-                  className={`${styles.checkboxOption} ${
-                    formData.nivelJavaScript === nivel.value ? styles.checkboxOptionSelected : ''
-                  }`}
-                  onClick={() => handleSelect('nivelJavaScript', nivel.value)}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.nivelJavaScript === nivel.value}
-                    onChange={() => handleSelect('nivelJavaScript', nivel.value)}
-                    className={styles.checkbox}
-                  />
-                  <label className={styles.checkboxLabel}>{nivel.label}</label>
-                </div>
-              ))}
-            </div>
-            {errors.nivelJavaScript && (
-              <span className={styles.errorText}>{errors.nivelJavaScript}</span>
-            )}
-          </div>
-
           <div className={styles.actions}>
             <Button
               type="button"
@@ -152,14 +48,71 @@ export function TecnicaStep({ data, onNext, onBack }) {
               Atrás
             </Button>
             <Button
-              type="submit"
+              type="button"
               variant="primary"
+              onClick={() => onNext({ evaluacionTecnicaCompletada: true })}
               className={styles.buttonPrimary}
             >
-              Siguiente
+              Continuar
             </Button>
           </div>
-        </form>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.stepContainer}>
+      <div className={styles.stepCard}>
+        <div className={styles.stepHeader}>
+          <div className={styles.iconContainer}>
+            <Code size={48} className={styles.icon} />
+          </div>
+          <h2 className={styles.stepTitle}>Evaluación Técnica</h2>
+          <p className={styles.stepSubtitle}>
+            Completa la evaluación técnica para demostrar tus conocimientos
+          </p>
+        </div>
+
+        <div className={styles.content}>
+          {evaluationId || convocatoriaId ? (
+            <EvaluacionEmbedded
+              evaluationId={evaluationId}
+              convocatoriaId={convocatoriaId}
+              evaluationType="technical"
+              onComplete={handleEvaluationComplete}
+              onSkip={handleSkip}
+            />
+          ) : (
+            <>
+              <div className={styles.warningBox}>
+                <AlertCircle size={16} />
+                <span>
+                  No hay evaluación técnica disponible para esta convocatoria.
+                  Puedes continuar con el siguiente paso.
+                </span>
+              </div>
+              <div className={styles.actions}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={onBack}
+                  className={styles.buttonSecondary}
+                >
+                  Atrás
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleSkip}
+                  className={styles.buttonPrimary}
+                >
+                  Continuar sin Evaluación
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

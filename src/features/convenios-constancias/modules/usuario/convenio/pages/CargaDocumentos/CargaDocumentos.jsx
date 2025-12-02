@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { Button, Modal } from 'antd'
 import styles from './CargaDocumentos.module.css'
 import { DocumentCard } from '../../components/DocumentCard'

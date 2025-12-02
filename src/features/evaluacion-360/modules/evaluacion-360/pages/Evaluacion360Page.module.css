@@ -260,3 +260,94 @@
   font-size: 0.875rem;
   cursor: pointer;
 }
+.fadeIn {
+  animation: fadeIn 0.8s ease-in;
+}
+
+.slideIn {
+  animation: slideIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Selectores mejorados */
+.filtrosContainer {
+  display: flex;
+  gap: 12px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+.filtroBtn {
+  padding: 10px 20px;
+  border: 2px solid #e1e5e9;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.filtroBtnActive,
+.filtroBtn:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Badges para estados */
+.estadoBadge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.estadoEvaluado {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.estadoNoEvaluado {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Efectos hover en la tabla */
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8fafc;
+  transform: translateX(5px);
+}
+
+/* Efectos en botones existentes */
+.evaluarButton {
+  transition: all 0.2s ease;
+}
+
+.evaluarButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

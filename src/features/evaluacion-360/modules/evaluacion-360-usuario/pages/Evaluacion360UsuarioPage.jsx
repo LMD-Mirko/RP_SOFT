@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'  // Agregar useEffect
 import { EvaluacionModal } from '../../../components/EvaluacionModal'
 import { usePracticantes } from '../../../context/PracticantesContext'
 import styles from './Evaluacion360UsuarioPage.module.css'
@@ -12,7 +12,15 @@ export function Evaluacion360UsuarioPage() {
   })
   const [filteredPracticantes, setFilteredPracticantes] = useState([])
   const [hasSearched, setHasSearched] = useState(false)
+  const [mostrarContenido, setMostrarContenido] = useState(false) // NUEVO: Estado para animaciones
+  const [filtroActivo, setFiltroActivo] = useState('todos') // NUEVO: Filtros rápidos
+  
   const { practicantes } = usePracticantes()
+
+  // NUEVO: Efecto para animación de entrada
+  useEffect(() => {
+    setMostrarContenido(true)
+  }, [])
 
   const handleEvaluar = (practicante) => {
     setSelectedPracticante(practicante)
@@ -83,9 +91,9 @@ export function Evaluacion360UsuarioPage() {
   }
 
   return (
-    <div className={styles.container}>
-      {/* Header */}
-      <div className={styles.header}>
+    <div className={`${styles.container} ${mostrarContenido ? styles.fadeIn : ''}`}>
+      {/* Header - CON ANIMACIÓN */}
+      <div className={`${styles.header} ${styles.slideIn}`}>
         <div className={styles.titleSection}>
           <h1 className={styles.title}>
             Evaluación 360
@@ -105,8 +113,8 @@ export function Evaluacion360UsuarioPage() {
         </div>
       </div>
 
-      {/* Info Banner */}
-      <div className={styles.infoBanner}>
+      {/* Info Banner - CON ANIMACIÓN */}
+      <div className={`${styles.infoBanner} ${styles.slideIn}`} style={{animationDelay: '0.1s'}}>
         <div className={styles.infoIcon}>ℹ</div>
         <div className={styles.infoContent}>
           <strong>Evaluación Real</strong>
@@ -114,9 +122,31 @@ export function Evaluacion360UsuarioPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className={styles.filtersSection}>
-        <h3 className={styles.filtersTitle}>Filtros:</h3>
+      {/* NUEVO: SELECTORES MEJORADOS */}
+      <div className={styles.filtrosContainer}>
+        <button 
+          className={`${styles.filtroBtn} ${filtroActivo === 'todos' ? styles.filtroBtnActive : ''}`}
+          onClick={() => setFiltroActivo('todos')}
+        >
+          Todos los Practicantes
+        </button>
+        <button 
+          className={`${styles.filtroBtn} ${filtroActivo === 'evaluados' ? styles.filtroBtnActive : ''}`}
+          onClick={() => setFiltroActivo('evaluados')}
+        >
+          Evaluados ({practicantes.filter(p => p.evaluacion360).length})
+        </button>
+        <button 
+          className={`${styles.filtroBtn} ${filtroActivo === 'no-evaluados' ? styles.filtroBtnActive : ''}`}
+          onClick={() => setFiltroActivo('no-evaluados')}
+        >
+          No Evaluados ({practicantes.filter(p => !p.evaluacion360).length})
+        </button>
+      </div>
+
+      {/* Filters - CON ANIMACIÓN */}
+      <div className={`${styles.filtersSection} ${styles.slideIn}`} style={{animationDelay: '0.2s'}}>
+        <h3 className={styles.filtersTitle}>Filtros Avanzados:</h3>
         
         <div className={styles.filtersGrid}>
           <div className={styles.filterGroup}>
@@ -154,9 +184,9 @@ export function Evaluacion360UsuarioPage() {
         </div>
       </div>
 
-      {/* Table or Empty State */}
+      {/* Table or Empty State - CON ANIMACIONES */}
       {!hasSearched ? (
-        <div className={styles.emptyState}>
+        <div className={`${styles.emptyState} ${styles.slideIn}`} style={{animationDelay: '0.3s'}}>
           <div className={styles.emptyIcon}>
             <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
               <circle cx="40" cy="30" r="15" stroke="#CBD5E1" strokeWidth="2"/>
@@ -170,7 +200,7 @@ export function Evaluacion360UsuarioPage() {
           </p>
         </div>
       ) : filteredPracticantes.length > 0 ? (
-        <div className={styles.tableContainer}>
+        <div className={`${styles.tableContainer} ${styles.slideIn}`} style={{animationDelay: '0.3s'}}>
           <table className={styles.table}>
             <thead>
               <tr>
@@ -184,14 +214,24 @@ export function Evaluacion360UsuarioPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredPracticantes.map(practicante => (
-                <tr key={practicante.id}>
+              {filteredPracticantes.map((practicante, index) => (
+                <tr 
+                  key={practicante.id}
+                  className={styles.slideIn}
+                  style={{animationDelay: `${0.4 + (index * 0.05)}s`}}
+                >
                   <td>{practicante.nombres}</td>
                   <td>{practicante.apellidos}</td>
                   <td>{practicante.servidor}</td>
                   <td>{practicante.proyecto}</td>
                   <td>{practicante.sala}</td>
-                  <td>{practicante.evaluacion360 ? 'Evaluado' : 'No evaluado'}</td>
+                  <td>
+                    <span className={`${styles.estadoBadge} ${
+                      practicante.evaluacion360 ? styles.estadoEvaluado : styles.estadoNoEvaluado
+                    }`}>
+                      {practicante.evaluacion360 ? 'Evaluado' : 'No evaluado'}
+                    </span>
+                  </td>
                   <td>
                     <button
                       className={styles.evaluarButton}
@@ -206,7 +246,7 @@ export function Evaluacion360UsuarioPage() {
           </table>
         </div>
       ) : (
-        <div className={styles.emptyState}>
+        <div className={`${styles.emptyState} ${styles.slideIn}`} style={{animationDelay: '0.3s'}}>
           <div className={styles.emptyIcon}>
             <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
               <circle cx="40" cy="40" r="30" stroke="#CBD5E1" strokeWidth="2"/>

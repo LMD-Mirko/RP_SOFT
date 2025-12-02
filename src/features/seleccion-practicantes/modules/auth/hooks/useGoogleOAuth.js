@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { oauthLogin, oauthRegister, getUserRole } from '../services/authService';
 import { setAuthTokens } from '../../../shared/utils/cookieHelper';
 import { redirectByRole } from '../utils/redirectByRole';
+import { getEnvVar } from '@shared/utils/envConfig';
 
 /**
  * Hook para manejar OAuth con Google
@@ -37,6 +38,9 @@ export const useGoogleOAuth = () => {
         provider: googleData.provider,
         provider_id: googleData.provider_id,
       });
+
+      // Limpiar marca de logout si existe
+      sessionStorage.removeItem('rpsoft_logging_out')
 
       // 3. Guardar tokens en cookies
       if (response.tokens) {
@@ -143,6 +147,9 @@ export const useGoogleOAuth = () => {
         role_id: roleId,
       });
 
+      // Limpiar marca de logout si existe
+      sessionStorage.removeItem('rpsoft_logging_out')
+
       if (response.tokens) {
         const accessToken = response.tokens.access;
         const refreshToken = response.tokens.refresh;
@@ -228,10 +235,10 @@ export const useGoogleOAuth = () => {
  */
 const loginWithGoogle = async () => {
   return new Promise((resolve, reject) => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const clientId = getEnvVar('VITE_GOOGLE_CLIENT_ID');
     
     if (!clientId) {
-      reject(new Error('VITE_GOOGLE_CLIENT_ID no está configurado en el archivo .env'));
+      reject(new Error('VITE_GOOGLE_CLIENT_ID no está configurado. Configúralo en Variables de Entorno.'));
       return;
     }
 

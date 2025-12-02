@@ -1,0 +1,2 @@
+export { ExamResultsModal } from './ExamResultsModal'
+

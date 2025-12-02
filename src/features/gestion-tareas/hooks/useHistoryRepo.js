@@ -67,6 +67,10 @@ export function useHistoryRepo() {
     setTemplates((prev) => prev.map((t) => (t.code === code ? { ...t, ...updates } : t)))
   }
 
+  const addTemplate = (tpl) => {
+    setTemplates((prev) => [tpl, ...prev])
+  }
+
   return {
     loading,
     stats,
@@ -88,5 +92,6 @@ export function useHistoryRepo() {
     duplicateTemplate,
     deleteTemplate,
     updateTemplate,
+    addTemplate,
   }
 }

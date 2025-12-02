@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import { Menu, Search, MoreVertical, Edit, Trash2 } from 'lucide-react'
 import styles from './ChatSidebar.module.css'
@@ -26,6 +27,8 @@ export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
   const [editingIndex, setEditingIndex] = useState(null)
   const [editingValue, setEditingValue] = useState('')
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 })
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteIndex, setDeleteIndex] = useState(null)
   const menuRef = useRef(null)
   const buttonRefs = useRef({})
   const searchInputRef = useRef(null)
@@ -101,8 +104,22 @@ export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
 
   const handleDelete = (event, index) => {
     event.stopPropagation()
-    setRecentItems(prev => prev.filter((_, i) => i !== index))
+    setDeleteIndex(index)
+    setShowDeleteModal(true)
     setOpenMenuIndex(null)
+  }
+
+  const confirmDelete = () => {
+    if (deleteIndex !== null) {
+      setRecentItems(prev => prev.filter((_, i) => i !== deleteIndex))
+      setDeleteIndex(null)
+    }
+    setShowDeleteModal(false)
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false)
+    setDeleteIndex(null)
   }
 
   const handleRename = (event, index) => {
@@ -182,14 +199,14 @@ export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
             <div className={styles.recentList}>
               {filteredItems.length > 0 ? (
                 filteredItems.map((item, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className={styles.recentItem}
                     onClick={() => editingIndex !== i && onSelectChat?.(item)}
                   >
                     {editingIndex !== i && (
                       <div className={styles.moreContainer}>
-                        <button 
+                        <button
                           ref={(el) => { buttonRefs.current[i] = el }}
                           className={styles.moreButton}
                           onClick={(e) => handleMoreClick(e, i)}
@@ -222,8 +239,8 @@ export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
         </div>
       )}
       {openMenuIndex !== null && (
-        <div 
-          ref={menuRef} 
+        <div
+          ref={menuRef}
           className={styles.contextMenu}
           style={{
             top: `${menuPosition.top}px`,
@@ -240,6 +257,28 @@ export function ChatSidebar({ isCollapsed, onToggle, onSelectChat }) {
             <span>Eliminar</span>
           </div>
         </div>
+      )}
+      {showDeleteModal && createPortal(
+        <div className={styles.modalOverlay} onClick={cancelDelete}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>¿Deseas eliminar el chat?</h3>
+            <p className={styles.modalMessage}>
+              Esto eliminará <strong>{deleteIndex !== null ? recentItems[deleteIndex] : ''}</strong>.
+            </p>
+            <p className={styles.modalSubtext}>
+              Ve a Configuración para eliminar todas las memorias guardadas durante este chat.
+            </p>
+            <div className={styles.modalButtons}>
+              <button className={styles.cancelButton} onClick={cancelDelete}>
+                Cancelar
+              </button>
+              <button className={styles.deleteButton} onClick={confirmDelete}>
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   )

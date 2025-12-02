@@ -1,5 +1,5 @@
 import { 
-  Inbox, 
+  PackageOpen,
   Activity, 
   FileText, 
   Users, 
@@ -16,7 +16,7 @@ import styles from './EmptyState.module.css'
 
 // Presets de iconos comunes
 const ICON_PRESETS = {
-  default: Inbox,
+  default: PackageOpen,
   activity: Activity,
   document: FileText,
   users: Users,
@@ -36,36 +36,49 @@ const COLOR_PRESETS = {
     icon: '#9ca3af',
     background: 'rgba(156, 163, 175, 0.1)',
     border: 'rgba(156, 163, 175, 0.2)',
+    glow: 'rgba(156, 163, 175, 0.35)',
   },
   blue: {
     icon: '#3b82f6',
     background: 'rgba(59, 130, 246, 0.1)',
     border: 'rgba(59, 130, 246, 0.2)',
+    glow: 'rgba(59, 130, 246, 0.35)',
   },
   green: {
     icon: '#10b981',
     background: 'rgba(16, 185, 129, 0.1)',
     border: 'rgba(16, 185, 129, 0.2)',
+    glow: 'rgba(16, 185, 129, 0.35)',
   },
   purple: {
     icon: '#8b5cf6',
     background: 'rgba(139, 92, 246, 0.1)',
     border: 'rgba(139, 92, 246, 0.2)',
+    glow: 'rgba(139, 92, 246, 0.35)',
   },
   orange: {
     icon: '#f59e0b',
     background: 'rgba(245, 158, 11, 0.1)',
     border: 'rgba(245, 158, 11, 0.2)',
+    glow: 'rgba(245, 158, 11, 0.35)',
   },
   turquoise: {
     icon: '#14b8a6',
     background: 'rgba(20, 184, 166, 0.1)',
     border: 'rgba(20, 184, 166, 0.2)',
+    glow: 'rgba(20, 184, 166, 0.35)',
   },
   pink: {
     icon: '#ec4899',
     background: 'rgba(236, 72, 153, 0.1)',
     border: 'rgba(236, 72, 153, 0.2)',
+    glow: 'rgba(236, 72, 153, 0.35)',
+  },
+  dark: {
+    icon: '#0f172a',
+    background: 'rgba(15, 23, 42, 0.08)',
+    border: 'rgba(15, 23, 42, 0.25)',
+    glow: 'rgba(15, 23, 42, 0.55)',
   },
 }
 
@@ -79,6 +92,7 @@ const COLOR_PRESETS = {
  * @param {string} props.iconPreset - Preset de icono ('default', 'activity', 'document', 'users', etc.)
  * @param {string} props.colorPreset - Preset de color ('default', 'blue', 'green', 'purple', 'orange', 'turquoise', 'pink')
  * @param {string} props.iconColor - Color personalizado para el icono
+ * @param {string} props.glowColor - Color personalizado para el resplandor del icono
  * @param {string} props.background - Color de fondo personalizado
  * @param {string} props.border - Color de borde personalizado
  * @param {number} props.iconSize - Tamaño del icono (default: 64)
@@ -92,6 +106,7 @@ export function EmptyState({
   iconPreset = 'default',
   colorPreset = 'default',
   iconColor,
+  glowColor,
   background,
   border,
   iconSize = 64,
@@ -117,9 +132,10 @@ export function EmptyState({
 
   // Determinar los colores
   const colors = COLOR_PRESETS[colorPreset] || COLOR_PRESETS.default
-  const finalIconColor = iconColor || colors.icon
+  const finalIconColor = iconColor || '#0f172a'
   const finalBackground = background || colors.background
   const finalBorder = border || colors.border
+  const finalGlow = glowColor || colors.glow || 'rgba(0, 0, 0, 0.3)'
 
   return (
     <div className={`${styles.container} ${className}`}>
@@ -129,6 +145,7 @@ export function EmptyState({
           '--icon-color': finalIconColor,
           '--icon-background': finalBackground,
           '--icon-border': finalBorder,
+          '--icon-glow': finalGlow,
         }}
       >
         <IconComponent size={iconSize} className={styles.icon} />

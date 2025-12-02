@@ -1,0 +1,2 @@
+export { PreguntaCard } from './PreguntaCard'
+

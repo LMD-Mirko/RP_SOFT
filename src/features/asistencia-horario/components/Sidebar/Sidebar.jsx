@@ -60,11 +60,6 @@ const menuItems = [
         path: '/asistencia-horario/reportes',
       },
       {
-        icon: AlertCircle,
-        label: 'Reforzamiento',
-        path: '/asistencia-horario/reforzamiento',
-      },
-      {
         icon: ClipboardList,
         label: 'Historial de Practicantes',
         path: '/asistencia-horario/historial-practicantes',

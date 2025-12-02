@@ -3,7 +3,6 @@ import {
   loadConfiguracion,
   saveConfiguracion,
   saveConfiguracionSection,
-  getConfiguracionSection,
 } from '../services/configuracionService'
 
 /**

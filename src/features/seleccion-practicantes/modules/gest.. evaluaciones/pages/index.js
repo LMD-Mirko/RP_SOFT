@@ -1,2 +1,2 @@
-export { EvaluacionesPage } from './EvaluacionesPage'
+// Este archivo puede exportar páginas si es necesario en el futuro
 

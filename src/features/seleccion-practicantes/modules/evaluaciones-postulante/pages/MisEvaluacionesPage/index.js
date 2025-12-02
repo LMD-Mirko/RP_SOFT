@@ -1,0 +1,2 @@
+export { MisEvaluacionesPage } from './MisEvaluacionesPage'
+

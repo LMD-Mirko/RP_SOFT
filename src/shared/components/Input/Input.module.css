@@ -54,8 +54,10 @@
 
 .input:disabled {
   background-color: #f3f4f6;
-  color: #9ca3af;
+  color: #111827;
   cursor: not-allowed;
+  opacity: 1;
+  -webkit-text-fill-color: #111827;
 }
 
 .input.error {

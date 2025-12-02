@@ -1,0 +1,2 @@
+export { AssignExamModal } from './AssignExamModal'
+

@@ -153,6 +153,7 @@
   border-radius: 16px;
   padding: 20px 20px 18px 20px;
   box-shadow: 0 1px 2px rgba(2, 6, 23, 0.06);
+  animation: fadeInUp 300ms ease both;
 }
 .statHeader {
   display: flex;
@@ -441,6 +442,7 @@
   padding: 16px;
   box-shadow: 0 1px 2px rgba(2, 6, 23, 0.06);
   transition: box-shadow 0.2s, transform 0.2s;
+  animation: fadeInUp 300ms ease both;
 }
 .card:hover {
   box-shadow: 0 4px 10px rgba(2, 6, 23, 0.08);
@@ -656,4 +658,8 @@
   justify-content: flex-end;
   gap: 8px;
   padding-top: 8px;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

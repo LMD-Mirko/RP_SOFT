@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'  // Agregar useEffect
 import { Eye, Edit, Trash2 } from 'lucide-react'
 import styles from './EventosEvaluacionPage.module.css'
 
 export function EventosEvaluacionPage() {
   const [activeTab, setActiveTab] = useState('todos')
+  const [mostrarContenido, setMostrarContenido] = useState(false) // NUEVO: Estado para animaciones
+
+  // NUEVO: Efecto para animación de entrada
+  useEffect(() => {
+    setMostrarContenido(true)
+  }, [])
 
   const evaluaciones = [
     {
@@ -39,9 +45,9 @@ export function EventosEvaluacionPage() {
   })
 
   return (
-    <div className={styles.container}>
-      {/* Header */}
-      <div className={styles.header}>
+    <div className={`${styles.container} ${mostrarContenido ? styles.fadeIn : ''}`}>
+      {/* Header - CON ANIMACIÓN */}
+      <div className={`${styles.header} ${styles.slideIn}`}>
         <div className={styles.headerContent}>
           <h1>Evento de Evaluación</h1>
           <p>Crea y administra eventos de evaluación con equipos y criterios</p>
@@ -51,8 +57,8 @@ export function EventosEvaluacionPage() {
         </button>
       </div>
 
-      {/* Tabs */}
-      <div className={styles.tabs}>
+      {/* Tabs - SELECTORES MEJORADOS */}
+      <div className={`${styles.tabs} ${styles.slideIn}`} style={{animationDelay: '0.1s'}}>
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -64,15 +70,21 @@ export function EventosEvaluacionPage() {
         ))}
       </div>
 
-      {/* Evaluaciones List */}
+      {/* Evaluaciones List - CON ANIMACIONES */}
       <div className={styles.evaluacionesList}>
-        {filteredEvaluaciones.map(evaluacion => (
-          <div key={evaluacion.id} className={styles.evaluacionCard}>
+        {filteredEvaluaciones.map((evaluacion, index) => (
+          <div 
+            key={evaluacion.id} 
+            className={`${styles.evaluacionCard} ${styles.slideIn}`}
+            style={{animationDelay: `${0.2 + (index * 0.1)}s`}}
+          >
             <div className={styles.cardContent}>
               <div className={styles.cardMain}>
                 <div className={styles.cardHeader}>
                   <h3 className={styles.cardTitle}>{evaluacion.titulo}</h3>
-                  <span className={`${styles.badge} ${evaluacion.estado === 'Activo' ? styles.badgeActive : styles.badgeClosed}`}>
+                  <span className={`${styles.badge} ${
+                    evaluacion.estado === 'Activo' ? styles.badgeActive : styles.badgeClosed
+                  }`}>
                     {evaluacion.estado}
                   </span>
                 </div>
@@ -118,11 +130,10 @@ export function EventosEvaluacionPage() {
       </div>
 
       {filteredEvaluaciones.length === 0 && (
-        <div className={styles.emptyState}>
+        <div className={`${styles.emptyState} ${styles.slideIn}`}>
           <p>No hay evaluaciones para mostrar</p>
         </div>
       )}
     </div>
   )
 }
-

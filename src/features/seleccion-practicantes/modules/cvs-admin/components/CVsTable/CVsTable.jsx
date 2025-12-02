@@ -110,7 +110,8 @@ export function CVsTable({
       <div className={styles.container}>
         <EmptyState
           iconPreset="document"
-          colorPreset="blue"
+          colorPreset="dark"
+          iconColor="#0f172a"
           title="No hay CVs disponibles"
           description="No se encontraron CVs con los filtros aplicados"
           className={styles.emptyState}

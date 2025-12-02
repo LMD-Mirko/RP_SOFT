@@ -10,7 +10,9 @@
   padding: 1.5rem 0;
   position: sticky;
   top: 0;
-  z-index: 100;
+  /* Elevar z-index para que los modals renderizados en portal (body)
+     no tapen el header de postulación. Solo afectamos este módulo. */
+  z-index: 100001;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -102,6 +104,10 @@
   margin: 2rem auto;
   padding: 0 2rem 2rem;
   animation: fadeIn 0.4s ease-out;
+  position: relative;
+  /* Mantener el contenido por debajo del header y de los modals si corresponde */
+  z-index: 0;
+  overflow: visible;
 }
 
 @keyframes fadeIn {
