@@ -1,9 +1,43 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import EstadisticasResumen from '../components/EstadisticasResumen/EstadisticasResumen';
 import FiltrosHistorial from '../components/FiltrosHistorial/FiltrosHistorial';
 import TablaHistorialDetallado from '../components/TablaHistorialDetallado/TablaHistorialDetallado';
 import TablaResumenPracticante from '../components/TablaResumenPracticante/TablaResumenPracticante';
+import { useHistorialPracticantes } from '../hooks';
 import styles from './HistorialPracticantes.module.css';
+
+// Función para transformar datos del backend al formato del frontend
+const transformHistorialItem = (item) => {
+  const tipoAccionMap = {
+    'advertencia': 'Advertencia',
+    'traslado': 'Traslado',
+    'expulsion': 'Expulsión',
+    'otro': 'Otro'
+  };
+
+  const estadoMap = {
+    'activo': 'Activo',
+    'trasladado': 'Transferido',
+    'expulsado': 'Expulsado',
+    'en_recuperacion': 'En Recuperación',
+    'en_riesgo': 'En Riesgo'
+  };
+
+  return {
+    nombre: item.practicante?.nombre || item.nombre || 'Sin nombre',
+    email: item.practicante?.correo || item.email || '',
+    area: item.practicante?.area || item.area || 'N/A',
+    accion: tipoAccionMap[item.tipo_accion] || item.tipo_accion,
+    fecha: item.fecha ? new Date(item.fecha).toLocaleDateString('es-ES', { 
+      day: 'numeric', 
+      month: 'short', 
+      year: 'numeric' 
+    }) : '',
+    motivo: item.descripcion || '',
+    detalles: item.detalles ? JSON.stringify(item.detalles) : '',
+    estado: estadoMap[item.estado] || item.estado || 'Activo'
+  };
+};
 
 const HistorialPracticantes = () => {
   const [activeTab, setActiveTab] = useState('detallado');
@@ -13,22 +47,34 @@ const HistorialPracticantes = () => {
     tipoAccion: '',
     estado: ''
   });
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { 
+    historial: historialData, 
+    loading, 
+    pagination,
+    loadHistorial 
+  } = useHistorialPracticantes();
+
+  // Cargar historial cuando cambian los filtros
+  useEffect(() => {
+    loadHistorial(currentPage, filters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, filters.buscar, filters.area, filters.tipoAccion, filters.estado]);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({
       ...prev,
       [filterName]: value
     }));
+    setCurrentPage(1); // Resetear a primera página al cambiar filtros
   };
 
-  const estadisticas = {
-    totalRegistros: 13,
-    advertencias: 10,
-    traslados: 1,
-    expulsiones: 2
-  };
+  // Transformar datos del backend
+  const historialDetallado = historialData.map(transformHistorialItem);
 
-  const historialDetallado = [
+  // Mock data para resumen (esto debería venir del backend también)
+  const historialDetalladoMock = [
     { nombre: 'Juan Pérez', email: 'juan@example.com', area: 'Desarrollo', accion: 'Advertencia #1', fecha: '14 sept 2025', motivo: 'Primer llamado sin respuesta - Falta injustifi...', detalles: '', estado: 'Activo' },
     { nombre: 'Juan Pérez', email: 'juan@example.com', area: 'Desarrollo', accion: 'Advertencia #2', fecha: '24 sept 2025', motivo: 'Segundo llamado sin respuesta - Llegada ta...', detalles: '', estado: 'Activo' },
     { nombre: 'Juan Pérez', email: 'juan@example.com', area: 'Desarrollo', accion: 'Advertencia #3', fecha: '27 sept 2025', motivo: 'Tercer llamado sin respuesta - Ausencia sin...', detalles: '', estado: 'Activo' },
@@ -52,22 +98,10 @@ const HistorialPracticantes = () => {
     { nombre: 'Patricia Moreno', email: 'patricia@example.com', area: 'Soporte', advertencias: 1, traslados: 0, estado: 'Expulsado', ultimaAccion: '14 ago 2025', enSistema: 'Eliminado' },
   ];
 
+  // Los filtros ya se aplican en el backend, pero podemos hacer un filtrado adicional si es necesario
   const filteredHistorialDetallado = useMemo(() => {
-    return historialDetallado.filter(item => {
-      const matchBuscar = !filters.buscar || 
-        item.nombre.toLowerCase().includes(filters.buscar.toLowerCase()) ||
-        item.email.toLowerCase().includes(filters.buscar.toLowerCase()) ||
-        item.motivo.toLowerCase().includes(filters.buscar.toLowerCase());
-      
-      const matchArea = !filters.area || item.area === filters.area;
-      
-      const matchTipoAccion = !filters.tipoAccion || item.accion.includes(filters.tipoAccion);
-      
-      const matchEstado = !filters.estado || item.estado === filters.estado;
-
-      return matchBuscar && matchArea && matchTipoAccion && matchEstado;
-    });
-  }, [historialDetallado, filters]);
+    return historialDetallado;
+  }, [historialDetallado]);
 
   const filteredResumenPracticantes = useMemo(() => {
     return resumenPracticantes.filter(item => {
@@ -97,7 +131,7 @@ const HistorialPracticantes = () => {
             </button>
           </div>
 
-          <EstadisticasResumen {...estadisticas} />
+          <EstadisticasResumen />
 
           <FiltrosHistorial 
             filters={filters}
@@ -127,7 +161,11 @@ const HistorialPracticantes = () => {
                     <h3 className={styles.tabTitle}>Historial Detallado</h3>
                     <p className={styles.tabSubtitle}>Registro cronológico de todas las acciones disciplinarias</p>
                   </div>
-                  <TablaHistorialDetallado data={filteredHistorialDetallado} />
+                  {loading ? (
+                    <div className={styles.loadingMessage}>Cargando historial...</div>
+                  ) : (
+                    <TablaHistorialDetallado data={filteredHistorialDetallado} />
+                  )}
                 </div>
               )}
               {activeTab === 'resumen' && (

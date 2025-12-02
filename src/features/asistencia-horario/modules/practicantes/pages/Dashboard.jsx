@@ -1,11 +1,38 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Download, Mail, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import { StatsCards } from '../components/StatsCards'
 import { SearchAndFilters } from '../components/SearchAndFilters'
 import { PracticanteCard } from '../components/PracticanteCard'
+import { usePracticantes } from '../hooks'
 import styles from './Dashboard.module.css'
 
-// Datos de ejemplo basados en el diseño
+// Función para transformar datos del backend al formato esperado por el frontend
+const transformPracticante = (practicante) => {
+  const nombreCompleto = `${practicante.nombre || ''} ${practicante.apellido || ''}`.trim()
+  const iniciales = nombreCompleto
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
+  return {
+    id: practicante.id,
+    nombre: nombreCompleto || practicante.correo?.split('@')[0] || 'Sin nombre',
+    email: practicante.correo || practicante.email || '',
+    equipo: practicante.equipo || 'Rpsoft • Team Alpha',
+    servidor: practicante.servidor || 'rpsoft',
+    estado: practicante.estado || 'activo',
+    cohorte: practicante.cohorte || 'Cohorte 2024-A',
+    score: practicante.score || 0,
+    asistencia: practicante.asistencia || '0%',
+    infracciones: practicante.infracciones || 0,
+    avatar: iniciales || 'NA',
+    color: practicante.color || '#3b82f6'
+  }
+}
+
+// Datos de ejemplo basados en el diseño (fallback)
 const mockPracticantes = [
   {
     id: 1,
@@ -157,23 +184,48 @@ export function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 6
 
-  const filteredPracticantes = mockPracticantes.filter(practicante => {
-    const matchesSearch = practicante.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      practicante.email.toLowerCase().includes(searchTerm.toLowerCase())
+  // Usar el hook para obtener practicantes
+  const { 
+    practicantes: practicantesData, 
+    loading, 
+    pagination,
+    loadPracticantes 
+  } = usePracticantes({
+    estado: selectedStatus !== 'todos' ? selectedStatus : undefined,
+    nombre: searchTerm || undefined,
+    correo: searchTerm || undefined,
+  })
 
+  // Cargar practicantes cuando cambian los filtros
+  useEffect(() => {
+    const params = {}
+    if (selectedStatus !== 'todos') {
+      params.estado = selectedStatus
+    }
+    if (searchTerm) {
+      params.nombre = searchTerm
+    }
+    loadPracticantes(currentPage, params)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, selectedStatus, searchTerm])
+
+  // Transformar datos del backend al formato del frontend
+  const practicantes = practicantesData.length > 0 
+    ? practicantesData.map(transformPracticante)
+    : []
+
+  // Filtrar por servidor y cohorte en el frontend (si no están en el backend)
+  const filteredPracticantes = practicantes.filter(practicante => {
     const matchesServer = selectedServer === 'todos' ||
       practicante.servidor === selectedServer
-
-    const matchesStatus = selectedStatus === 'todos' ||
-      practicante.estado === selectedStatus
 
     const matchesCohort = selectedCohort === 'todas' ||
       practicante.cohorte.includes(selectedCohort)
 
-    return matchesSearch && matchesServer && matchesStatus && matchesCohort
+    return matchesServer && matchesCohort
   })
 
-  const totalPages = Math.ceil(filteredPracticantes.length / itemsPerPage)
+  const totalPages = Math.ceil((pagination.total || filteredPracticantes.length) / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
   const currentPracticantes = filteredPracticantes.slice(startIndex, endIndex)
@@ -224,9 +276,15 @@ export function Dashboard() {
       />
 
       <div className={styles.practicantesGrid}>
-        {currentPracticantes.map(practicante => (
-          <PracticanteCard key={practicante.id} practicante={practicante} />
-        ))}
+        {loading ? (
+          <div className={styles.loadingMessage}>Cargando practicantes...</div>
+        ) : currentPracticantes.length > 0 ? (
+          currentPracticantes.map(practicante => (
+            <PracticanteCard key={practicante.id} practicante={practicante} />
+          ))
+        ) : (
+          <div className={styles.emptyMessage}>No se encontraron practicantes</div>
+        )}
       </div>
 
       <div className={styles.pagination}>
