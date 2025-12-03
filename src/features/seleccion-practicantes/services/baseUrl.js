@@ -8,7 +8,7 @@ import { getEnvVar } from '@shared/utils/envConfig'
 // Base URL de la API - puede venir de variables de entorno o usar un valor por defecto
 // En desarrollo, usar '/api' para que pase por el proxy de Vite y evite CORS
 // En producción, usar la URL completa del servidor
-const FALLBACK_BASE = import.meta.env.DEV ? '/api' : 'http://0.0.0.0:8000/api'
+const FALLBACK_BASE = import.meta.env.DEV ? '/api' : 'http://127.0.0.1:8000/api'
 
 export const BASE_URL =
   getEnvVar('VITE_API_BASE_URL') ||

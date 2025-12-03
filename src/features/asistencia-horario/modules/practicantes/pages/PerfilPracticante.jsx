@@ -1,41 +1,297 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Mail, MessageSquare, Github, Linkedin, Award, Clock, TrendingUp, AlertTriangle, Users } from 'lucide-react'
+import { ArrowLeft, Mail, MessageSquare, Github, Linkedin, Award, Clock, TrendingUp, AlertTriangle, Edit, Trash2, MoreVertical } from 'lucide-react'
 import styles from './PerfilPracticante.module.css'
 
 // Datos de ejemplo - en producción vendrían de una API
 const practicantesData = {
   1: {
-    nombre: 'Juan Pérez García',
-    email: 'juan.perez@rpsoft.com',
-    discord: 'juanperez#1234',
-    avatar: 'JP',
+    id: 1,
+    nombre: 'Anderson Aponte Pantoja',
+    email: 'Apontechizito@gmail.com',
+    discord: 'Darkai#1234',
+    avatar: 'AA',
     color: '#3b82f6',
     estado: 'Activo',
-    rol: 'Elite',
+    rol: 'Product Owner',
     destacado: true,
-    descripcion: 'Desarrollador Full Stack apasionado por crear soluciones innovadoras. Me encanta aprender nuevas tecnologías y compartir conocimiento con el equipo.',
-    github: 'github.com/juanperez',
+    descripcion: 'Desarrollador Full Stack apasionado por crear soluciones innovadoras.',
+    github: 'github.com/PieroSalced',
     linkedin: 'linkedin.com/in/juanperez',
-    especializacion: 'Backend',
+    especializacion: 'Frontend',
     servidor: 'Rpsoft',
-    equipoActual: 'Team Alpha',
-    scrum: 'Carlos Mendoza',
-    cohorte: 'Cohorte 2024-A',
-    fechaIngreso: '2024-01-15',
-    scoreActual: 850,
-    horasSemanales: '24/30',
-    asistencia: '98%',
+    equipoActual: 'Asistencia Horario',
+    scrum: 'Antony Salcedo ',
+    scoreActual: 800,
+    horasSemanales: '12/30',
+    asistencia: '30%',
     infracciones: 0,
     habilidades: ['React', 'Node.js', 'TypeScript', 'PostgreSQL', 'Docker', 'Git']
   }
 }
 
+// Modal para confirmación de eliminación
+function DeleteConfirmModal({ isOpen, practicante, onConfirm, onCancel }) {
+  if (!isOpen) return null
+
+  return (
+    <div className={styles.modalOverlay} onClick={onCancel}>
+      <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalHeader}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className={styles.deleteIcon}>
+              <Trash2 size={24} />
+            </div>
+            <h2 className={styles.modalTitle}>Eliminar Practicante</h2>
+          </div>
+        </div>
+
+        <div className={styles.modalContent}>
+          <p>
+            ¿Estás seguro de que deseas eliminar a <strong>{practicante?.nombre}</strong>? 
+            Esta acción no se puede deshacer y se perderán todos los datos del practicante.
+          </p>
+        </div>
+
+        <div className={styles.modalFooter}>
+          <button className={styles.cancelButton} onClick={onCancel}>
+            Cancelar
+          </button>
+          <button className={styles.deleteButton} onClick={onConfirm}>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Modal para editar practicante
+function EditPractitionerModal({ isOpen, practicante, onClose, onSave }) {
+  const [formData, setFormData] = useState(practicante || {
+    nombre: '',
+    email: '',
+    discord: '',
+    descripcion: '',
+    github: '',
+    linkedin: '',
+    especializacion: '',
+    equipoActual: '',
+    scrum: '',
+    habilidades: []
+  })
+
+  const [newSkill, setNewSkill] = useState('')
+
+  if (!isOpen) return null
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    onSave(formData)
+  }
+
+  const addSkill = () => {
+    if (newSkill.trim() && !formData.habilidades.includes(newSkill.trim())) {
+      setFormData({
+        ...formData,
+        habilidades: [...formData.habilidades, newSkill.trim()]
+      })
+      setNewSkill('')
+    }
+  }
+
+  const removeSkill = (skillToRemove) => {
+    setFormData({
+      ...formData,
+      habilidades: formData.habilidades.filter(skill => skill !== skillToRemove)
+    })
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      addSkill()
+    }
+  }
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.editModal} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>Editar Practicante</h2>
+          <button className={styles.modalClose} onClick={onClose}>
+            <MoreVertical size={20} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className={styles.editForm}>
+          <div className={styles.formGrid}>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Nombre Completo</label>
+              <input
+                type="text"
+                className={styles.formInput}
+                value={formData.nombre}
+                onChange={(e) => setFormData({...formData, nombre: e.target.value})}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Email</label>
+              <input
+                type="email"
+                className={styles.formInput}
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Discord</label>
+              <input
+                type="text"
+                className={styles.formInput}
+                value={formData.discord}
+                onChange={(e) => setFormData({...formData, discord: e.target.value})}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>GitHub</label>
+              <input
+                type="text"
+                className={styles.formInput}
+                value={formData.github}
+                onChange={(e) => setFormData({...formData, github: e.target.value})}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>LinkedIn</label>
+              <input
+                type="text"
+                className={styles.formInput}
+                value={formData.linkedin}
+                onChange={(e) => setFormData({...formData, linkedin: e.target.value})}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Especialización</label>
+              <select
+                className={styles.formInput}
+                value={formData.especializacion}
+                onChange={(e) => setFormData({...formData, especializacion: e.target.value})}
+              >
+                <option value="Backend">Backend</option>
+                <option value="Frontend">Frontend</option>
+                <option value="Full Stack">Full Stack</option>
+                <option value="DevOps">DevOps</option>
+                <option value="QA">QA</option>
+                <option value="Mobile">Mobile</option>
+              </select>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Equipo Actual</label>
+              <input
+                type="text"
+                className={styles.formInput}
+                value={formData.equipoActual}
+                onChange={(e) => setFormData({...formData, equipoActual: e.target.value})}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Scrum Master</label>
+              <input
+                type="text"
+                className={styles.formInput}
+                value={formData.scrum}
+                onChange={(e) => setFormData({...formData, scrum: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Descripción</label>
+            <textarea
+              className={styles.formTextarea}
+              value={formData.descripcion}
+              onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
+              rows={3}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Habilidades</label>
+            <div className={styles.skillsInputContainer}>
+              <input
+                type="text"
+                className={styles.formInput}
+                placeholder="Agregar habilidad..."
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                onKeyPress={handleKeyPress}
+              />
+              <button
+                type="button"
+                className={styles.addSkillButton}
+                onClick={addSkill}
+              >
+                Agregar
+              </button>
+            </div>
+            <div className={styles.skillsPreview}>
+              {formData.habilidades.map((skill, index) => (
+                <span key={index} className={styles.skillPreviewBadge}>
+                  {skill}
+                  <button
+                    type="button"
+                    className={styles.removeSkillButton}
+                    onClick={() => removeSkill(skill)}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.modalFooter}>
+            <button type="button" className={styles.cancelButton} onClick={onClose}>
+              Cancelar
+            </button>
+            <button type="submit" className={styles.saveButton}>
+              Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 export function PerfilPracticante() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const practicante = practicantesData[id] || practicantesData[1]
-  const [activeTab, setActiveTab] = useState('resumen')
+  const [practicante, setPracticante] = useState(practicantesData[id] || practicantesData[1])
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+
+  const handleDelete = () => {
+    // En producción, aquí harías una llamada a la API
+    console.log('Eliminando practicante:', practicante.id)
+    // Redirigir al dashboard después de eliminar
+    navigate('/dashboard')
+  }
+
+  const handleSave = (updatedData) => {
+    setPracticante(updatedData)
+    setShowEditModal(false)
+    // En producción, aquí harías una llamada a la API para actualizar
+    console.log('Guardando cambios:', updatedData)
+  }
 
   return (
     <div className={styles.container}>
@@ -91,6 +347,20 @@ export function PerfilPracticante() {
               <MessageSquare size={16} />
               Discord
             </button>
+            <button 
+              className={styles.editButton}
+              onClick={() => setShowEditModal(true)}
+            >
+              <Edit size={16} />
+              Editar
+            </button>
+            <button 
+              className={styles.deleteButton}
+              onClick={() => setShowDeleteModal(true)}
+            >
+              <Trash2 size={16} />
+              Eliminar
+            </button>
           </div>
         </div>
 
@@ -110,14 +380,6 @@ export function PerfilPracticante() {
           <div className={styles.infoItem}>
             <span className={styles.infoLabel}>Scrum Master</span>
             <span className={styles.infoValue}>{practicante.scrum}</span>
-          </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Cohorte</span>
-            <span className={styles.infoValue}>{practicante.cohorte}</span>
-          </div>
-          <div className={styles.infoItem}>
-            <span className={styles.infoLabel}>Fecha de ingreso</span>
-            <span className={styles.infoValue}>{practicante.fechaIngreso}</span>
           </div>
         </div>
       </div>
@@ -185,146 +447,20 @@ export function PerfilPracticante() {
         </div>
       </div>
 
-      <div className={styles.tabsSection}>
-        <div className={styles.tabs}>
-          <button 
-            className={`${styles.tab} ${activeTab === 'resumen' ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab('resumen')}
-          >
-            Resumen
-          </button>
-          <button 
-            className={`${styles.tab} ${activeTab === 'evaluaciones' ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab('evaluaciones')}
-          >
-            Evaluaciones
-          </button>
-          <button 
-            className={`${styles.tab} ${activeTab === 'historial' ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab('historial')}
-          >
-            Historial de Equipos
-          </button>
-          <button 
-            className={`${styles.tab} ${activeTab === 'asistencia' ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab('asistencia')}
-          >
-            Asistencia
-          </button>
-          <button 
-            className={`${styles.tab} ${activeTab === 'infracciones' ? styles.tabActive : ''}`}
-            onClick={() => setActiveTab('infracciones')}
-          >
-            Infracciones
-          </button>
-        </div>
-      </div>
+      {/* Modales */}
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        practicante={practicante}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteModal(false)}
+      />
 
-      {activeTab === 'resumen' && (
-        <div className={styles.resumeSection}>
-          <h3>Resumen General</h3>
-          <div className={styles.resumeGrid}>
-            <div className={styles.resumeItem}>
-              <span className={styles.resumeLabel}>Última actividad</span>
-              <span className={styles.resumeValue}>2024-03-20</span>
-            </div>
-            <div className={styles.resumeItem}>
-              <span className={styles.resumeLabel}>Progreso del Programa</span>
-              <span className={styles.resumeValue}>Full Stack Development</span>
-            </div>
-          </div>
-          <div className={styles.progressBar}>
-            <div className={styles.progressFill} style={{ width: '75%' }}></div>
-          </div>
-          <span className={styles.progressText}>75% completado</span>
-        </div>
-      )}
-
-      {activeTab === 'evaluaciones' && (
-        <div className={styles.contentSection}>
-          <h3>Historial de Evaluaciones</h3>
-          <div className={styles.evaluacionesList}>
-            <div className={styles.evaluacionItem}>
-              <div className={styles.evaluacionHeader}>
-                <div>
-                  <h4>Hackathon Scrum - Semana 3</h4>
-                  <p className={styles.evaluacionDate}>2024-03-10</p>
-                  <p className={styles.evaluacionType}>Evaluación de Equipo</p>
-                </div>
-                <div className={styles.evaluacionScore}>
-                  <span className={styles.scoreNumber}>9.2</span>
-                  <span className={styles.scoreLabel}>/ 10</span>
-                </div>
-              </div>
-              <p className={styles.evaluacionComment}>"Excelente trabajo en equipo y liderazgo técnico"</p>
-            </div>
-            <div className={styles.evaluacionItem}>
-              <div className={styles.evaluacionHeader}>
-                <div>
-                  <h4>Evaluación Individual</h4>
-                  <p className={styles.evaluacionDate}>2024-03-05</p>
-                  <p className={styles.evaluacionType}>Evaluación Individual</p>
-                  <p className={styles.evaluador}>Evaluador: Carlos Mendoza</p>
-                </div>
-                <div className={styles.evaluacionScore}>
-                  <span className={styles.scoreNumber}>8.8</span>
-                  <span className={styles.scoreLabel}>/ 10</span>
-                </div>
-              </div>
-              <p className={styles.evaluacionComment}>"Muy buen progreso en habilidades técnicas"</p>
-            </div>
-            <div className={styles.evaluacionItem}>
-              <div className={styles.evaluacionHeader}>
-                <div>
-                  <h4>Peer Review Sprint 2</h4>
-                  <p className={styles.evaluacionDate}>2024-02-28</p>
-                  <p className={styles.evaluacionType}>Evaluación Peer-to-Peer</p>
-                </div>
-                <div className={styles.evaluacionScore}>
-                  <span className={styles.scoreNumber}>9</span>
-                  <span className={styles.scoreLabel}>/ 10</span>
-                </div>
-              </div>
-              <p className={styles.evaluacionComment}>"Colaborativo y siempre dispuesto a ayudar"</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'historial' && (
-        <div className={styles.contentSection}>
-          <h3>Historial de Equipos</h3>
-          <div className={styles.equiposList}>
-            <div className={styles.equipoItem}>
-              <div className={styles.equipoIcon}>
-                <Users size={24} color="#3b82f6" />
-              </div>
-              <div className={styles.equipoInfo}>
-                <h4>Team Alpha</h4>
-                <p className={styles.equipoRole}>Rol: Developer</p>
-                <p className={styles.equipoDate}>2024-01-15 - Presente</p>
-              </div>
-              <div className={styles.equipoStatus}>
-                <span className={styles.statusBadgeActual}>Actual</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'asistencia' && (
-        <div className={styles.contentSection}>
-          <h3>Registro de Asistencia</h3>
-          <p className={styles.emptyMessage}>Contenido de asistencia próximamente...</p>
-        </div>
-      )}
-
-      {activeTab === 'infracciones' && (
-        <div className={styles.contentSection}>
-          <h3>Registro de Infracciones</h3>
-          <p className={styles.emptyMessage}>No hay infracciones registradas</p>
-        </div>
-      )}
+      <EditPractitionerModal
+        isOpen={showEditModal}
+        practicante={practicante}
+        onClose={() => setShowEditModal(false)}
+        onSave={handleSave}
+      />
     </div>
   )
 }
