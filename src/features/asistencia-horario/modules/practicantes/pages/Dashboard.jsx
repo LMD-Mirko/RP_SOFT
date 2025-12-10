@@ -4,6 +4,7 @@ import { StatsCards } from '../components/StatsCards'
 import { SearchAndFilters } from '../components/SearchAndFilters'
 import { PracticanteCard } from '../components/PracticanteCard'
 import { usePracticantes } from '../hooks'
+import { transformToBackend } from '../utils/dataAdapter'
 import styles from './Dashboard.module.css'
 
 // Función para transformar datos del backend al formato esperado por el frontend
@@ -28,19 +29,25 @@ const transformPracticante = (practicante) => {
     asistencia: practicante.asistencia || '0%',
     infracciones: practicante.infracciones || 0,
     avatar: iniciales || 'NA',
-    color: practicante.color || '#3b82f6'
+    color: practicante.color || '#3b82f6',
+    semestre: practicante.semestre || 1,
+    id_discord: practicante.id_discord || ''
   }
 }
 
 // Modal para Agregar/Editar Practicante
 function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSaving = false }) {
+  // PASO 1: Agregar campos al estado (línea ~38)
   const [formData, setFormData] = useState(practitioner || {
     nombre: '',
     email: '',
     equipo: '',
     servidor: 'rpsoft',
     estado: 'activo',
-    color: '#3b82f6'
+    color: '#3b82f6',
+    apellido: '',
+    id_discord: '',
+    semestre: 1
   })
 
   const [errors, setErrors] = useState({})
@@ -50,6 +57,7 @@ function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSav
     if (practitioner) {
       setFormData(practitioner)
     } else {
+      // PASO 2: Agregar campos al reset (línea ~55)
       // Resetear para nuevo practicante
       setFormData({
         nombre: '',
@@ -57,7 +65,10 @@ function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSav
         equipo: '',
         servidor: 'rpsoft',
         estado: 'activo',
-        color: '#3b82f6'
+        color: '#3b82f6',
+        apellido: '',
+        id_discord: '',
+        semestre: 1
       })
     }
   }, [practitioner])
@@ -67,6 +78,31 @@ function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSav
     setFormData(prev => ({ ...prev, nombre: value }))
     if (errors.nombre) {
       setErrors(prev => ({ ...prev, nombre: '' }))
+    }
+  }
+
+  // PASO 3: Crear handlers para los campos (línea ~73)
+  const handleApellidoChange = (e) => {
+    const value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+    setFormData(prev => ({ ...prev, apellido: value }))
+    if (errors.apellido) {
+      setErrors(prev => ({ ...prev, apellido: '' }))
+    }
+  }
+
+  const handleIdDiscordChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '')
+    setFormData(prev => ({ ...prev, id_discord: value }))
+    if (errors.id_discord) {
+      setErrors(prev => ({ ...prev, id_discord: '' }))
+    }
+  }
+
+  const handleSemestreChange = (e) => {
+    const value = parseInt(e.target.value) || 1
+    setFormData(prev => ({ ...prev, semestre: value }))
+    if (errors.semestre) {
+      setErrors(prev => ({ ...prev, semestre: '' }))
     }
   }
 
@@ -101,11 +137,14 @@ function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSav
     setFormData(prev => ({ ...prev, color: value }))
   }
 
+  // PASO 4: Validar los campos (línea ~104)
   const validateForm = () => {
     const newErrors = {}
     if (!formData.nombre.trim()) newErrors.nombre = 'El nombre es requerido'
+    if (!formData.apellido.trim()) newErrors.apellido = 'El apellido es requerido'
     if (!formData.email.trim()) newErrors.email = 'El email es requerido'
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Email inválido'
+    if (!formData.id_discord.trim()) newErrors.id_discord = 'El ID Discord es requerido'
     if (!formData.equipo.trim()) newErrors.equipo = 'El equipo es requerido'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -113,30 +152,13 @@ function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSav
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      const iniciales = formData.nombre
-        .split(' ')
-        .map(word => word[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
-
-      // Preparar datos para enviar al backend
-      const data = {
-        nombre: formData.nombre,
-        email: formData.email,
-        equipo: formData.equipo,
-        servidor: formData.servidor,
-        estado: formData.estado,
-        color: formData.color,
-        avatar: iniciales,
-        score: practitioner?.score || Math.floor(Math.random() * 900),
-        asistencia: practitioner?.asistencia || `${Math.floor(Math.random() * 30) + 70}%`,
-        infracciones: practitioner?.infracciones || 0,
-        cohorte: 'Cohorte 2024-A'
-      }
+      // Transformar datos del frontend al formato del backend
+      console.log('🔄 Datos del formulario (antes de transformar):', formData);
+      const backendData = transformToBackend(formData);
+      console.log('📤 Datos transformados para backend:', backendData);
 
       // Llamar a la función onSave que ahora manejará la API
-      await onSave(data, practitioner?.id)
+      await onSave(backendData, practitioner?.id)
       onClose()
     }
   }
@@ -159,13 +181,13 @@ function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSav
           <div className={styles.formGrid}>
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>
-                Nombre Completo <span className={styles.required}>*</span>
+                Nombre <span className={styles.required}>*</span>
               </label>
               <input
                 type="text"
                 name="nombre"
                 className={`${styles.formInput} ${errors.nombre ? styles.inputError : ''}`}
-                placeholder="Juan Pérez García"
+                placeholder="Juan"
                 value={formData.nombre}
                 onChange={handleNameChange}
                 disabled={isSaving}
@@ -176,6 +198,65 @@ function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSav
                   {errors.nombre}
                 </span>
               )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>
+                Apellido <span className={styles.required}>*</span>
+              </label>
+              <input
+                type="text"
+                name="apellido"
+                className={`${styles.formInput} ${errors.apellido ? styles.inputError : ''}`}
+                placeholder="Pérez García"
+                value={formData.apellido}
+                onChange={handleApellidoChange}
+                disabled={isSaving}
+              />
+              {errors.apellido && (
+                <span className={styles.errorMessage}>
+                  <AlertCircle size={14} />
+                  {errors.apellido}
+                </span>
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>
+                ID Discord <span className={styles.required}>*</span>
+              </label>
+              <input
+                type="text"
+                name="id_discord"
+                className={`${styles.formInput} ${errors.id_discord ? styles.inputError : ''}`}
+                placeholder="123456789012345678"
+                value={formData.id_discord}
+                onChange={handleIdDiscordChange}
+                disabled={isSaving}
+              />
+              {errors.id_discord && (
+                <span className={styles.errorMessage}>
+                  <AlertCircle size={14} />
+                  {errors.id_discord}
+                </span>
+              )}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>
+                Semestre
+              </label>
+              <input
+                type="number"
+                name="semestre"
+                className={styles.formInput}
+                placeholder="1"
+                min="1"
+                max="10"
+                value={formData.semestre}
+                onChange={handleSemestreChange}
+                disabled={isSaving}
+              />
             </div>
 
             <div className={styles.formGroup}>
@@ -267,15 +348,15 @@ function PractitionerModal({ isOpen, onClose, onSave, practitioner = null, isSav
           </div>
 
           <div className={styles.modalFooter}>
-            <button 
-              className={styles.cancelButton} 
+            <button
+              className={styles.cancelButton}
               onClick={onClose}
               disabled={isSaving}
             >
               Cancelar
             </button>
-            <button 
-              className={styles.submitButton} 
+            <button
+              className={styles.submitButton}
               onClick={handleSubmit}
               disabled={isSaving}
             >
@@ -297,13 +378,13 @@ export function Dashboard() {
   const [showModal, setShowModal] = useState(false)
   const [editingPractitioner, setEditingPractitioner] = useState(null)
   const [isSaving, setIsSaving] = useState(false)
-  
+
   const itemsPerPage = 6
 
   // Usar el hook actualizado
-  const { 
-    practicantes: practicantesData, 
-    loading, 
+  const {
+    practicantes: practicantesData,
+    loading,
     pagination,
     loadPracticantes,
     createPracticante,
@@ -316,7 +397,7 @@ export function Dashboard() {
 
   // Filtrar practicantes (puedes mover esto al backend)
   const filteredPracticantes = transformedPracticantes.filter(practicante => {
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       practicante.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       practicante.email.toLowerCase().includes(searchTerm.toLowerCase())
 
@@ -346,13 +427,13 @@ export function Dashboard() {
         // Crear nuevo practicante
         await createPracticante(data);
       }
-      
+
       // Recargar los practicantes para mostrar los cambios
       await loadPracticantes(currentPage, {
         estado: selectedStatus !== 'todos' ? selectedStatus : undefined,
         nombre: searchTerm || undefined,
       });
-      
+
     } catch (error) {
       console.error('Error al guardar practicante:', error);
       alert('Error al guardar el practicante. Por favor, intente nuevamente.');
@@ -364,7 +445,7 @@ export function Dashboard() {
   const handleEditPractitioner = (practitioner) => {
     // Extraer solo el nombre del equipo (sin el servidor)
     const equipoNombre = practitioner.equipo.split(' • ')[1] || practitioner.equipo;
-    
+
     setEditingPractitioner({
       ...practitioner,
       equipo: equipoNombre
@@ -387,7 +468,7 @@ export function Dashboard() {
     const params = {};
     if (selectedStatus !== 'todos') params.estado = selectedStatus;
     if (searchTerm) params.nombre = searchTerm;
-    
+
     loadPracticantes(currentPage, params);
   }, [currentPage, selectedStatus, searchTerm]);
 
@@ -433,8 +514,8 @@ export function Dashboard() {
           <div className={styles.loadingMessage}>Cargando practicantes...</div>
         ) : currentPracticantes.length > 0 ? (
           currentPracticantes.map(practicante => (
-            <PracticanteCard 
-              key={practicante.id} 
+            <PracticanteCard
+              key={practicante.id}
               practicante={practicante}
               onEdit={handleEditPractitioner}
               onDelete={() => {

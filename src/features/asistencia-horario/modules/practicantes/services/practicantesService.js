@@ -17,7 +17,7 @@ import { get, post, put, patch, del } from '../../../services';
 export const getPracticantes = async (params = {}) => {
   try {
     const queryParams = new URLSearchParams();
-    
+
     if (params.nombre) queryParams.append('nombre', params.nombre);
     if (params.correo) queryParams.append('correo', params.correo);
     if (params.estado) queryParams.append('estado', params.estado);
@@ -25,7 +25,7 @@ export const getPracticantes = async (params = {}) => {
 
     const queryString = queryParams.toString();
     const endpoint = queryString ? `practicantes/?${queryString}` : 'practicantes/';
-    
+
     return await get(endpoint);
   } catch (error) {
     console.error('Error al obtener practicantes:', error);
@@ -60,9 +60,23 @@ export const getPracticanteById = async (id) => {
  */
 export const createPracticante = async (data) => {
   try {
-    return await post('practicantes/', data);
+    console.log('📤 Enviando datos al backend:', JSON.stringify(data, null, 2));
+    const response = await post('practicantes/', data);
+    console.log('✅ Practicante creado exitosamente:', response);
+    return response;
   } catch (error) {
-    console.error('Error al crear practicante:', error);
+    console.error('❌ Error al crear practicante:', error);
+    console.error('📋 Detalles del error:', {
+      message: error.message,
+      status: error.status,
+      responseData: error.response?.data
+    });
+
+    // Mostrar el detalle completo del error del backend
+    if (error.response?.data) {
+      console.error('🔴 Respuesta del backend:', JSON.stringify(error.response.data, null, 2));
+    }
+
     throw error;
   }
 };
